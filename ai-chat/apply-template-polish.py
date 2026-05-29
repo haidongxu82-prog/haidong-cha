@@ -42,7 +42,13 @@ body::before,body::after{display:none!important;content:none!important}
 
 .sidebar{width:60px!important;background:var(--m-bg)!important;border-right:0!important;padding:14px 9px!important;gap:6px!important;box-shadow:none!important;backdrop-filter:none!important}
 .logo{width:34px!important;height:34px!important;border-radius:10px!important;box-shadow:none!important;opacity:.92!important}
-.sb{position:relative!important;width:40px!important;height:40px!important;border-radius:999px!important;border:1px solid transparent!important;background:transparent!important;color:rgba(241,243,244,.48)!important;box-shadow:none!important;font-size:16px!important;transition:background .16s,border-color .16s,color .16s!important}
+.sb{position:relative!important;width:40px!important;height:40px!important;border-radius:999px!important;border:1px solid transparent!important;background:transparent!important;color:rgba(241,243,244,.48)!important;box-shadow:none!important;font-size:0!important;transition:background .16s,border-color .16s,color .16s!important}
+.sb::after{font-size:16px!important;line-height:1!important}
+.sb[title="聊天"]::after{content:"✦"}
+.sb[title="历史"]::after{content:"☰"}
+.sb[title="指令集"]::after{content:"⌘"}
+.sb[title="切换主题"]::after{content:"◐"}
+.sb[title="记忆"]::after{content:"◎"}
 .sb:hover{background:rgba(255,255,255,.07)!important;color:var(--m-soft)!important;border-color:transparent!important}
 .sb.active{background:transparent!important;color:var(--m-text)!important;border-color:transparent!important}
 .sb.active::before{content:"";position:absolute;left:-5px;top:13px;bottom:13px;width:2px;border-radius:999px;background:var(--m-accent)}
@@ -98,7 +104,8 @@ body::before,body::after{display:none!important;content:none!important}
   .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:10px!important;width:auto!important;height:48px!important;transform:translateX(-50%)!important;flex-direction:row!important;justify-content:center!important;padding:6px 12px!important;gap:14px!important;border-right:0!important;border-top:0!important;border-radius:999px!important;background:rgba(36,38,40,.78)!important;backdrop-filter:blur(18px)!important}
   [data-theme="light"] .sidebar{background:rgba(255,255,255,.82)!important;box-shadow:0 10px 32px rgba(60,64,67,.10)!important}
   .logo,.s-spacer{display:none!important}
-  .sb{width:32px!important;height:32px!important;border-radius:50%!important;font-size:16px!important;color:rgba(241,243,244,.50)!important}
+  .sb{width:32px!important;height:32px!important;border-radius:50%!important;font-size:0!important;color:rgba(241,243,244,.50)!important}
+  .sb::after{font-size:15px!important}
   [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
   .sb:hover,.sb.active{background:transparent!important;border-color:transparent!important;color:var(--m-text)!important}
   .sb.active::before{display:none!important}
@@ -108,15 +115,15 @@ body::before,body::after{display:none!important;content:none!important}
   .topbar h1::after{display:none!important}
   .tb{min-height:36px!important;padding:7px 13px!important;font-size:14px!important}
   .empty-state{min-height:calc(100svh - 124px)!important;align-items:stretch!important;justify-content:flex-start!important;padding:22px 16px 18px!important}
-  .greeting{max-width:100%!important;font-size:clamp(32px,10vw,44px)!important;line-height:1.12!important;margin-bottom:10px!important;font-weight:520!important}
-  .greeting-sub{max-width:100%!important;font-size:14px!important;line-height:1.58!important;margin-bottom:16px!important}
+  .greeting{max-width:100%!important;font-size:clamp(34px,10.4vw,46px)!important;line-height:1.12!important;margin-bottom:10px!important;font-weight:520!important}
+  .greeting-sub{max-width:100%!important;font-size:14px!important;line-height:1.58!important;margin-bottom:14px!important}
   .site-tag{margin-bottom:18px!important;font-size:10px!important}
   .empty-state > div[style*="max-width"]{max-width:none!important;width:100%!important}
   .model-area{max-width:none!important;margin-bottom:12px!important}
   .model-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important}
   .model-btns{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important}
   .model-tab{width:100%!important;min-width:0!important;text-align:center!important;padding:8px 10px!important;font-size:13px!important;border-radius:999px!important}
-  .model-btn{width:100%!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;padding:9px 11px!important;font-size:12px!important;border-radius:14px!important}
+  .model-btn{width:100%!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;padding:8px 10px!important;font-size:11.5px!important;border-radius:14px!important}
   .input-box{max-width:none!important;min-height:76px!important;border-radius:26px!important;padding:11px 11px 11px 16px!important}
   .input-box textarea{min-width:0!important;min-height:44px!important;max-height:128px!important;font-size:18px!important}
   .send-btn{width:48px!important;height:48px!important;border-radius:13px!important;flex:0 0 auto!important}
@@ -129,7 +136,7 @@ body::before,body::after{display:none!important;content:none!important}
 }
 
 @media(max-width:430px){
-  .empty-state{padding-top:18px!important}
+  .empty-state{padding-top:16px!important}
   .greeting{font-size:clamp(31px,9.6vw,40px)!important}
 }
 """
@@ -162,6 +169,7 @@ def main() -> None:
     backup.write_text(html, encoding="utf-8")
 
     html = remove_blocks(html)
+    html = html.replace('<html lang="zh-CN" data-theme="dark">', '<html lang="zh-CN" data-theme="light">')
     html = re.sub(r"<title>.*?</title>", "<title>海东 AI 对话</title>", html, count=1, flags=re.S)
     html = re.sub(
         r'<meta name="theme-color" content="[^"]+">',
@@ -172,17 +180,21 @@ def main() -> None:
 
     replacements = {
         "<h1>海东 AI Chat</h1>": "<h1>海东 AI 对话</h1>",
-        '<div class="greeting">你好，海东</div>': '<div class="greeting">今天要推进什么？</div>',
-        '<div class="greeting">今天想把哪件事交给 AI？</div>': '<div class="greeting">今天要推进什么？</div>',
-        '<div class="greeting">今天想让 AI 帮你推进什么？</div>': '<div class="greeting">今天要推进什么？</div>',
-        '<div class="greeting-sub">需要我做些什么？</div>': '<div class="greeting-sub">写作、整理、拆解任务、生成图片。保持简单，直接开始。</div>',
-        '<div class="greeting-sub">这里是海东的私人 AI 工作台，适合写作、整理、拆解任务和生成图片。</div>': '<div class="greeting-sub">写作、整理、拆解任务、生成图片。保持简单，直接开始。</div>',
-        '<div class="greeting-sub">写作、整理、拆解任务、生成图片，都可以从这里开始。</div>': '<div class="greeting-sub">写作、整理、拆解任务、生成图片。保持简单，直接开始。</div>',
+        '<div class="greeting">你好，海东</div>': '<div class="greeting">你好，海东</div>',
+        '<div class="greeting">今天要推进什么？</div>': '<div class="greeting">你好，海东</div>',
+        '<div class="greeting">今天想把哪件事交给 AI？</div>': '<div class="greeting">你好，海东</div>',
+        '<div class="greeting">今天想让 AI 帮你推进什么？</div>': '<div class="greeting">你好，海东</div>',
+        '<div class="greeting-sub">需要我做些什么？</div>': '<div class="greeting-sub">把想法、任务和图片交给 AI，简单开始。</div>',
+        '<div class="greeting-sub">这里是海东的私人 AI 工作台，适合写作、整理、拆解任务和生成图片。</div>': '<div class="greeting-sub">把想法、任务和图片交给 AI，简单开始。</div>',
+        '<div class="greeting-sub">写作、整理、拆解任务、生成图片，都可以从这里开始。</div>': '<div class="greeting-sub">把想法、任务和图片交给 AI，简单开始。</div>',
+        '<div class="greeting-sub">写作、整理、拆解任务、生成图片。保持简单，直接开始。</div>': '<div class="greeting-sub">把想法、任务和图片交给 AI，简单开始。</div>',
         '<div class="site-tag">私有 AI 交互前端</div>': '<div class="site-tag">Private AI Workspace</div>',
         '<div class="site-tag">Hangzhou AI workspace</div>': '<div class="site-tag">Private AI Workspace</div>',
         '<div class="site-tag">Hangzhou AI Workspace</div>': '<div class="site-tag">Private AI Workspace</div>',
         'placeholder="有什么想聊的..."': 'placeholder="输入想法、任务或问题..."',
         'placeholder="继续聊天..."': 'placeholder="继续补充，或者按 Enter 发送..."',
+        'src="/icon-40.png"': 'src="https://haidong.chat/assets/logo-hd-rotated.png"',
+        'src="/icon-512.png"': 'src="https://haidong.chat/assets/logo-hd-rotated.png"',
     }
     for old, new in replacements.items():
         html = html.replace(old, new)

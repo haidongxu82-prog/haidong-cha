@@ -25,7 +25,13 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
+git rm --cached -r --ignore-unmatch \
+  __pycache__ \
+  ai-chat/__pycache__ \
+  >/dev/null 2>> "$LOG_FILE" || true
+
 git add \
+  .gitignore \
   index.html \
   styles.css \
   CNAME \
@@ -34,6 +40,11 @@ git add \
   ai-chat \
   deploy \
   scripts \
+  ':(exclude)__pycache__' \
+  ':(exclude)ai-chat/__pycache__' \
+  ':(exclude)**/.DS_Store' \
+  ':(exclude)**/*.pyc' \
+  ':(exclude)**/*.pyo' \
   2>> "$LOG_FILE" || true
 
 if git diff --cached --quiet; then

@@ -25,6 +25,7 @@ cat > "$PLIST_PATH" <<EOF
   <string>chat.haidong.site-auto-push</string>
   <key>ProgramArguments</key>
   <array>
+    <string>/bin/bash</string>
     <string>$SCRIPT_PATH</string>
   </array>
   <key>StartInterval</key>
