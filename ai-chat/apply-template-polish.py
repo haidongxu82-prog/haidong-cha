@@ -63,6 +63,7 @@ body::before,body::after{display:none!important;content:none!important}
 
 .chat-wrap{flex:1 1 auto!important;overflow-y:auto!important;padding:0!important;background:var(--m-bg)!important}
 .empty-state{min-height:calc(100svh - 64px)!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:36px clamp(24px,6vw,76px) 58px!important;text-align:left!important}
+#emptyState[style*="display: none"],#emptyState[style*="display:none"],#chatInputArea[style*="display: none"],#chatInputArea[style*="display:none"],#chatInner[style*="display: none"],#chatInner[style*="display:none"]{display:none!important}
 .empty-state > div[style*="max-width"]{width:100%!important;max-width:880px!important}
 .greeting{max-width:880px!important;margin:0 auto 12px!important;color:var(--m-text)!important;background:linear-gradient(90deg,var(--m-accent),var(--m-accent-2) 48%,#fbbc04)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;font-size:clamp(40px,5vw,68px)!important;line-height:1.08!important;font-weight:520!important;text-align:left!important;text-wrap:balance!important}
 .greeting-sub{max-width:880px!important;margin:0 auto 24px!important;color:var(--m-muted)!important;font-size:clamp(16px,1.4vw,19px)!important;line-height:1.72!important;font-weight:420!important;text-align:left!important}
