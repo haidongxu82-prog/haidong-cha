@@ -50,7 +50,13 @@ button{cursor:pointer}
   background:var(--bg);
 }
 
-.brand{width:42px;height:42px;border-radius:13px}
+.brand-link{
+  width:42px;
+  height:42px;
+  display:block;
+  border-radius:13px;
+}
+.brand{width:42px;height:42px;border-radius:13px;display:block}
 .rail-btn{
   position:relative;
   width:42px;
@@ -65,7 +71,7 @@ button{cursor:pointer}
 .rail-btn.history::before{content:"☰"}
 .rail-btn.theme{margin-top:auto}
 .rail-btn.theme::before{content:"◐"}
-.rail-btn.active,.rail-btn:hover{background:var(--soft);color:var(--text)}
+.rail-btn:hover{background:var(--soft);color:var(--text)}
 
 .history-drawer{
   position:fixed;
@@ -292,7 +298,7 @@ textarea::placeholder{color:var(--muted)}
     background:var(--soft);
     backdrop-filter:blur(18px);
   }
-  .brand{display:none}
+  .brand-link{display:none}
   .rail-btn{width:30px;height:30px}
   .rail-btn::before{font-size:15px}
   .history-drawer{
