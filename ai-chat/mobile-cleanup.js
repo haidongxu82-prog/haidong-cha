@@ -50,13 +50,19 @@
   }
 
   function removeMobileOnlyChrome(){
+    document.querySelectorAll('.sidebar .sb').forEach(function(btn){
+      Array.from(btn.childNodes).forEach(function(node){
+        if (node.nodeType === Node.TEXT_NODE) node.remove();
+      });
+    });
     document.querySelectorAll('[title="指令集"], [title="记忆"], #promptPanel, .prompt-panel').forEach(function(el){
       el.classList && el.classList.remove('open', 'active');
       el.style && (el.style.display = 'none');
       el.remove();
     });
     document.querySelectorAll('body *').forEach(function(el){
-      if (el.children.length === 0 && el.textContent && el.textContent.trim() === '指令集') {
+      var text = el.textContent && el.textContent.trim();
+      if (el.children.length === 0 && (text === '指令集' || text === '历史记录')) {
         el.remove();
       }
     });

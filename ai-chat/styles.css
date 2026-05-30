@@ -147,7 +147,8 @@ body::before,body::after{display:none!important;content:none!important}
   .msg-user .bubble,.msg-ai .bubble{max-width:92%!important;font-size:15.5px!important;line-height:1.75!important}
   .input-area{position:relative!important;bottom:auto!important;padding:10px 16px 12px!important}
   .history-panel{left:0!important;right:0!important;top:auto!important;bottom:56px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
-  .history-panel.open{transform:translateY(0)!important}
+  .history-panel:not(.open){display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+  .history-panel.open{display:block!important;visibility:visible!important;opacity:1!important;transform:translateY(0)!important}
   .prompt-panel,.prompt-panel.open,#promptPanel,#promptPanel.open{display:none!important;visibility:hidden!important;pointer-events:none!important;opacity:0!important;transform:translateY(120%)!important;left:-9999px!important}
 }
 
