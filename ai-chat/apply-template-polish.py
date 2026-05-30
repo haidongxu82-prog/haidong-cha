@@ -1,159 +1,19 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from datetime import datetime
+import os
 import re
 
-TEMPLATE = Path("/opt/ai_chat/template.html")
+TEMPLATE = Path(os.environ.get("AI_CHAT_TEMPLATE", "/opt/ai_chat/template.html"))
+BASE_DIR = Path(__file__).resolve().parent
+STYLE_FILE = BASE_DIR / "styles.css"
+MOBILE_SCRIPT_FILE = BASE_DIR / "mobile-cleanup.js"
 
-CSS = r"""
-/* Haidong AI chat: Gemini-inspired minimal premium */
-:root{
-  color-scheme:dark;
-  --m-bg:#1b1c1d;
-  --m-surface:#242628;
-  --m-surface-2:#2d3033;
-  --m-line:rgba(255,255,255,.08);
-  --m-line-strong:rgba(255,255,255,.14);
-  --m-text:#f1f3f4;
-  --m-muted:#9aa0a6;
-  --m-soft:#c8cdd2;
-  --m-accent:#8ab4f8;
-  --m-accent-2:#c58af9;
-}
 
-[data-theme="light"]{
-  color-scheme:light;
-  --m-bg:#f8fafd;
-  --m-surface:#ffffff;
-  --m-surface-2:#edf2f7;
-  --m-line:rgba(32,33,36,.08);
-  --m-line-strong:rgba(32,33,36,.14);
-  --m-text:#202124;
-  --m-muted:#6f7782;
-  --m-soft:#3c4043;
-  --m-accent:#1a73e8;
-  --m-accent-2:#9334e6;
-}
-
-*{letter-spacing:0!important}
-html,body{height:100%;width:100%;overflow:hidden;background:var(--m-bg)!important}
-body{color:var(--m-text)!important;background:var(--m-bg)!important;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif!important}
-body::before,body::after{display:none!important;content:none!important}
-
-.sidebar{width:60px!important;background:var(--m-bg)!important;border-right:0!important;padding:14px 9px!important;gap:6px!important;box-shadow:none!important;backdrop-filter:none!important}
-.logo{width:34px!important;height:34px!important;border-radius:10px!important;box-shadow:none!important;opacity:.92!important}
-.sb{position:relative!important;width:40px!important;height:40px!important;border-radius:999px!important;border:1px solid transparent!important;background:transparent!important;color:rgba(241,243,244,.48)!important;box-shadow:none!important;font-size:0!important;transition:background .16s,border-color .16s,color .16s!important}
-.sb::after{font-size:16px!important;line-height:1!important}
-.sb[title="聊天"]::after{content:"✦"}
-.sb[title="历史"]::after{content:"☰"}
-.sb[title="指令集"]::after{content:"⌘"}
-.sb[title="切换主题"]::after{content:"◐"}
-.sb[title="记忆"]::after{content:"◎"}
-.sb:hover{background:rgba(255,255,255,.07)!important;color:var(--m-soft)!important;border-color:transparent!important}
-.sb.active{background:transparent!important;color:var(--m-text)!important;border-color:transparent!important}
-.sb.active::before{content:"";position:absolute;left:-5px;top:13px;bottom:13px;width:2px;border-radius:999px;background:var(--m-accent)}
-[data-theme="light"] .sidebar{background:#f8fafd!important}
-[data-theme="light"] .sb{color:rgba(60,64,67,.54)!important}
-[data-theme="light"] .sb:hover{background:rgba(60,64,67,.08)!important;color:var(--m-soft)!important}
-[data-theme="light"] .sb.active{color:var(--m-text)!important}
-
-.main{margin-left:60px!important;height:100svh!important;background:var(--m-bg)!important}
-.topbar{min-height:64px!important;padding:0 clamp(22px,3vw,40px)!important;background:rgba(27,28,29,.78)!important;border-bottom:0!important;backdrop-filter:blur(18px)!important}
-[data-theme="light"] .topbar{background:rgba(248,250,253,.78)!important}
-.topbar h1{font-size:18px!important;line-height:1.2!important;color:var(--m-text)!important;font-weight:650!important}
-.topbar h1::after{content:" / 私人工作台";margin-left:8px;color:var(--m-muted);font-size:13px;font-weight:650}
-.tb{min-height:38px!important;border-radius:999px!important;padding:7px 14px!important;background:var(--m-surface)!important;color:var(--m-soft)!important;border:0!important;box-shadow:none!important;font-size:14px!important;font-weight:620!important}
-.tb:hover{background:var(--m-surface-2)!important;color:var(--m-text)!important}
-
-.chat-wrap{flex:1 1 auto!important;overflow-y:auto!important;padding:0!important;background:var(--m-bg)!important}
-.empty-state{min-height:calc(100svh - 64px)!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:36px clamp(24px,6vw,76px) 58px!important;text-align:left!important}
-#emptyState[style*="display: none"],#emptyState[style*="display:none"],#chatInputArea[style*="display: none"],#chatInputArea[style*="display:none"],#chatInner[style*="display: none"],#chatInner[style*="display:none"]{display:none!important}
-.empty-state > div[style*="max-width"]{width:100%!important;max-width:880px!important}
-.greeting{max-width:880px!important;margin:0 auto 12px!important;color:var(--m-text)!important;background:linear-gradient(90deg,var(--m-accent),var(--m-accent-2) 48%,#fbbc04)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;font-size:clamp(40px,5vw,68px)!important;line-height:1.08!important;font-weight:520!important;text-align:left!important;text-wrap:balance!important}
-.greeting-sub{max-width:880px!important;margin:0 auto 24px!important;color:var(--m-muted)!important;font-size:clamp(16px,1.4vw,19px)!important;line-height:1.72!important;font-weight:420!important;text-align:left!important}
-.site-tag{display:none!important}
-
-.model-area{width:100%!important;max-width:880px!important;margin:0 auto 12px!important}
-.model-tabs,.model-btns{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
-.model-tabs{margin-bottom:10px!important}
-.model-tab,.model-btn{border:0!important;background:var(--m-surface)!important;color:var(--m-muted)!important;box-shadow:none!important;white-space:nowrap!important;font-weight:520!important;transition:background .16s,border-color .16s,color .16s!important}
-.model-tab{border-radius:999px!important;padding:7px 13px!important;font-size:13px!important}
-.model-btn{border-radius:999px!important;padding:7px 12px!important;font-size:12px!important}
-[data-theme="light"] .model-tab,[data-theme="light"] .model-btn{border:1px solid rgba(60,64,67,.12)!important;background:rgba(255,255,255,.72)!important}
-.model-tab:hover,.model-btn:hover{background:var(--m-surface-2)!important;color:var(--m-text)!important;border-color:var(--m-line-strong)!important}
-.model-tab.active,.model-btn.active{background:rgba(138,180,248,.18)!important;border-color:transparent!important;color:var(--m-text)!important}
-[data-theme="light"] .model-tab.active,[data-theme="light"] .model-btn.active{border-color:rgba(26,115,232,.24)!important;background:rgba(26,115,232,.10)!important}
-
-.input-box{width:100%!important;max-width:880px!important;min-height:76px!important;margin:0 auto!important;padding:12px 12px 12px 18px!important;border-radius:28px!important;border:0!important;background:var(--m-surface)!important;box-shadow:none!important}
-.input-box:focus-within{box-shadow:inset 0 0 0 1px rgba(138,180,248,.28)!important}
-.input-box textarea{min-height:42px!important;max-height:170px!important;color:var(--m-text)!important;font-size:17px!important;line-height:1.55!important}
-.input-box textarea::placeholder{color:var(--m-muted)!important}
-.send-btn{width:46px!important;height:46px!important;border-radius:50%!important;background:var(--m-accent)!important;color:#101418!important;box-shadow:none!important;font-size:17px!important;font-weight:900!important}
-.send-btn:hover{transform:none!important;filter:brightness(1.08)!important}
-.input-hint{width:100%!important;max-width:880px!important;margin:10px auto 0!important;color:var(--m-muted)!important;text-align:center!important;font-size:12px!important}
-.quick-actions{width:100%!important;max-width:880px!important;margin:14px auto 0!important;justify-content:flex-start!important}
-.quick-btn{background:var(--m-surface)!important;border:0!important;color:var(--m-muted)!important;box-shadow:none!important}
-.quick-btn:hover{background:var(--m-surface-2)!important;color:var(--m-text)!important;transform:none!important}
-
-.chat-inner{max-width:880px!important;margin:0 auto!important;padding:28px 22px 24px!important}
-.msg{margin-bottom:24px!important}
-.msg-user .bubble{max-width:min(76%,680px)!important;border-radius:14px!important;background:var(--m-surface-2)!important;color:var(--m-text)!important;border:1px solid var(--m-line)!important;box-shadow:none!important}
-.msg-ai .bubble{max-width:820px!important;border-radius:12px!important;background:transparent!important;color:var(--m-text)!important;border:1px solid var(--m-line)!important;box-shadow:none!important}
-.msg-ai .model-tag{color:var(--m-accent)!important;font-weight:720!important}
-
-.input-area{border-top:0!important;background:rgba(27,28,29,.88)!important;padding:12px clamp(22px,3vw,40px) max(18px,env(safe-area-inset-bottom))!important;backdrop-filter:blur(18px)!important}
-[data-theme="light"] .input-area{background:rgba(248,250,253,.88)!important}
-.history-panel,.prompt-panel{background:var(--m-surface)!important;border-color:var(--m-line)!important;box-shadow:none!important}
-.history-item:hover,.prompt-item:hover{background:var(--m-surface-2)!important}
-
-@media(max-width:768px){
-  html,body{height:100svh!important;overflow:hidden!important}
-  body{background:#f8fafd!important}
-  [data-theme="dark"] body{background:#1b1c1d!important}
-  .main{margin-left:0!important;height:100svh!important;padding-bottom:54px!important}
-  .topbar{min-height:42px!important;padding:0 12px!important;background:transparent!important;border:0!important;backdrop-filter:none!important;justify-content:flex-end!important}
-  .topbar h1,.topbar h1::after{display:none!important}
-  .tb{min-height:32px!important;padding:6px 12px!important;border-radius:999px!important;border:0!important;background:rgba(255,255,255,.72)!important;color:var(--m-soft)!important;font-size:13px!important}
-  [data-theme="dark"] .tb{background:rgba(255,255,255,.08)!important}
-  .chat-wrap{height:calc(100svh - 96px)!important;overflow-y:auto!important;padding:0!important}
-  .empty-state{height:auto!important;min-height:0!important;display:flex!important;align-items:stretch!important;justify-content:flex-start!important;padding:0 12px 14px!important;text-align:left!important}
-  .greeting,.greeting-sub,.site-tag,.quick-actions,.input-hint{display:none!important}
-  .empty-state > div[style*="max-width"]{width:100%!important;max-width:none!important;display:flex!important;flex-direction:column!important}
-  .model-area{order:1!important;width:100%!important;max-width:none!important;margin:0 0 10px!important;padding:0!important;background:transparent!important;box-shadow:none!important}
-  .model-area::before{content:"模型墙";display:block;margin:0 0 8px;color:var(--m-muted);font-size:11px;font-weight:650;letter-spacing:.05em}
-  .model-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;margin:0 0 6px!important;overflow:visible!important}
-  .model-btns{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;overflow:visible!important}
-  .model-tab,.model-btn{width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:center!important;border:1px solid rgba(60,64,67,.08)!important;border-radius:999px!important;background:rgba(255,255,255,.74)!important;color:var(--m-soft)!important;box-shadow:none!important}
-  .model-tab{padding:7px 8px!important;font-size:12px!important}
-  .model-btn{padding:6px 4px!important;font-size:9.4px!important;line-height:1.08!important}
-  .model-tab.active,.model-btn.active{background:rgba(26,115,232,.11)!important;border-color:rgba(26,115,232,.22)!important;color:var(--m-text)!important}
-  [data-theme="dark"] .model-tab,[data-theme="dark"] .model-btn{background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.08)!important}
-  [data-theme="dark"] .model-tab.active,[data-theme="dark"] .model-btn.active{background:rgba(138,180,248,.18)!important;border-color:rgba(138,180,248,.25)!important}
-  .input-box{order:2!important;width:100%!important;max-width:none!important;min-height:68px!important;margin:0!important;padding:9px 9px 9px 15px!important;border:0!important;border-radius:26px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 10px 30px rgba(60,64,67,.08)!important}
-  [data-theme="dark"] .input-box{background:var(--m-surface)!important;box-shadow:none!important}
-  .input-box textarea{min-width:0!important;min-height:42px!important;max-height:120px!important;font-size:17px!important;line-height:1.45!important}
-  .send-btn{width:42px!important;height:42px!important;border-radius:50%!important;flex:0 0 auto!important}
-  .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:8px!important;width:auto!important;height:42px!important;transform:translateX(-50%)!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:18px!important;padding:6px 12px!important;border:0!important;border-radius:999px!important;background:rgba(36,38,40,.72)!important;backdrop-filter:blur(18px)!important}
-  [data-theme="light"] .sidebar{background:rgba(255,255,255,.84)!important;box-shadow:0 10px 32px rgba(60,64,67,.10)!important}
-  .logo,.s-spacer,.sb[title="指令集"],.sb[title="记忆"],#promptPanel{display:none!important}
-  .sb{width:30px!important;height:30px!important;border-radius:50%!important;background:transparent!important;border:0!important;font-size:0!important;color:rgba(241,243,244,.54)!important}
-  .sb::after{font-size:15px!important}
-  [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
-  .sb.active,.sb:hover{background:transparent!important;color:var(--m-text)!important}
-  .sb.active::before{display:none!important}
-  .chat-inner{padding:16px 14px 18px!important}
-  .msg-user .bubble,.msg-ai .bubble{max-width:92%!important;font-size:15.5px!important;line-height:1.75!important}
-  .input-area{position:sticky!important;bottom:0!important;padding:10px 14px 12px!important}
-  .history-panel{left:0!important;right:0!important;top:auto!important;bottom:56px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
-  .history-panel.open{transform:translateY(0)!important}
-  .prompt-panel,.prompt-panel.open{display:none!important;transform:translateY(105%)!important}
-}
-
-@media(max-width:430px){
-  .empty-state{padding-inline:10px!important}
-  .model-btn{font-size:9px!important}
-}
-"""
+def read_asset(path: Path) -> str:
+    if not path.exists():
+        raise SystemExit(f"asset not found: {path}")
+    return path.read_text(encoding="utf-8").strip()
 
 
 def remove_blocks(html: str) -> str:
@@ -222,33 +82,18 @@ def main() -> None:
         "  if(!isOpen){p.classList.add('open');o.classList.add('active');loadPrompts();}",
     )
 
-    mobile_cleanup = r"""
+    css = read_asset(STYLE_FILE)
+    mobile_cleanup_js = read_asset(MOBILE_SCRIPT_FILE)
+    mobile_cleanup = f'''
 <script id="hd-mobile-cleanup">
-(function(){
-  function cleanMobile(){
-    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
-    document.querySelectorAll('[title="指令集"], [title="记忆"]').forEach(function(el){ el.remove(); });
-    var promptPanel = document.getElementById('promptPanel');
-    if (promptPanel) promptPanel.remove();
-    var greeting = document.getElementById('emptyState')?.querySelector('.greeting');
-    if (greeting) greeting.remove();
-    var sub = document.getElementById('emptyState')?.querySelector('.greeting-sub');
-    if (sub) sub.remove();
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', cleanMobile);
-  } else {
-    cleanMobile();
-  }
-  window.addEventListener('resize', cleanMobile);
-})();
+{mobile_cleanup_js}
 </script>
-"""
+'''
     html = re.sub(r"\n?<script id=\"hd-mobile-cleanup\">.*?</script>\n?", "\n", html, flags=re.S)
 
     html = html.replace(
         "</head>",
-        f'\n<style id="hd-ai-minimal-premium">\n{CSS}\n</style>\n</head>',
+        f'\n<style id="hd-ai-minimal-premium">\n{css}\n</style>\n</head>',
         1,
     )
     html = html.replace("</body>", mobile_cleanup + "\n</body>", 1)
