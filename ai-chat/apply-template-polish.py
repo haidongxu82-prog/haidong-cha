@@ -104,21 +104,22 @@ body::before,body::after{display:none!important;content:none!important}
   html,body{height:100svh!important;overflow:hidden!important}
   body{background:linear-gradient(180deg,#f8fafd 0%,#f3f6fb 100%)!important}
   [data-theme="dark"] body{background:var(--m-bg)!important}
-  .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:10px!important;width:auto!important;height:48px!important;transform:translateX(-50%)!important;flex-direction:row!important;justify-content:center!important;padding:6px 12px!important;gap:14px!important;border-right:0!important;border-top:0!important;border-radius:999px!important;background:rgba(36,38,40,.78)!important;backdrop-filter:blur(18px)!important}
+  .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:10px!important;width:auto!important;height:46px!important;transform:translateX(-50%)!important;flex-direction:row!important;justify-content:center!important;padding:6px 12px!important;gap:18px!important;border-right:0!important;border-top:0!important;border-radius:999px!important;background:rgba(36,38,40,.78)!important;backdrop-filter:blur(18px)!important}
   [data-theme="light"] .sidebar{background:rgba(255,255,255,.82)!important;box-shadow:0 10px 32px rgba(60,64,67,.10)!important}
   .logo,.s-spacer{display:none!important}
   .sb{width:32px!important;height:32px!important;border-radius:50%!important;font-size:0!important;color:rgba(241,243,244,.50)!important}
   .sb::after{font-size:15px!important}
+  .sb[title="指令集"],.sb[title="记忆"]{display:none!important}
   [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
   .sb:hover,.sb.active{background:transparent!important;border-color:transparent!important;color:var(--m-text)!important}
   .sb.active::before{display:none!important}
   .main{margin-left:0!important;height:100svh!important;padding-bottom:56px!important}
-  .topbar{min-height:46px!important;padding:0 14px!important;background:transparent!important;backdrop-filter:none!important;border-bottom:0!important}
+  .topbar{min-height:42px!important;padding:0 14px!important;background:transparent!important;backdrop-filter:none!important;border-bottom:0!important;justify-content:flex-end!important}
   [data-theme="dark"] .topbar{background:rgba(27,28,29,.82)!important}
-  .topbar h1{font-size:17px!important;font-weight:560!important}
+  .topbar h1{display:none!important}
   .topbar h1::after{display:none!important}
   .tb{min-height:32px!important;padding:6px 11px!important;font-size:13px!important;background:rgba(255,255,255,.68)!important}
-  .chat-wrap{height:calc(100svh - 102px)!important;overflow-y:auto!important}
+  .chat-wrap{height:calc(100svh - 98px)!important;overflow-y:auto!important}
   .empty-state{min-height:auto!important;height:auto!important;align-items:stretch!important;justify-content:flex-start!important;padding:2px 14px 16px!important}
   .greeting{order:1;max-width:100%!important;font-size:clamp(22px,6.6vw,30px)!important;line-height:1.1!important;margin:0 0 10px!important;font-weight:520!important}
   .greeting-sub{display:none!important}
