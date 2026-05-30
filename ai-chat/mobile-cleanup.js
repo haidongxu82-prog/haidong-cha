@@ -1,6 +1,50 @@
 (function(){
+  function isMobile(){
+    return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function syncMobileState(){
+    if (!isMobile()) {
+      document.body.classList.remove('hd-mobile', 'hd-chat-active');
+      var dock = document.getElementById('hdMobileModelDock');
+      var chatInputArea = document.getElementById('chatInputArea');
+      var dockModelArea = dock && dock.querySelector('.model-area');
+      if (chatInputArea && dockModelArea) {
+        chatInputArea.insertBefore(dockModelArea, chatInputArea.firstChild);
+      }
+      if (dock) dock.remove();
+      return;
+    }
+
+    document.body.classList.add('hd-mobile');
+
+    var emptyState = document.getElementById('emptyState');
+    var chatInputArea = document.getElementById('chatInputArea');
+    var chatActive = !!(chatInputArea && getComputedStyle(chatInputArea).display !== 'none');
+    document.body.classList.toggle('hd-chat-active', chatActive);
+
+    var main = document.querySelector('.main');
+    var topbar = document.querySelector('.topbar');
+    var chatModelArea = chatInputArea && chatInputArea.querySelector('.model-area');
+
+    if (main && topbar && chatModelArea && !document.getElementById('hdMobileModelDock')) {
+      var dock = document.createElement('div');
+      dock.id = 'hdMobileModelDock';
+      dock.className = 'mobile-model-dock';
+      topbar.insertAdjacentElement('afterend', dock);
+      dock.appendChild(chatModelArea);
+    }
+
+    if (emptyState) {
+      var greeting = emptyState.querySelector('.greeting');
+      if (greeting) greeting.remove();
+      var sub = emptyState.querySelector('.greeting-sub');
+      if (sub) sub.remove();
+    }
+  }
+
   function cleanMobile(){
-    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+    if (!isMobile()) return;
     document.querySelectorAll('[title="指令集"], [title="记忆"]').forEach(function(el){ el.remove(); });
     var promptPanel = document.getElementById('promptPanel');
     if (promptPanel) {
@@ -10,10 +54,7 @@
     }
     var overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('show');
-    var greeting = document.getElementById('emptyState')?.querySelector('.greeting');
-    if (greeting) greeting.remove();
-    var sub = document.getElementById('emptyState')?.querySelector('.greeting-sub');
-    if (sub) sub.remove();
+    syncMobileState();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', cleanMobile);
@@ -21,4 +62,5 @@
     cleanMobile();
   }
   window.addEventListener('resize', cleanMobile);
+  setInterval(syncMobileState, 350);
 })();
