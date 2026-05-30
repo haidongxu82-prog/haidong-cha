@@ -188,15 +188,6 @@ h1{
   background:var(--soft);
   box-shadow:none;
 }
-.wall-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:760;
-}
 .mode-tabs,.models{display:flex;flex-wrap:wrap;gap:7px}
 .mode,.model{
   height:34px;
@@ -333,8 +324,6 @@ textarea::placeholder{color:var(--muted)}
     border-radius:24px;
     background:var(--soft);
   }
-  .wall-head{margin-bottom:10px}
-  .wall-head small{display:none}
   .mode-tabs,.models{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
