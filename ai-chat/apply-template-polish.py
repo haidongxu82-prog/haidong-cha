@@ -222,11 +222,36 @@ def main() -> None:
         "  if(!isOpen){p.classList.add('open');o.classList.add('active');loadPrompts();}",
     )
 
+    mobile_cleanup = r"""
+<script id="hd-mobile-cleanup">
+(function(){
+  function cleanMobile(){
+    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+    document.querySelectorAll('[title="指令集"], [title="记忆"]').forEach(function(el){ el.remove(); });
+    var promptPanel = document.getElementById('promptPanel');
+    if (promptPanel) promptPanel.remove();
+    var greeting = document.getElementById('emptyState')?.querySelector('.greeting');
+    if (greeting) greeting.remove();
+    var sub = document.getElementById('emptyState')?.querySelector('.greeting-sub');
+    if (sub) sub.remove();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', cleanMobile);
+  } else {
+    cleanMobile();
+  }
+  window.addEventListener('resize', cleanMobile);
+})();
+</script>
+"""
+    html = re.sub(r"\n?<script id=\"hd-mobile-cleanup\">.*?</script>\n?", "\n", html, flags=re.S)
+
     html = html.replace(
         "</head>",
         f'\n<style id="hd-ai-minimal-premium">\n{CSS}\n</style>\n</head>',
         1,
     )
+    html = html.replace("</body>", mobile_cleanup + "\n</body>", 1)
 
     TEMPLATE.write_text(html, encoding="utf-8")
     print("ai.haidong.chat template updated")
