@@ -95,7 +95,6 @@ body::before,body::after{display:none!important;content:none!important}
 
 .input-area{border-top:0!important;background:rgba(27,28,29,.88)!important;padding:12px clamp(22px,3vw,40px) max(18px,env(safe-area-inset-bottom))!important;backdrop-filter:blur(18px)!important}
 [data-theme="light"] .input-area{background:rgba(248,250,253,.88)!important}
-.input-area > .model-area{display:none!important}
 .history-panel,.prompt-panel{background:var(--m-surface)!important;border-color:var(--m-line)!important;box-shadow:none!important}
 .history-item:hover,.prompt-item:hover{background:var(--m-surface-2)!important}
 
