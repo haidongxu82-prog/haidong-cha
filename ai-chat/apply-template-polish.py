@@ -52,6 +52,10 @@ body::before,body::after{display:none!important;content:none!important}
 .sb:hover{background:rgba(255,255,255,.07)!important;color:var(--m-soft)!important;border-color:transparent!important}
 .sb.active{background:transparent!important;color:var(--m-text)!important;border-color:transparent!important}
 .sb.active::before{content:"";position:absolute;left:-5px;top:13px;bottom:13px;width:2px;border-radius:999px;background:var(--m-accent)}
+[data-theme="light"] .sidebar{background:#f8fafd!important}
+[data-theme="light"] .sb{color:rgba(60,64,67,.54)!important}
+[data-theme="light"] .sb:hover{background:rgba(60,64,67,.08)!important;color:var(--m-soft)!important}
+[data-theme="light"] .sb.active{color:var(--m-text)!important}
 
 .main{margin-left:60px!important;height:100svh!important;background:var(--m-bg)!important}
 .topbar{min-height:64px!important;padding:0 clamp(22px,3vw,40px)!important;background:rgba(27,28,29,.78)!important;border-bottom:0!important;backdrop-filter:blur(18px)!important}
@@ -75,8 +79,10 @@ body::before,body::after{display:none!important;content:none!important}
 .model-tab,.model-btn{border:0!important;background:var(--m-surface)!important;color:var(--m-muted)!important;box-shadow:none!important;white-space:nowrap!important;font-weight:520!important;transition:background .16s,border-color .16s,color .16s!important}
 .model-tab{border-radius:999px!important;padding:7px 13px!important;font-size:13px!important}
 .model-btn{border-radius:999px!important;padding:7px 12px!important;font-size:12px!important}
+[data-theme="light"] .model-tab,[data-theme="light"] .model-btn{border:1px solid rgba(60,64,67,.12)!important;background:rgba(255,255,255,.72)!important}
 .model-tab:hover,.model-btn:hover{background:var(--m-surface-2)!important;color:var(--m-text)!important;border-color:var(--m-line-strong)!important}
 .model-tab.active,.model-btn.active{background:rgba(138,180,248,.18)!important;border-color:transparent!important;color:var(--m-text)!important}
+[data-theme="light"] .model-tab.active,[data-theme="light"] .model-btn.active{border-color:rgba(26,115,232,.24)!important;background:rgba(26,115,232,.10)!important}
 
 .input-box{width:100%!important;max-width:880px!important;min-height:76px!important;margin:0 auto!important;padding:12px 12px 12px 18px!important;border-radius:28px!important;border:0!important;background:var(--m-surface)!important;box-shadow:none!important}
 .input-box:focus-within{box-shadow:inset 0 0 0 1px rgba(138,180,248,.28)!important}
