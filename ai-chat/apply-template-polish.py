@@ -7,6 +7,7 @@ import re
 TEMPLATE = Path(os.environ.get("AI_CHAT_TEMPLATE", "/opt/ai_chat/template.html"))
 BASE_DIR = Path(__file__).resolve().parent
 STYLE_FILE = BASE_DIR / "styles.css"
+MOBILE_STYLE_FILE = BASE_DIR / "mobile.css"
 MOBILE_SCRIPT_FILE = BASE_DIR / "mobile-cleanup.js"
 
 
@@ -23,6 +24,7 @@ def remove_blocks(html: str) -> str:
         "hd-ai-workbench-v4",
         "hd-ai-minimal-premium-v5",
         "hd-ai-minimal-premium",
+        "hd-ai-mobile",
     ]
     for block_id in ids:
         html = re.sub(
@@ -83,6 +85,7 @@ def main() -> None:
     )
 
     css = read_asset(STYLE_FILE)
+    mobile_css = read_asset(MOBILE_STYLE_FILE)
     mobile_cleanup_js = read_asset(MOBILE_SCRIPT_FILE)
     mobile_cleanup = f'''
 <script id="hd-mobile-cleanup">
@@ -93,7 +96,7 @@ def main() -> None:
 
     html = html.replace(
         "</head>",
-        f'\n<style id="hd-ai-minimal-premium">\n{css}\n</style>\n</head>',
+        f'\n<style id="hd-ai-minimal-premium">\n{css}\n</style>\n<style id="hd-ai-mobile">\n{mobile_css}\n</style>\n</head>',
         1,
     )
     html = html.replace("</body>", mobile_cleanup + "\n</body>", 1)

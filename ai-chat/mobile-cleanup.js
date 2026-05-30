@@ -55,6 +55,11 @@
       el.style && (el.style.display = 'none');
       el.remove();
     });
+    document.querySelectorAll('body *').forEach(function(el){
+      if (el.children.length === 0 && el.textContent && el.textContent.trim() === '指令集') {
+        el.remove();
+      }
+    });
     var overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('show');
   }
