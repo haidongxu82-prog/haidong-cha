@@ -152,7 +152,24 @@ body.history-open .history-drawer{
   height:100svh;
   display:grid;
   grid-template-rows:116px minmax(0,1fr);
+  overflow:hidden;
 }
+.shell::before{
+  content:"海东 AI";
+  position:absolute;
+  right:clamp(28px,5vw,78px);
+  bottom:clamp(64px,9vh,118px);
+  z-index:0;
+  pointer-events:none;
+  color:rgba(32,33,36,.032);
+  font-size:clamp(72px,11vw,176px);
+  line-height:1;
+  font-weight:720;
+  white-space:nowrap;
+  user-select:none;
+}
+[data-theme="dark"] .shell::before{color:rgba(255,255,255,.038)}
+.topbar,.workspace{position:relative;z-index:1}
 .topbar{
   display:flex;
   align-items:flex-end;
@@ -347,6 +364,13 @@ textarea::placeholder{color:var(--muted);opacity:.72}
     height:100svh;
     grid-template-rows:56px minmax(0,1fr);
   }
+  .shell::before{
+    right:12px;
+    bottom:92px;
+    font-size:76px;
+    color:rgba(32,33,36,.028);
+  }
+  [data-theme="dark"] .shell::before{color:rgba(255,255,255,.035)}
   .topbar{padding:8px 16px 0}
   .kicker,h1{display:none}
   .new-chat{position:static;height:34px}
