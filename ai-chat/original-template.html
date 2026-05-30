@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>海东 AI Chat</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#131314">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#131314;--bg2:#1e1f20;--card:#1e1f20;--card2:#282a2c;
+  --border:#3c4043;--text:#e3e3e3;--text2:#9aa0a6;--text3:#6e7378;
+  --accent:#8ab4f8;--accent2:#aecbfa;--input-bg:#2d2e30;
+  --grad1:#1a73e8;--grad2:#9334e6;--grad3:#e8710a;
+  --danger:#f28b82;--success:#81c995;
+}
+[data-theme="light"]{
+  --bg:#f0f4f9;--bg2:#fff;--card:#fff;--card2:#e8eaed;
+  --border:#dadce0;--text:#202124;--text2:#5f6368;--text3:#80868b;
+  --accent:#1a73e8;--accent2:#4285f4;--input-bg:#f1f3f4;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;height:100vh;overflow:hidden;transition:background .3s,color .3s}
+
+/* ========== 左侧极简栏 ========== */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:56px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;z-index:100}
+.sb{width:40px;height:40px;border-radius:50%;border:none;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background .2s}
+.sb:hover{background:var(--card2)}
+.sb.active{background:var(--card2);color:var(--accent)}
+.logo{font-size:20px;margin-bottom:8px;cursor:pointer}
+.s-spacer{flex:1}
+
+/* ========== 主区域 ========== */
+.main{margin-left:56px;height:100vh;display:flex;flex-direction:column}
+
+/* 顶栏 */
+.topbar{display:flex;align-items:center;padding:8px 24px;gap:10px;flex-shrink:0}
+.topbar h1{font-size:17px;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad2),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tb{background:var(--input-bg);color:var(--text2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px}
+.tb:hover{background:var(--card2);color:var(--text)}
+
+/* ========== 聊天区 ========== */
+.chat-wrap{flex:1;overflow-y:auto;padding:20px 24px;scroll-behavior:smooth}
+.chat-inner{max-width:900px;margin:0 auto}
+
+/* 消息 */
+.msg{margin-bottom:24px;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-user{display:flex;justify-content:flex-end}
+.msg-user .bubble{background:var(--card2);color:var(--text);padding:10px 18px;border-radius:20px;white-space:pre-wrap;word-break:break-word;max-width:70%;line-height:1.6}
+.msg-ai .bubble{padding:8px 0;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+.msg-ai .bubble code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:13px;font-family:'SF Mono','Fira Code',monospace}
+.msg-ai .bubble pre{background:var(--card2);padding:14px;border-radius:12px;overflow-x:auto;margin:8px 0}
+.msg-ai .bubble pre code{background:none;padding:0}
+.msg-ai .model-tag{font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:500}
+.msg-ai .thinking{color:var(--text2);font-style:italic;border-left:3px solid var(--accent);padding-left:12px;margin:6px 0 12px;font-size:14px;line-height:1.6}
+.typing::after{content:' ┃';animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0}}
+.error-text{color:#f28b82}
+.memo-badge{display:inline-block;background:var(--accent);color:#000;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:600}
+
+/* ========== 空状态 - Gemini极简风 ========== */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center}
+.greeting{font-size:36px;font-weight:700;background:linear-gradient(135deg,var(--grad1),var(--grad2),var(--grad3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px}
+.greeting-sub{font-size:16px;color:var(--text3);margin-top:-16px;margin-bottom:12px;font-weight:400}
+.site-tag{display:inline-block;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border:1px solid var(--border);border-radius:20px;margin-bottom:24px;font-weight:500;opacity:.6;transition:opacity .3s}.site-tag:hover{opacity:1}
+
+/* ========== 输入区 - Gemini风格 ========== */
+.input-area{flex-shrink:0;padding:8px 24px 20px;display:flex;flex-direction:column;align-items:center}
+.input-box{width:100%;max-width:900px;background:var(--input-bg);border:1px solid var(--border);border-radius:28px;padding:12px 16px;display:flex;align-items:center;gap:10px;transition:border-color .2s,box-shadow .2s;flex-wrap:wrap}
+.input-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.input-box textarea{flex:1;min-width:200px;background:transparent;color:var(--text);border:none;font-size:16px;resize:none;outline:none;min-height:24px;max-height:160px;line-height:1.5;font-family:inherit}
+.input-box textarea::placeholder{color:var(--text3)}
+.input-hint{color:var(--text3);font-size:11px;margin-top:8px;max-width:900px}
+.quick-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;max-width:900px}.quick-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:8px 16px;border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}.quick-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
+
+/* ========== 模型选择器 - 输入框上方展示 ========== */
+.model-area{width:100%;max-width:900px;margin-bottom:10px}
+.model-tabs{display:flex;align-items:center;gap:4px;margin-bottom:8px}
+.model-tab{padding:5px 14px;border-radius:16px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--text2);transition:all .2s;font-weight:500;white-space:nowrap}
+.model-tab:hover{background:var(--card2);border-color:var(--accent);color:var(--text)}
+.model-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.model-btns{display:flex;gap:6px;flex-wrap:wrap}
+.model-btn{padding:4px 12px;border-radius:10px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .2s;white-space:nowrap}
+.model-btn:hover{border-color:var(--accent);color:var(--text);background:rgba(138,180,248,.08)}
+.model-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.send-btn{background:var(--accent);color:#000;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
+.send-btn:hover{background:var(--accent2);transform:scale(1.05)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ========== 历史面板（默认收起） ========== */
+.history-panel{position:fixed;left:56px;top:0;bottom:0;width:280px;background:var(--bg2);border-right:1px solid var(--border);z-index:99;transform:translateX(-100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.history-panel.open{transform:translateX(0)}
+.history-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.history-header h3{font-size:14px;font-weight:600}
+.history-list{flex:1;overflow-y:auto;padding:8px}
+.history-item{padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:8px}
+.history-item:hover{background:var(--card2)}
+.history-item .hi-title{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item .hi-del{color:var(--text3);font-size:16px;opacity:0;transition:opacity .15s;cursor:pointer}
+.history-item:hover .hi-del{opacity:1}
+.history-item .hi-del:hover{color:var(--danger)}
+.history-empty{color:var(--text3);font-size:13px;text-align:center;padding:40px 16px}
+.history-item.pinned{border-left:2px solid var(--accent)}
+.history-item.pinned .hi-title{font-weight:600}
+.pin-btn{color:var(--text3);font-size:12px;opacity:0;transition:opacity .15s;cursor:pointer}
+.history-item:hover .pin-btn{opacity:1}
+.pin-btn.active{color:var(--accent);opacity:1}
+.rename-input{background:var(--input-bg);color:var(--text);border:1px solid var(--accent);border-radius:4px;padding:2px 6px;font-size:13px;width:100%;outline:none}
+
+/* ========== Prompt面板（默认收起） ========== */
+.prompt-panel{position:fixed;right:0;top:0;bottom:0;width:320px;background:var(--bg2);border-left:1px solid var(--border);z-index:99;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.prompt-panel.open{transform:translateX(0)}
+.prompt-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.prompt-header h3{font-size:14px;font-weight:600}
+.prompt-list{flex:1;overflow-y:auto;padding:8px}
+.prompt-cat{font-size:11px;color:var(--accent);font-weight:600;padding:12px 8px 4px;text-transform:uppercase;letter-spacing:.5px}
+.prompt-item{padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s}
+.prompt-item:hover{background:var(--card2)}
+.prompt-item .pi-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.prompt-item .pi-content{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prompt-item .pi-actions{float:right;display:flex;gap:6px;opacity:0;transition:opacity .15s}
+.prompt-item:hover .pi-actions{opacity:1}
+.prompt-item .pi-actions span{cursor:pointer;font-size:14px}
+.prompt-empty{color:var(--text3);font-size:13px;text-align:center;padding:40px 16px}
+.prompt-add{padding:12px 16px;border-top:1px solid var(--border)}
+.prompt-add input,.prompt-add textarea{width:100%;background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:6px;outline:none;font-family:inherit}
+.prompt-add textarea{resize:vertical;min-height:60px}
+.prompt-add button{width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer}
+
+/* ========== 遮罩 ========== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:98;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.active{opacity:1;pointer-events:auto}
+
+/* === 增强功能样式 === */
+.stop-btn{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:50;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:24px;padding:8px 20px;font-size:13px;cursor:pointer;display:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.stop-btn:hover{background:var(--danger);color:#fff}
+.stop-btn.visible{display:flex;align-items:center;gap:6px}
+.code-wrap{position:relative;margin:8px 0}
+.code-wrap pre{margin:0!important}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--card2);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;opacity:0;transition:opacity .2s}
+.code-wrap:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--accent)}
+.retry-btn{display:inline-block;background:var(--card2);color:var(--accent);border:1px solid var(--border);border-radius:12px;padding:4px 14px;font-size:12px;cursor:pointer;margin-top:8px}
+.retry-btn:hover{background:var(--accent);color:#000}
+
+/* 滚动条 */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+@media(max-width:768px){
+  .sidebar{width:44px}
+  .main{margin-left:44px}
+  .greeting{font-size:26px}
+  .chat-wrap{padding:12px}
+  .msg-user .bubble{max-width:85%}
+  .history-panel{left:44px;width:260px}
+  .prompt-panel{width:280px}
+  .model-tab{padding:4px 10px;font-size:11px}
+  .model-btn{padding:3px 8px;font-size:10px}
+  .model-btns{gap:4px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <img class="logo" src="/icon-40.png" onclick="location.reload()" style="width:32px;height:32px;border-radius:8px;cursor:pointer;margin-bottom:8px">
+  <button class="sb active" title="聊天">💬</button>
+  <button class="sb" title="历史" onclick="toggleHistory()">☰</button>
+  <button class="sb" title="指令集" onclick="togglePrompts()">📋</button>
+  <div class="s-spacer"></div>
+  <button class="sb" id="themeBtn2" title="切换主题" onclick="toggleTheme()">🌙</button>
+  <button class="sb" title="记忆" onclick="showMemo()">🧠</button>
+</div>
+
+<button class="stop-btn" id="stopBtn" onclick="stopGen()">■ 停止生成</button>
+<div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+<div class="history-panel" id="historyPanel">
+  <div class="history-header">
+    <h3>对话历史</h3>
+    <span style="cursor:pointer;font-size:18px" onclick="toggleHistory()">✕</span>
+  </div>
+  <div class="history-list" id="historyList">
+    <div class="history-empty">暂无历史对话</div>
+  </div>
+</div>
+
+<div class="prompt-panel" id="promptPanel">
+  <div class="prompt-header">
+    <h3>指令集</h3>
+    <span style="cursor:pointer;font-size:18px" onclick="togglePrompts()">✕</span>
+  </div>
+  <div class="prompt-list" id="promptList">
+    <div class="prompt-empty">暂无指令</div>
+  </div>
+  <div class="prompt-add">
+    <input id="pCat" placeholder="分类（如：写作、编码）">
+    <input id="pTitle" placeholder="标题">
+    <textarea id="pContent" placeholder="指令内容..."></textarea>
+    <textarea id="pContent" placeholder="指令内容..."></textarea>
+    <button onclick="addPrompt()">添加指令</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1>海东 AI Chat</h1>
+    <div class="topbar-right">
+      <button class="tb" onclick="newChat()">＋ 新对话</button>
+    </div>
+  </div>
+
+  <div class="chat-wrap" id="chatWrap">
+    <div class="empty-state" id="emptyState">
+      <div class="greeting">你好，海东</div>
+      <div class="greeting-sub">需要我做些什么？</div>
+      <div class="site-tag">私有 AI 交互前端</div>
+      <div style="width:100%;max-width:900px">
+        <div class="model-area">
+          <div class="model-tabs" id="modelTabsEmpty">
+            <div class="model-tab active" data-group="chat">💬 对话</div>
+            <div class="model-tab" data-group="image">🎨 生图</div>
+          </div>
+          <div class="model-btns" id="modelSelectWrap"></div>
+        </div>
+        <div class="input-box">
+          <textarea id="userInput" placeholder="有什么想聊的..." rows="1"></textarea>
+          <button class="send-btn" id="sendBtnEmpty" onclick="sendMessage()">➤</button>
+        </div>
+        <div class="input-hint" style="margin-top:8px">AI可能会出错，请核实重要信息</div>
+        <div class="quick-actions" id="quickActionsEmpty"></div>
+      </div>
+    </div>
+    <div class="chat-inner" id="chatInner" style="display:none"></div>
+  </div>
+
+  <div class="input-area" id="chatInputArea" style="display:none">
+    <div class="model-area">
+      <div class="model-tabs" id="modelTabsChat">
+        <div class="model-tab active" data-group="chat">💬 对话</div>
+        <div class="model-tab" data-group="image">🎨 生图</div>
+      </div>
+      <div class="model-btns" id="modelSelectWrap2"></div>
+    </div>
+    <div class="input-box">
+      <textarea id="userInput2" placeholder="继续聊天..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtnChat" onclick="sendMessage()">➤</button>
+    </div>
+    <div class="input-hint">输入 /memo 内容 可写入记忆库</div>
+  </div>
+</div>
+
+<script>
+let modelData=MODEL_DATA_PLACEHOLDER,currentGroup='chat',currentModel='',messages=[],streaming=false,convId=genId(),abortCtrl=null,lastUserMsg='';
+
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+
+function toggleTheme(){
+  const h=document.documentElement,t=h.getAttribute('data-theme'),n=t==='dark'?'light':'dark';
+  h.setAttribute('data-theme',n);localStorage.setItem('ai_chat_theme',n);
+  document.getElementById('themeBtn2').textContent=n==='dark'?'🌙':'☀️';
+}
+(function(){
+  const s=localStorage.getItem('ai_chat_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',s);
+  document.getElementById('themeBtn2').textContent=s==='dark'?'🌙':'☀️';
+})();
+
+function loadModels(){
+  if(modelData&&modelData.chat){initModelTabs('modelTabsEmpty','modelSelectWrap');initModelTabs('modelTabsChat','modelSelectWrap2');return;}
+  fetch('/api/models').then(r=>r.json()).then(d=>{
+    if(d.error){console.error('load models error:',d.error);return;}
+    modelData=d;
+    if(d.chat&&d.chat.length>0)currentModel=d.chat[0].id;
+    initModelTabs('modelTabsEmpty','modelSelectWrap');
+    initModelTabs('modelTabsChat','modelSelectWrap2');
+  });
+}
+
+function initModelTabs(tabsId,wrapId){
+  const tabs=document.getElementById(tabsId);
+  const wrap=document.getElementById(wrapId);
+  if(!tabs||!wrap)return;
+  tabs.querySelectorAll('.model-tab').forEach(tab=>{
+    tab.onclick=function(){switchModelGroup(this.dataset.group,this,tabsId,wrapId)};
+  });
+  renderModelButtons(wrapId,currentGroup);
+}
+
+function switchModelGroup(group,el,tabsId,wrapId){
+  currentGroup=group;
+  if(modelData[group]&&modelData[group].length>0&&!modelData[group].find(m=>m.id===currentModel)){currentModel=modelData[group][0].id;}
+  ['modelTabsEmpty','modelTabsChat'].forEach(tid=>{
+    const t=document.getElementById(tid);
+    if(t)t.querySelectorAll('.model-tab').forEach(x=>x.classList.toggle('active',x.dataset.group===group));
+  });
+  renderModelButtons('modelSelectWrap',group);
+  renderModelButtons('modelSelectWrap2',group);
+}
+
+function renderModelButtons(wrapId,group){
+  const wrap=document.getElementById(wrapId);
+  if(!wrap)return;
+  const list=modelData[group]||[];
+  if(list.length===0){wrap.style.display='none';return;}
+  wrap.style.display='flex';
+  wrap.innerHTML=list.map(m=>`<div class="model-btn ${m.id===currentModel?'active':''}" data-model="${m.id}" onclick="selectModel('${m.id}','${group}','${wrapId}')">${m.name}</div>`).join('');
+}
+
+function selectModel(id,group,wrapId){
+  currentModel=id;
+  ['modelSelectWrap','modelSelectWrap2'].forEach(wid=>{
+    const wrap=document.getElementById(wid);
+    if(!wrap)return;
+    wrap.querySelectorAll('.model-btn').forEach(t=>t.classList.toggle('active',t.dataset.model===id));
+  });
+}
+
+function getActiveModel(){return currentModel;}
+
+function setupTextarea(el){
+  el.addEventListener('input',()=>{el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'});
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+}
+setupTextarea(document.getElementById('userInput'));
+setupTextarea(document.getElementById('userInput2'));
+
+function getActiveInput(){return document.getElementById('chatInputArea').style.display!=='none'?'userInput2':'userInput'}
+
+function newChat(){
+  if(messages.length>0) saveConv();
+  messages=[];convId=genId();
+  document.getElementById('emptyState').style.display='flex';
+  document.getElementById('chatInner').style.display='none';
+  document.getElementById('chatInner').innerHTML='';
+  document.getElementById('chatInputArea').style.display='none';
+  document.getElementById('userInput').value='';
+  document.getElementById('userInput2').value='';
+  document.getElementById('userInput').style.height='auto';
+  document.getElementById('userInput2').style.height='auto';
+}
+
+function appendMsg(role,content,modelTag){
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('chatInputArea').style.display='flex';
+  const ci=document.getElementById('chatInner');ci.style.display='block';
+  const d=document.createElement('div');d.className='msg '+(role==='user'?'msg-user':'msg-ai');
+  let h='';
+  if(modelTag)h+='<div class="model-tag">'+esc(modelTag)+'</div>';
+  h+='<div class="bubble">'+renderMd(content)+'</div>';
+  d.innerHTML=h;ci.appendChild(d);
+  autoScroll('chatWrap');
+  return d;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function renderMd(t){
+  let imgM=t.match(/!\[[^\]]*\]\((data:image\/[^)]+)\)/);let imgUrl=imgM?imgM[1]:"";
+  let txt=imgUrl?t.replace(/!\[[^\]]*\]\(data:image\/[^)]+\)/,""):t;
+  let s=esc(txt);if(imgUrl){s=`<img src="${imgUrl}" style="max-width:100%;border-radius:12px;margin:8px 0"><br>`+s;}
+  s=s.replace(/```(\w*)\n?([\s\S]*?)```/g,function(m,lang,code){
+    const id='cb'+Math.random().toString(36).slice(2,8);
+    return '<div class="code-wrap"><button class="copy-btn" onclick="copyCode(\''+id+'\')">复制</button><pre><code id="'+id+'">'+code+'</code></pre></div>';
+  });
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/\n/g,'<br>');
+  return s;
+}
+
+function copyCode(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const btn=el.closest('.code-wrap').querySelector('.copy-btn');
+    btn.textContent='已复制 ✓';setTimeout(()=>btn.textContent='复制',1500);
+  });
+}
+
+function handleMemoCommand(text){
+  const memoMatch = text.match(/^\/memo\s+(.+)/i);
+  if(memoMatch){
+    const memoContent = memoMatch[1];
+    fetch('/api/memo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:memoContent})})
+      .then(r=>r.json()).then(d=>{
+        if(d.ok){
+          appendMsg('ai','已写入记忆库 ✓ <span class="memo-badge">MEMO</span>','');
+          messages.push({role:'assistant',content:'已写入记忆库'});
+        }else{
+          appendMsg('ai','写入失败：'+(d.error||'未知错误'),'');
+        }
+      });
+    return true;
+  }
+  return false;
+}
+
+function saveConv(){
+  if(messages.length===0) return;
+  const title=messages.find(m=>m.role==='user')?.content?.slice(0,60)||'新对话';
+  fetch('/api/conversations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:convId,title,model:getActiveModel(),messages})});
+}
+
+function toggleHistory(){
+  const p=document.getElementById('historyPanel'),o=document.getElementById('overlay');
+  const isOpen=p.classList.contains('open');
+  closeAllPanels();
+  if(!isOpen){p.classList.add('open');o.classList.add('active');loadHistory();}
+}
+function togglePrompts(){
+  const p=document.getElementById('promptPanel'),o=document.getElementById('overlay');
+  const isOpen=p.classList.contains('open');
+  closeAllPanels();
+  if(!isOpen){p.classList.add('open');o.classList.add('active');loadPrompts();}
+  if(!isOpen){p.classList.add('open');o.classList.add('active');loadPrompts();}
+}
+function closeAllPanels(){
+  document.getElementById('historyPanel').classList.remove('open');
+  document.getElementById('promptPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function loadHistory(){
+  fetch('/api/conversations').then(r=>r.json()).then(list=>{
+    const el=document.getElementById('historyList');
+    if(!list.length){el.innerHTML='<div class="history-empty">暂无历史对话</div>';return;}
+    el.innerHTML=list.map(c=>{
+      const pinClass=c.pinned?'pinned':'';
+      const pinIcon=c.pinned?'📌':'📍';
+      return `<div class="history-item ${pinClass}" onclick="loadConv('${c.id}')">
+        <span class="pin-btn ${c.pinned?'active':''}" onclick="event.stopPropagation();togglePin('${c.id}')" title="${c.pinned?'取消置顶':'置顶'}">${pinIcon}</span>
+        <span class="hi-title" ondblclick="event.stopPropagation();renameConv('${c.id}',this)">${esc(c.title)}</span>
+        <span class="hi-del" onclick="event.stopPropagation();delConv('${c.id}')">✕</span>
+      </div>`;
+    }).join('');
+  });
+}
+
+function togglePin(id){
+  fetch('/api/conversations/'+id+'/pin',{method:'POST'}).then(r=>r.json()).then(()=>loadHistory());
+}
+
+function renameConv(id,titleEl){
+  const oldTitle
+=== template.html total lines ===
+738 /opt/ai_chat/template.html
+
+=== template.html 701-end ===
+  chat:[
+    {icon:'🧠',label:'深度推理',prompt:'请帮我深度分析以下问题，给出详细推理过程和结论：'},
+    {icon:'📝',label:'写文案',prompt:'帮我写一段产品文案，要求简洁有力、突出卖点、有场景感：'},
+    {icon:'💻',label:'写代码',prompt:'请用Python实现以下功能，代码简洁有注释可直接运行：'},
+    {icon:'📊',label:'数据分析',prompt:'请帮我分析以下数据，找出关键趋势和洞察：'},
+    {icon:'🌐',label:'翻译润色',prompt:'请将以下内容翻译成地道流畅的中文，保持原意和语气：'},
+    {icon:'💡',label:'头脑风暴',prompt:'请围绕以下主题，给我10个有创意的想法：'},
+    {icon:'📖',label:'学习助手',prompt:'请用通俗易懂的方式解释以下概念，给我举例说明：'},
+    {icon:'🎯',label:'方案策划',prompt:'请帮我制定一份详细的执行方案，包括目标、步骤、时间线：'},
+  ],
+  image:[
+    {icon:'🖼️',label:'电商主图',prompt:'生成一张电商产品主图，白色简洁背景，产品居中，高端质感，专业摄影风格'},
+    {icon:'📸',label:'场景氛围图',prompt:'生成一张产品场景图，自然光线，温馨家居环境，产品融入生活场景'},
+    {icon:'🎨',label:'创意海报',prompt:'生成一张创意海报设计，大胆配色，现代排版，视觉冲击力强'},
+    {icon:'✨',label:'3D渲染',prompt:'生成一张3D产品渲染图，影棚灯光，细腻材质，真实感强'},
+    {icon:'🏮',label:'国潮风格',prompt:'生成一张国潮风格设计图，中国风元素，红金配色，传统与现代结合'},
+    {icon:'🌸',label:'清新文艺',prompt:'生成一张清新文艺风格图片，淡雅色调，自然元素，温馨治愈感'},
+    {icon:'💎',label:'极简高级',prompt:'生成一张极简高级感图片，大量留白，精致排版，黑白灰为主'},
+    {icon:'🎪',label:'活动Banner',prompt:'生成一张活动Banner图，醒目标题，促销元素，红橙暖色调，吸引眼球'},
+  ]
+};
+function renderQuickActions(group){
+  const el=document.getElementById('quickActionsEmpty');
+  if(!el)return;
+  const items=qaData[group]||qaData.chat;
+  el.innerHTML=items.map(a=>`<button class="quick-btn" onclick="fillPrompt('${a.prompt.replace(/'/g,"\\'")}')">${a.icon} ${a.label}</button>`).join('');
+}
+// Patch switchModelGroup to also update quick actions
+const _origSwitchModelGroup=switchModelGroup;
+switchModelGroup=function(group,el,tabsId,wrapId){
+  _origSwitchModelGroup(group,el,tabsId,wrapId);
+  renderQuickActions(group);
+};
+// Initial render
+renderQuickActions('chat');
+</script>
+</body>
+</html>
+
+

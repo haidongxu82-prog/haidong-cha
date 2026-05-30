@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海东 AI 对话 V2</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <aside class="rail" aria-label="主导航">
+    <img class="brand" src="../assets/logo-hd-rotated.png" alt="HD">
+    <button class="rail-btn active" type="button" aria-label="对话"></button>
+    <button class="rail-btn history" type="button" aria-label="历史"></button>
+    <button class="rail-btn theme" type="button" aria-label="切换主题"></button>
+  </aside>
+
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="kicker">Haidong AI Workspace</p>
+        <h1>你好，海东</h1>
+      </div>
+      <button class="new-chat" type="button">+ 新对话</button>
+    </header>
+
+    <section class="workspace">
+      <section class="model-wall" aria-label="模型墙">
+        <div class="wall-head">
+          <span>模型墙</span>
+          <small>文字 / 生图随时切换</small>
+        </div>
+        <div class="mode-tabs">
+          <button class="mode active" type="button">对话</button>
+          <button class="mode" type="button">生图</button>
+        </div>
+        <div class="models">
+          <button class="model active" type="button">GPT-5.4 Pro</button>
+          <button class="model" type="button">GPT-5.4</button>
+          <button class="model" type="button">Claude Opus 4.7</button>
+          <button class="model" type="button">Claude Sonnet 4.6</button>
+          <button class="model" type="button">Gemini 3.5 Flash</button>
+          <button class="model" type="button">Gemini 2.5 Pro</button>
+          <button class="model" type="button">Grok 4</button>
+          <button class="model" type="button">DeepSeek V3</button>
+        </div>
+      </section>
+
+      <section class="conversation" aria-label="对话">
+        <div class="message user">帮我把今天的想法整理成一段清楚的说明。</div>
+        <div class="message ai">可以。先把散点想法放进来，我会帮你提炼结构、语气和下一步行动。</div>
+      </section>
+
+      <form class="composer">
+        <textarea rows="1" placeholder="输入想法、任务或问题..."></textarea>
+        <button type="button" aria-label="发送">➤</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
