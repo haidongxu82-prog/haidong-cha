@@ -109,7 +109,7 @@ body::before,body::after{display:none!important;content:none!important}
   .logo,.s-spacer{display:none!important}
   .sb{width:30px!important;height:30px!important;border-radius:50%!important;font-size:0!important;color:rgba(241,243,244,.50)!important}
   .sb::after{font-size:15px!important}
-  .sb[title="指令集"],.sb[title="记忆"]{display:none!important}
+  .sb[title="指令集"],.sb[title="记忆"],#promptPanel{display:none!important}
   [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
   .sb:hover,.sb.active{background:transparent!important;border-color:transparent!important;color:var(--m-text)!important}
   .sb.active::before{display:none!important}
@@ -144,8 +144,9 @@ body::before,body::after{display:none!important;content:none!important}
   .chat-inner{padding:18px 14px 18px!important}
   .msg-user .bubble,.msg-ai .bubble{max-width:92%!important;font-size:15.5px!important;line-height:1.75!important}
   .input-area{position:sticky!important;bottom:0!important;padding:10px 14px 12px!important}
-  .history-panel,.prompt-panel{left:0!important;right:0!important;top:auto!important;bottom:68px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
-  .history-panel.open,.prompt-panel.open{transform:translateY(0)!important}
+  .history-panel{left:0!important;right:0!important;top:auto!important;bottom:58px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
+  .history-panel.open{transform:translateY(0)!important}
+  .prompt-panel,.prompt-panel.open{display:none!important;transform:translateY(105%)!important}
 }
 
 @media(max-width:430px){
