@@ -164,14 +164,15 @@ h1{
   height:38px;
   width:38px;
   padding:0;
-  border:1px solid var(--line);
+  border:0;
   border-radius:50%;
   background:transparent;
-  color:var(--text);
+  color:var(--muted);
   font-size:22px;
   line-height:1;
   font-weight:680;
 }
+.new-chat:hover{background:var(--soft);color:var(--text)}
 
 .workspace{
   min-height:0;
@@ -195,7 +196,7 @@ h1{
 .mode-tabs,.models{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
 .mode,.model{
   height:34px;
-  border:1px solid var(--line);
+  border:1px solid transparent;
   border-radius:999px;
   background:transparent;
   color:var(--muted);
@@ -206,6 +207,11 @@ h1{
 .mode.active,.model.active{
   border-color:rgba(26,115,232,.24);
   background:rgba(26,115,232,.10);
+  color:var(--text);
+}
+.mode:hover,.model:hover{
+  border-color:var(--line);
+  background:var(--soft);
   color:var(--text);
 }
 .models{margin-top:10px}
@@ -250,6 +256,7 @@ h1{
   background:var(--surface);
   box-shadow:none;
 }
+.composer:focus-within{border-color:var(--line-strong)}
 textarea{
   flex:1;
   min-width:0;
