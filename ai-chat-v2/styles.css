@@ -216,6 +216,7 @@ h1{
   justify-content:center;
   text-align:center;
 }
+.conversation:empty{display:block}
 .empty-copy strong{
   display:block;
   max-width:760px;
