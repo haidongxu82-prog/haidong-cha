@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
 REPO_DIR="/Users/haidong/Documents/Codex/2026-05-29/https-haidong-chat-ai-ai"
 LOG_FILE="$HOME/Library/Logs/haidong-site-auto-push.log"
 LOCK_DIR="/tmp/haidong-site-auto-push.lock"
 BRANCH="main"
+GIT_BIN="$(command -v git || true)"
 
 mkdir -p "$(dirname "$LOG_FILE")"
 
@@ -20,17 +23,22 @@ trap 'rmdir "$LOCK_DIR"' EXIT
 
 cd "$REPO_DIR"
 
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+if [ -z "$GIT_BIN" ]; then
+  log "git command not found. PATH=$PATH"
+  exit 1
+fi
+
+if ! "$GIT_BIN" -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   log "Not a git repository: $REPO_DIR"
   exit 1
 fi
 
-git rm --cached -r --ignore-unmatch \
+"$GIT_BIN" rm --cached -r --ignore-unmatch \
   __pycache__ \
   ai-chat/__pycache__ \
   >/dev/null 2>> "$LOG_FILE" || true
 
-git add \
+"$GIT_BIN" add \
   .gitignore \
   index.html \
   styles.css \
@@ -47,15 +55,15 @@ git add \
   ':(exclude)**/*.pyo' \
   2>> "$LOG_FILE" || true
 
-if git diff --cached --quiet; then
+if "$GIT_BIN" diff --cached --quiet; then
   log "No site changes to push."
   exit 0
 fi
 
 commit_msg="Auto update site $(date '+%Y-%m-%d %H:%M')"
-git commit -m "$commit_msg" >> "$LOG_FILE" 2>&1
+"$GIT_BIN" commit -m "$commit_msg" >> "$LOG_FILE" 2>&1
 
-if git push origin "$BRANCH" >> "$LOG_FILE" 2>&1; then
+if "$GIT_BIN" push origin "$BRANCH" >> "$LOG_FILE" 2>&1; then
   log "Pushed: $commit_msg"
 else
   log "Push failed. Manual check needed."
