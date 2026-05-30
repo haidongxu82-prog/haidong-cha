@@ -108,56 +108,50 @@ body::before,body::after{display:none!important;content:none!important}
 
 @media(max-width:768px){
   html,body{height:100svh!important;overflow:hidden!important}
-  body{background:linear-gradient(180deg,#f8fafd 0%,#f3f6fb 100%)!important}
-  [data-theme="dark"] body{background:var(--m-bg)!important}
-  .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:8px!important;width:auto!important;height:44px!important;transform:translateX(-50%)!important;flex-direction:row!important;justify-content:center!important;padding:6px 12px!important;gap:18px!important;border-right:0!important;border-top:0!important;border-radius:999px!important;background:rgba(36,38,40,.72)!important;backdrop-filter:blur(18px)!important}
-  [data-theme="light"] .sidebar{background:rgba(255,255,255,.82)!important;box-shadow:0 10px 32px rgba(60,64,67,.10)!important}
-  .logo,.s-spacer{display:none!important}
-  .sb{width:30px!important;height:30px!important;border-radius:50%!important;font-size:0!important;color:rgba(241,243,244,.50)!important}
-  .sb::after{font-size:15px!important}
-  .sb[title="指令集"],.sb[title="记忆"],#promptPanel{display:none!important}
-  [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
-  .sb:hover,.sb.active{background:transparent!important;border-color:transparent!important;color:var(--m-text)!important}
-  .sb.active::before{display:none!important}
-  .main{margin-left:0!important;height:100svh!important;padding-bottom:52px!important}
-  .topbar{min-height:38px!important;padding:0 12px!important;background:transparent!important;backdrop-filter:none!important;border-bottom:0!important;justify-content:flex-end!important}
-  [data-theme="dark"] .topbar{background:rgba(27,28,29,.82)!important}
-  .topbar h1{display:none!important}
-  .topbar h1::after{display:none!important}
-  .tb{min-height:32px!important;padding:6px 11px!important;font-size:13px!important;background:rgba(255,255,255,.68)!important}
-  .chat-wrap{height:calc(100svh - 90px)!important;overflow-y:auto!important}
-  .empty-state{min-height:auto!important;height:auto!important;align-items:stretch!important;justify-content:flex-start!important;padding:0 12px 14px!important}
-  .greeting{display:none!important}
-  .greeting-sub{display:none!important}
-  .site-tag{margin-bottom:18px!important;font-size:10px!important}
-  .empty-state > div[style*="max-width"]{order:3;max-width:none!important;width:100%!important;display:flex!important;flex-direction:column!important}
-  .model-area{order:1;position:relative;max-width:none!important;margin:0 0 10px!important;padding:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
-  .model-area::before{content:"模型墙";display:block;margin:0 0 7px;color:var(--m-muted);font-size:11px;font-weight:650;letter-spacing:.04em;text-transform:uppercase}
-  [data-theme="dark"] .model-area{background:transparent!important;box-shadow:none!important}
-  .model-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;overflow:visible!important;margin-bottom:6px!important}
+  body{background:#f8fafd!important}
+  [data-theme="dark"] body{background:#1b1c1d!important}
+  .main{margin-left:0!important;height:100svh!important;padding-bottom:54px!important}
+  .topbar{min-height:42px!important;padding:0 12px!important;background:transparent!important;border:0!important;backdrop-filter:none!important;justify-content:flex-end!important}
+  .topbar h1,.topbar h1::after{display:none!important}
+  .tb{min-height:32px!important;padding:6px 12px!important;border-radius:999px!important;border:0!important;background:rgba(255,255,255,.72)!important;color:var(--m-soft)!important;font-size:13px!important}
+  [data-theme="dark"] .tb{background:rgba(255,255,255,.08)!important}
+  .chat-wrap{height:calc(100svh - 96px)!important;overflow-y:auto!important;padding:0!important}
+  .empty-state{height:auto!important;min-height:0!important;display:flex!important;align-items:stretch!important;justify-content:flex-start!important;padding:0 12px 14px!important;text-align:left!important}
+  .greeting,.greeting-sub,.site-tag,.quick-actions,.input-hint{display:none!important}
+  .empty-state > div[style*="max-width"]{width:100%!important;max-width:none!important;display:flex!important;flex-direction:column!important}
+  .model-area{order:1!important;width:100%!important;max-width:none!important;margin:0 0 10px!important;padding:0!important;background:transparent!important;box-shadow:none!important}
+  .model-area::before{content:"模型墙";display:block;margin:0 0 8px;color:var(--m-muted);font-size:11px;font-weight:650;letter-spacing:.05em}
+  .model-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;margin:0 0 6px!important;overflow:visible!important}
   .model-btns{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;overflow:visible!important}
-  .model-tab{width:100%!important;min-width:0!important;text-align:center!important;padding:7px 10px!important;font-size:12px!important;border-radius:999px!important;background:rgba(255,255,255,.82)!important;color:var(--m-soft)!important;box-shadow:0 1px 0 rgba(60,64,67,.04)!important}
-  .model-btn{width:100%!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:center!important;padding:6px 4px!important;font-size:9.4px!important;line-height:1.08!important;border-radius:999px!important;background:rgba(255,255,255,.70)!important;color:var(--m-soft)!important;box-shadow:0 1px 0 rgba(60,64,67,.035)!important}
-  [data-theme="dark"] .model-tab,[data-theme="dark"] .model-btn{background:rgba(255,255,255,.07)!important;color:var(--m-soft)!important}
-  .model-btn.active{background:rgba(26,115,232,.14)!important;color:var(--m-text)!important}
-  [data-theme="dark"] .model-btn.active{background:rgba(138,180,248,.20)!important}
-  .input-box{order:2;max-width:none!important;min-height:68px!important;border-radius:26px!important;padding:9px 9px 9px 15px!important;background:rgba(255,255,255,.94)!important;box-shadow:0 10px 30px rgba(60,64,67,.08)!important}
+  .model-tab,.model-btn{width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:center!important;border:1px solid rgba(60,64,67,.08)!important;border-radius:999px!important;background:rgba(255,255,255,.74)!important;color:var(--m-soft)!important;box-shadow:none!important}
+  .model-tab{padding:7px 8px!important;font-size:12px!important}
+  .model-btn{padding:6px 4px!important;font-size:9.4px!important;line-height:1.08!important}
+  .model-tab.active,.model-btn.active{background:rgba(26,115,232,.11)!important;border-color:rgba(26,115,232,.22)!important;color:var(--m-text)!important}
+  [data-theme="dark"] .model-tab,[data-theme="dark"] .model-btn{background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.08)!important}
+  [data-theme="dark"] .model-tab.active,[data-theme="dark"] .model-btn.active{background:rgba(138,180,248,.18)!important;border-color:rgba(138,180,248,.25)!important}
+  .input-box{order:2!important;width:100%!important;max-width:none!important;min-height:68px!important;margin:0!important;padding:9px 9px 9px 15px!important;border:0!important;border-radius:26px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 10px 30px rgba(60,64,67,.08)!important}
   [data-theme="dark"] .input-box{background:var(--m-surface)!important;box-shadow:none!important}
-  .input-box textarea{min-width:0!important;min-height:42px!important;max-height:128px!important;font-size:17px!important}
+  .input-box textarea{min-width:0!important;min-height:42px!important;max-height:120px!important;font-size:17px!important;line-height:1.45!important}
   .send-btn{width:42px!important;height:42px!important;border-radius:50%!important;flex:0 0 auto!important}
-  .input-hint{display:none!important}
-  .quick-actions{display:none!important}
-  .chat-inner{padding:18px 14px 18px!important}
+  .sidebar{left:50%!important;right:auto!important;top:auto!important;bottom:8px!important;width:auto!important;height:42px!important;transform:translateX(-50%)!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:18px!important;padding:6px 12px!important;border:0!important;border-radius:999px!important;background:rgba(36,38,40,.72)!important;backdrop-filter:blur(18px)!important}
+  [data-theme="light"] .sidebar{background:rgba(255,255,255,.84)!important;box-shadow:0 10px 32px rgba(60,64,67,.10)!important}
+  .logo,.s-spacer,.sb[title="指令集"],.sb[title="记忆"],#promptPanel{display:none!important}
+  .sb{width:30px!important;height:30px!important;border-radius:50%!important;background:transparent!important;border:0!important;font-size:0!important;color:rgba(241,243,244,.54)!important}
+  .sb::after{font-size:15px!important}
+  [data-theme="light"] .sb{color:rgba(60,64,67,.58)!important}
+  .sb.active,.sb:hover{background:transparent!important;color:var(--m-text)!important}
+  .sb.active::before{display:none!important}
+  .chat-inner{padding:16px 14px 18px!important}
   .msg-user .bubble,.msg-ai .bubble{max-width:92%!important;font-size:15.5px!important;line-height:1.75!important}
   .input-area{position:sticky!important;bottom:0!important;padding:10px 14px 12px!important}
-  .history-panel{left:0!important;right:0!important;top:auto!important;bottom:58px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
+  .history-panel{left:0!important;right:0!important;top:auto!important;bottom:56px!important;width:auto!important;height:min(72svh,620px)!important;transform:translateY(105%)!important;border-right:0!important;border-left:0!important;border-top:1px solid var(--m-line)!important;border-radius:24px 24px 0 0!important}
   .history-panel.open{transform:translateY(0)!important}
   .prompt-panel,.prompt-panel.open{display:none!important;transform:translateY(105%)!important}
 }
 
 @media(max-width:430px){
-  .empty-state{padding-top:16px!important}
-  .greeting{font-size:clamp(31px,9.6vw,40px)!important}
+  .empty-state{padding-inline:10px!important}
+  .model-btn{font-size:9px!important}
 }
 """
 
