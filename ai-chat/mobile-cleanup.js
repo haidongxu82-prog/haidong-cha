@@ -45,22 +45,33 @@
 
   function cleanMobile(){
     if (!isMobile()) return;
-    document.querySelectorAll('[title="指令集"], [title="记忆"]').forEach(function(el){ el.remove(); });
-    var promptPanel = document.getElementById('promptPanel');
-    if (promptPanel) {
-      promptPanel.classList.remove('open');
-      promptPanel.style.display = 'none';
-      promptPanel.remove();
-    }
-    var overlay = document.getElementById('overlay');
-    if (overlay) overlay.classList.remove('show');
+    removeMobileOnlyChrome();
     syncMobileState();
   }
+
+  function removeMobileOnlyChrome(){
+    document.querySelectorAll('[title="指令集"], [title="记忆"], #promptPanel, .prompt-panel').forEach(function(el){
+      el.classList && el.classList.remove('open', 'active');
+      el.style && (el.style.display = 'none');
+      el.remove();
+    });
+    var overlay = document.getElementById('overlay');
+    if (overlay) overlay.classList.remove('show');
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', cleanMobile);
   } else {
     cleanMobile();
   }
   window.addEventListener('resize', cleanMobile);
-  setInterval(syncMobileState, 350);
+  setInterval(function(){
+    if (!isMobile()) return;
+    removeMobileOnlyChrome();
+    syncMobileState();
+  }, 250);
+  new MutationObserver(function(){
+    if (!isMobile()) return;
+    removeMobileOnlyChrome();
+  }).observe(document.documentElement, {childList:true, subtree:true});
 })();
