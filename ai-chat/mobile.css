@@ -334,6 +334,7 @@
     background:var(--phone-card-solid)!important;
     transform:translateY(110%)!important;
     box-shadow:none!important;
+    z-index:140!important;
   }
 
   body.hd-mobile .history-panel.open{
