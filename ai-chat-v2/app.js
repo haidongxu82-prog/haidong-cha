@@ -1,7 +1,27 @@
-document.querySelectorAll(".mode,.model").forEach((button) => {
+function showModelGroup(group) {
+  document.querySelectorAll(".model").forEach((model) => {
+    const visible = model.dataset.group === group;
+    model.classList.toggle("is-hidden", !visible);
+    if (!visible) model.classList.remove("active");
+  });
+
+  const firstVisible = document.querySelector(`.model[data-group="${group}"]`);
+  if (firstVisible && !document.querySelector(`.model[data-group="${group}"].active`)) {
+    firstVisible.classList.add("active");
+  }
+}
+
+document.querySelectorAll(".mode").forEach((button) => {
   button.addEventListener("click", () => {
-    const group = button.classList.contains("mode") ? ".mode" : ".model";
-    document.querySelectorAll(group).forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".mode").forEach((item) => item.classList.remove("active"));
+    button.classList.add("active");
+    showModelGroup(button.textContent.includes("生图") ? "image" : "chat");
+  });
+});
+
+document.querySelectorAll(".model").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(`.model[data-group="${button.dataset.group}"]`).forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
   });
 });
