@@ -711,18 +711,24 @@ h2 {
 @media (max-width: 620px) {
   .site-header {
     position: sticky;
-    flex-direction: column;
-    gap: 10px;
-    padding: 14px 16px;
-    background: rgba(248, 249, 251, 0.9);
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(248, 249, 251, 0.92);
     border-bottom: 1px solid var(--line-soft);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
   }
 
   .brand {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+  }
+
+  .brand > span:last-child {
+    display: none;
   }
 
   .brand-mark {
@@ -731,11 +737,12 @@ h2 {
   }
 
   .nav {
-    width: 100%;
+    width: auto;
     max-width: 100%;
+    flex: 1;
     justify-content: flex-start;
     overflow-x: auto;
-    padding: 5px;
+    padding: 0;
     border-radius: 999px;
     scrollbar-width: none;
   }
@@ -750,19 +757,19 @@ h2 {
     min-height: 36px;
     display: inline-flex;
     align-items: center;
-    padding-inline: 12px;
+    padding-inline: 10px;
     white-space: nowrap;
   }
 
   .hero {
-    min-height: calc(100svh - 92px);
-    padding: 44px 16px 156px;
+    min-height: calc(100svh - 57px);
+    padding: 38px 16px 136px;
     align-items: center;
   }
 
   .hero h1 {
     max-width: 7em;
-    font-size: clamp(54px, 17vw, 76px);
+    font-size: clamp(50px, 15vw, 68px);
     line-height: 1.08;
   }
 
@@ -773,14 +780,15 @@ h2 {
   }
 
   .hero-copy {
-    margin-top: 20px;
+    max-width: 28em;
+    margin-top: 18px;
     font-size: 16px;
-    line-height: 1.72;
+    line-height: 1.68;
   }
 
   .hero-actions {
-    margin-top: 24px;
-    gap: 10px;
+    margin-top: 22px;
+    gap: 8px;
   }
 
   .button {
@@ -796,22 +804,32 @@ h2 {
   }
 
   .status-strip {
+    display: grid;
     left: 16px;
     right: 16px;
     width: auto;
     transform: none;
-    bottom: 18px;
-    gap: 8px;
+    bottom: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
     font-size: 13px;
-    padding-top: 12px;
+    padding-top: 0;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.52);
+    overflow: hidden;
+  }
+
+  .status-strip span {
+    padding: 10px 9px;
   }
 
   .status-strip strong {
-    font-size: 15px;
+    font-size: 12px;
   }
 
   .section {
-    padding: 54px 16px;
+    padding: 48px 16px;
   }
 
   .intro > *,
@@ -841,7 +859,7 @@ h2 {
   .tool-card,
   .photo-grid article {
     min-height: auto;
-    padding: 18px;
+    padding: 16px;
   }
 
   .pulse-grid span,
@@ -852,11 +870,11 @@ h2 {
   .tool-card h3,
   .post-row h3,
   .photo-grid h3 {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .tool-card a {
-    padding-top: 16px;
+    padding-top: 18px;
   }
 
   .section-heading,
