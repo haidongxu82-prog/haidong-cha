@@ -117,7 +117,7 @@ a {
   border: 0;
   border-radius: 11px;
   background: transparent;
-  box-shadow: 0 8px 22px rgba(26, 115, 232, 0.055);
+  box-shadow: 0 6px 18px rgba(26, 115, 232, 0.04);
 }
 
 .brand-mark img {
