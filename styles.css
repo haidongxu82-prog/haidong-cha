@@ -96,8 +96,7 @@ a {
 .hero-actions,
 .section-heading,
 .site-footer,
-.status-strip,
-.place-notes {
+.status-strip {
   display: flex;
   align-items: center;
 }
@@ -320,7 +319,7 @@ h2 {
 }
 
 .intro p,
-.place-copy p {
+.article-body p {
   color: var(--muted);
   font-size: 18px;
 }
@@ -453,43 +452,6 @@ h2 {
 
 .feature-card a {
   color: var(--green);
-}
-
-.place-section {
-  width: var(--content);
-  margin-left: auto;
-  margin-right: auto;
-  display: grid;
-  grid-template-columns: minmax(0, 0.94fr) minmax(300px, 0.72fr);
-  gap: clamp(32px, 8vw, 112px);
-  align-items: end;
-  border-top: 1px solid var(--line);
-  background: transparent;
-}
-
-.place-copy h2 {
-  max-width: 820px;
-  margin-bottom: 22px;
-}
-
-.place-copy p {
-  max-width: 680px;
-}
-
-.place-notes {
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.place-notes span {
-  padding: 9px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.46);
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 760;
 }
 
 .writing-band {
@@ -668,7 +630,6 @@ h2 {
   .pulse-grid,
   .tool-grid,
   .photo-grid,
-  .place-section,
   .archive-row {
     grid-template-columns: 1fr;
   }
@@ -681,9 +642,6 @@ h2 {
     min-height: 220px;
   }
 
-  .place-notes {
-    justify-content: flex-start;
-  }
 }
 
 @media (max-width: 620px) {
@@ -814,8 +772,7 @@ h2 {
   .pulse-section > *,
   #tools > *,
   .writing-band > *,
-  #moments > *,
-  .place-section {
+  #moments > * {
     width: 100%;
   }
 
@@ -825,7 +782,7 @@ h2 {
   }
 
   .intro p,
-  .place-copy p {
+  .article-body p {
     font-size: 16px;
   }
 
@@ -870,11 +827,6 @@ h2 {
 
   .post-row p {
     margin-bottom: 0;
-  }
-
-  .place-notes span {
-    font-size: 12px;
-    padding: 8px 10px;
   }
 
   .article-shell {
