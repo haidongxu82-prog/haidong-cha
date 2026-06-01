@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>海东 AI 对话 V2</title>
+  <title>海东 AI</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -20,18 +20,9 @@
       <span>历史记录</span>
       <button class="drawer-close" type="button" aria-label="关闭历史"></button>
     </div>
-    <button class="history-item active" type="button">
-      <span>自动化工作流整理</span>
-      <small>今天</small>
-    </button>
-    <button class="history-item" type="button">
-      <span>公众号文章开头</span>
-      <small>昨天</small>
-    </button>
-    <button class="history-item" type="button">
-      <span>图片生成提示词</span>
-      <small>周三</small>
-    </button>
+    <div class="history-list" id="historyList">
+      <div class="panel-empty">暂无历史对话</div>
+    </div>
   </aside>
 
   <main class="shell">
@@ -44,40 +35,36 @@
 
     <section class="workspace">
       <section class="model-wall" aria-label="模型墙">
-        <div class="mode-tabs">
-          <button class="mode active" type="button">对话</button>
-          <button class="mode" type="button">生图</button>
+        <div class="mode-tabs" id="modeTabs">
+          <button class="mode active" type="button" data-group="chat">对话</button>
+          <button class="mode" type="button" data-group="image">生图</button>
         </div>
-        <div class="models">
-          <button class="model active" data-group="chat" type="button">🔥 GPT-5.4 Pro</button>
-          <button class="model" data-group="chat" type="button">🟢 GPT-5.4</button>
-          <button class="model" data-group="chat" type="button">🟢 GPT-5.4 Mini</button>
-          <button class="model" data-group="chat" type="button">🟠 Claude Opus 4.7</button>
-          <button class="model" data-group="chat" type="button">🟠 Claude Sonnet 4.6</button>
-          <button class="model" data-group="chat" type="button">🟡 Claude Haiku 4.5</button>
-          <button class="model" data-group="chat" type="button">🔵 Gemini 3.5 Flash</button>
-          <button class="model" data-group="chat" type="button">🔵 Gemini 3.1 Pro</button>
-          <button class="model" data-group="chat" type="button">🔵 Gemini 2.5 Pro</button>
-          <button class="model" data-group="chat" type="button">🔵 Gemini 2.5 Flash</button>
-          <button class="model" data-group="chat" type="button">🤖 Grok 4</button>
-          <button class="model" data-group="chat" type="button">🟢 GPT-4o</button>
-          <button class="model" data-group="chat" type="button">🧠 o4-mini</button>
-          <button class="model" data-group="chat" type="button">🧠 o3-mini</button>
-          <button class="model" data-group="chat" type="button">🌊 DeepSeek V3</button>
-          <button class="model" data-group="chat" type="button">🟣 Qwen3 235B</button>
-          <button class="model is-hidden" data-group="image" type="button">🖼️ GPT-Image-2</button>
-          <button class="model is-hidden" data-group="image" type="button">🎨 GPT-Image-1</button>
-          <button class="model is-hidden" data-group="image" type="button">📸 Gemini 3.1 Image</button>
-          <button class="model is-hidden" data-group="image" type="button">✨ Gemini 2.5 Image</button>
+        <div class="models" id="modelList">
+          <button class="model active" data-model="GPT-5.4 Pro" data-group="chat" type="button">🔥 GPT-5.4 Pro</button>
+          <button class="model" data-model="GPT-5.4" data-group="chat" type="button">🟢 GPT-5.4</button>
+          <button class="model" data-model="GPT-5.4 Mini" data-group="chat" type="button">🟢 GPT-5.4 Mini</button>
+          <button class="model" data-model="Claude Opus 4.7" data-group="chat" type="button">🟠 Claude Opus 4.7</button>
+          <button class="model" data-model="Claude Sonnet 4.6" data-group="chat" type="button">🟠 Claude Sonnet 4.6</button>
+          <button class="model" data-model="Claude Haiku 4.5" data-group="chat" type="button">🟡 Claude Haiku 4.5</button>
+          <button class="model" data-model="Gemini 3.5 Flash" data-group="chat" type="button">🔵 Gemini 3.5 Flash</button>
+          <button class="model" data-model="Gemini 3.1 Pro" data-group="chat" type="button">🔵 Gemini 3.1 Pro</button>
+          <button class="model" data-model="Gemini 2.5 Pro" data-group="chat" type="button">🔵 Gemini 2.5 Pro</button>
+          <button class="model" data-model="Gemini 2.5 Flash" data-group="chat" type="button">🔵 Gemini 2.5 Flash</button>
+          <button class="model" data-model="Grok 4" data-group="chat" type="button">🤖 Grok 4</button>
+          <button class="model" data-model="GPT-4o" data-group="chat" type="button">🟢 GPT-4o</button>
+          <button class="model" data-model="o4-mini" data-group="chat" type="button">🧠 o4-mini</button>
+          <button class="model" data-model="o3-mini" data-group="chat" type="button">🧠 o3-mini</button>
+          <button class="model" data-model="DeepSeek V3" data-group="chat" type="button">🌊 DeepSeek V3</button>
+          <button class="model" data-model="Qwen3 235B" data-group="chat" type="button">🟣 Qwen3 235B</button>
         </div>
       </section>
 
-      <section class="conversation" aria-label="对话">
+      <section class="conversation" id="conversation" aria-label="对话">
       </section>
 
-      <form class="composer">
-        <textarea rows="1" placeholder="输入想法、任务或问题..."></textarea>
-        <button type="button" aria-label="发送">➤</button>
+      <form class="composer" id="composer">
+        <textarea id="userInput" rows="1" placeholder="输入想法、任务或问题..."></textarea>
+        <button id="sendButton" type="submit" aria-label="发送">➤</button>
       </form>
     </section>
   </main>
