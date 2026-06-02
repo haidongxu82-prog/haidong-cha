@@ -24,7 +24,7 @@ def build_template() -> str:
     css = read(STYLES)
     js = read(APP)
 
-    html = html.replace("../assets/logo-hd-minimal.svg", "/icon-40.png")
+    html = html.replace("../assets/logo-hd-minimal.svg", "https://haidong.chat/assets/logo-hd-minimal.svg")
     html = html.replace("../index.html", "https://haidong.chat/")
 
     html = re.sub(
