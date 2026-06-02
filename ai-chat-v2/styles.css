@@ -267,6 +267,16 @@ h1{
   text-align:center;
 }
 .conversation:empty{display:none}
+.conversation.has-messages{
+  min-height:220px;
+  max-height:min(42vh,420px);
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  gap:0;
+  text-align:left;
+  padding:4px 0;
+}
 .empty-copy strong{
   display:block;
   max-width:760px;
@@ -285,6 +295,9 @@ h1{
 }
 .message.user{margin-left:auto;background:var(--surface)}
 .message.ai{background:transparent}
+.message .model-tag{margin-bottom:6px;color:var(--muted);font-size:12px}
+.message .generated-image{display:block;max-width:min(100%,420px);border-radius:18px;margin:0 0 12px}
+.error-text{color:#c94a4a}
 
 .composer{
   min-height:72px;
