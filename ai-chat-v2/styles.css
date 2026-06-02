@@ -157,7 +157,7 @@ body.history-open .history-drawer{
   min-width:0;
   height:100svh;
   display:grid;
-  grid-template-rows:116px minmax(0,1fr);
+  grid-template-rows:168px minmax(0,1fr);
   overflow:hidden;
 }
 .shell::before{
@@ -179,7 +179,7 @@ body.history-open .history-drawer{
   display:flex;
   align-items:flex-end;
   justify-content:center;
-  padding:28px clamp(24px,4vw,64px) 8px;
+  padding:42px clamp(24px,4vw,64px) 18px;
   text-align:center;
 }
 .kicker{display:none}
@@ -220,8 +220,8 @@ h1{
   display:grid;
   grid-template-rows:auto auto;
   align-content:center;
-  gap:12px;
-  transform:translateY(-86px);
+  gap:18px;
+  transform:translateY(-42px);
 }
 .model-wall,.conversation,.composer{width:100%}
 .model-wall{
