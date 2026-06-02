@@ -29,6 +29,10 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;");
 }
 
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/"/g, "&quot;");
+}
+
 function renderMarkdown(value) {
   let text = String(value ?? "");
   const imageMatch = text.match(/!\[[^\]]*\]\((data:image\/[^)]+)\)/);
@@ -121,7 +125,7 @@ function readFallbackModels() {
 function renderModels() {
   const models = modelData[currentGroup] || [];
   modelList.innerHTML = models.map((model) => (
-    `<button class="model ${model.id === currentModel ? "active" : ""}" data-model="${escapeHtml(model.id)}" type="button">${escapeHtml(model.name)}</button>`
+    `<button class="model ${model.id === currentModel ? "active" : ""}" data-model="${escapeAttr(model.id)}" type="button">${escapeHtml(model.name)}</button>`
   )).join("");
 
   modelList.querySelectorAll(".model").forEach((button) => {
@@ -151,6 +155,7 @@ function setupModes() {
 }
 
 function appendMessage(role, content, modelTag = "") {
+  body.classList.add("chat-active");
   const message = document.createElement("article");
   message.className = `message ${role}`;
   message.innerHTML = `${modelTag ? `<div class="model-tag">${escapeHtml(modelTag)}</div>` : ""}<div class="content">${renderMarkdown(content)}</div>`;
@@ -290,6 +295,7 @@ async function loadConversation(id) {
   conversationId = id;
   messages = [];
   conversation.innerHTML = "";
+  body.classList.toggle("chat-active", list.length > 0);
 
   list.forEach((message) => {
     messages.push({ role: message.role, content: message.content });
@@ -303,6 +309,7 @@ function newConversation() {
   conversationId = createId();
   messages = [];
   conversation.innerHTML = "";
+  body.classList.remove("chat-active");
   userInput.value = "";
   resizeInput();
   userInput.focus();

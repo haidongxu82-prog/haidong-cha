@@ -226,7 +226,35 @@ h1{
   align-content:center;
   gap:12px;
   transform:translateY(-86px);
+  transition:transform .22s ease,width .22s ease,gap .22s ease;
 }
+body.chat-active .shell{
+  grid-template-rows:76px minmax(0,1fr);
+}
+body.chat-active .topbar{
+  align-items:center;
+  padding-top:16px;
+}
+body.chat-active h1{
+  opacity:0;
+  pointer-events:none;
+}
+body.chat-active .workspace{
+  height:100%;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  align-content:stretch;
+  gap:10px;
+  transform:none;
+}
+body.chat-active .model-wall{
+  padding-top:2px;
+}
+body.chat-active .models{
+  max-height:78px;
+  overflow:auto;
+  scrollbar-width:none;
+}
+body.chat-active .models::-webkit-scrollbar{display:none}
 .model-wall,.conversation,.composer{width:100%}
 .model-wall{
   padding:0;
@@ -269,6 +297,7 @@ h1{
   display:block;
   padding:2px 0 0;
   text-align:left;
+  scrollbar-width:thin;
 }
 .conversation:empty{display:none}
 .message{
@@ -283,6 +312,9 @@ h1{
 }
 .message.user{margin-left:auto;background:var(--surface)}
 .message.ai{background:transparent}
+.message.ai .content{
+  font-size:15.5px;
+}
 .message .model-tag{
   margin-bottom:6px;
   color:var(--blue);
@@ -426,6 +458,20 @@ textarea::placeholder{color:var(--muted);opacity:.72}
     transform:none;
     align-content:start;
   }
+  body.chat-active .shell{
+    grid-template-rows:52px minmax(0,1fr);
+  }
+  body.chat-active .workspace{
+    height:100%;
+    grid-template-rows:auto minmax(0,1fr) auto;
+    gap:8px;
+  }
+  body.chat-active .model-wall{
+    padding-top:0;
+  }
+  body.chat-active .models{
+    max-height:86px;
+  }
   .model-wall{
     padding:0;
     border-radius:0;
@@ -447,11 +493,15 @@ textarea::placeholder{color:var(--muted);opacity:.72}
     min-height:36px;
     height:auto;
     padding:7px 6px;
-    font-size:11px;
+    font-size:10.8px;
     line-height:1.14;
     overflow:hidden;
   }
-  .conversation{align-items:flex-start;justify-content:flex-start;text-align:left;padding-top:4px}
+  .conversation{
+    text-align:left;
+    padding-top:4px;
+    padding-bottom:2px;
+  }
   .message{
     max-width:92%;
     padding:12px 14px;
