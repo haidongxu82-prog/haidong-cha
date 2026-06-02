@@ -11,6 +11,7 @@ V2_DIR = ROOT / "ai-chat-v2"
 INDEX = V2_DIR / "index.html"
 STYLES = V2_DIR / "styles.css"
 APP = V2_DIR / "app.js"
+LOGO = ROOT / "assets" / "logo-hd-minimal.svg"
 
 
 def read(path: Path) -> str:
@@ -23,9 +24,15 @@ def build_template() -> str:
     html = read(INDEX)
     css = read(STYLES)
     js = read(APP)
+    logo = read(LOGO).replace("<svg ", '<svg class="brand" aria-hidden="true" ')
 
-    html = html.replace("../assets/logo-hd-minimal.svg", "https://haidong.chat/assets/logo-hd-minimal.svg")
     html = html.replace("../index.html", "https://haidong.chat/")
+    html = re.sub(
+        r'<img class="brand" src="\.\./assets/logo-hd-minimal\.svg" alt="HD">',
+        logo,
+        html,
+        count=1,
+    )
 
     html = re.sub(
         r'\s*<link rel="stylesheet" href="\./styles\.css">\s*',
