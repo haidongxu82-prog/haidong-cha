@@ -1,73 +1,3 @@
-/* ===== Auth Gate ===== */
-const authForm = document.querySelector(".auth-form");
-const accessPassword = document.querySelector("#accessPassword");
-const authSubmit = document.querySelector("#authSubmit");
-const authError = document.querySelector("#authError");
-
-function setAuthed(authed) {
-  document.body.classList.toggle("authed", !!authed);
-  if (authed) document.body.classList.remove("auth-open");
-}
-
-function openAuthGate(message) {
-  if (authError) authError.textContent = message || "";
-  document.body.classList.add("auth-open");
-  setTimeout(function() { accessPassword && accessPassword.focus(); }, 80);
-}
-
-async function requireAuth(message) {
-  if (document.body.classList.contains("authed")) return true;
-  try {
-    const response = await fetch("/api/auth/check");
-    const data = await response.json();
-    if (data.authed) { setAuthed(true); return true; }
-  } catch (e) {}
-  openAuthGate(message || "请先验证身份后使用");
-  return false;
-}
-
-async function checkAuth() {
-  try {
-    const response = await fetch("/api/auth/check");
-    const data = await response.json();
-    setAuthed(!!data.authed);
-    if (!data.authed) openAuthGate();
-  } catch (e) {
-    setAuthed(false);
-  }
-}
-
-async function submitAuth(event) {
-  event.preventDefault();
-  var password = accessPassword.value.trim();
-  if (!password) { authError.textContent = "请输入访问密码"; return; }
-  authSubmit.disabled = true;
-  authSubmit.textContent = "验证中";
-  authError.textContent = "";
-  try {
-    const response = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: password }),
-    });
-    const data = await response.json();
-    if (data.error) throw new Error(data.error);
-    accessPassword.value = "";
-    setAuthed(true);
-  } catch (error) {
-    authError.textContent = error.message || "验证失败";
-    setAuthed(false);
-  } finally {
-    authSubmit.disabled = false;
-    authSubmit.textContent = "进入海东 AI";
-  }
-}
-
-if (authForm) authForm.addEventListener("submit", submitAuth);
-
-checkAuth();
-/* ===== End Auth Gate ===== */
-
 const fallbackModels = {
   chat: [
     ["GPT-5.4 Pro", "🔥 GPT-5.4 Pro"],
@@ -204,7 +134,6 @@ async function saveMessage(role, content) {
 }
 
 async function sendMessage() {
-  if (!await requireAuth()) return;
   if (abortController) {
     abortController.abort();
     abortController = null;
