@@ -109,18 +109,6 @@
             </ul>
             <a href="#" aria-label="打开口播视频处理流水线">查看流程</a>
           </article>
-          <article class="tool-card feature-card">
-            <div>
-              <div class="card-meta">AI 分析 · 可用</div>
-              <h3>爆品趋势分析日报</h3>
-              <p>上传电商商品 Excel，自动识别爆发增长、库存偏紧、转化率下滑等关键信号，AI 生成可执行的分析报告与运营建议。</p>
-            </div>
-            <ul class="tool-facts" aria-label="工具特点">
-              <li>适合：电商运营、商品日报、品类复盘</li>
-              <li>产出：AI 分析报告、风险预警、运营建议</li>
-            </ul>
-            <a href="https://trend.haidong.chat" target="_blank" aria-label="打开爆品趋势分析日报">立即使用</a>
-          </article>
           <article class="tool-card">
             <div>
               <div class="card-meta">Automation · 打磨中</div>
