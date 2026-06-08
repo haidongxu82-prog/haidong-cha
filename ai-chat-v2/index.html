@@ -94,6 +94,20 @@
     </section>
   </main>
 
+    <div class="auth-gate" role="dialog" aria-modal="true" aria-label="访问验证">
+    <section class="auth-card">
+      <div class="auth-logo">HD</div>
+      <h2>访问验证</h2>
+      <p>这个 AI 集成站会消耗模型额度。请输入访问密码后再使用。</p>
+      <form class="auth-form">
+        <input id="accessPassword" type="password" autocomplete="current-password" placeholder="输入访问密码">
+        <button id="authSubmit" type="submit">进入海东 AI</button>
+        <div class="auth-error" id="authError"></div>
+      </form>
+      <div class="auth-note">没有密码的人可以打开页面，但无法调用任何模型。</div>
+    </section>
+  </div>
+
   <script src="./app.js"></script>
 </body>
 </html>
