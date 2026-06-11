@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>爆品趋势数据大盘</title>
     <meta name="description" content="爆品趋势分析结果数据大盘，展示销量、增速、风险和机会品类的动态变化。" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
       :root {
         --bg: #07090f;
@@ -510,8 +511,8 @@
           <div class="live-pill"><i class="live-dot"></i><span id="clock">实时分析中</span></div>
           <button class="data-btn" type="button" id="importBtn">导入数据</button>
           <button class="data-btn" type="button" id="sampleBtn">示例数据</button>
-          <input class="file-input" id="dataFile" type="file" accept=".csv,.json" />
-          <div class="data-note" id="dataNote">支持 CSV / JSON，导入后实时刷新大盘</div>
+          <input class="file-input" id="dataFile" type="file" accept=".xlsx,.xls,.csv,.json" />
+          <div class="data-note" id="dataNote">支持 Excel / CSV / JSON，导入后实时刷新大盘</div>
         </div>
       </header>
 
@@ -707,6 +708,17 @@
         });
       }
 
+      async function parseExcel(file) {
+        if (!window.XLSX) {
+          throw new Error("Excel 解析库加载失败，请刷新页面后重试");
+        }
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: "array" });
+        const firstSheet = workbook.SheetNames[0];
+        if (!firstSheet) return [];
+        return XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { defval: "" });
+      }
+
       function applyRows(rawRows, sourceName = "已导入数据") {
         const rows = rawRows.map(normalizeRow).filter((row) => row.name);
         if (!rows.length) {
@@ -731,8 +743,14 @@
       }
 
       async function handleFile(file) {
-        const text = await file.text();
-        const rows = file.name.toLowerCase().endsWith(".json") ? JSON.parse(text) : parseCsv(text);
+        const lowerName = file.name.toLowerCase();
+        let rows = [];
+        if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xls")) {
+          rows = await parseExcel(file);
+        } else {
+          const text = await file.text();
+          rows = lowerName.endsWith(".json") ? JSON.parse(text) : parseCsv(text);
+        }
         applyRows(Array.isArray(rows) ? rows : rows.data || [], file.name);
       }
 
