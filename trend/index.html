@@ -117,6 +117,42 @@
         white-space: nowrap;
       }
 
+      .top-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .data-btn {
+        height: 34px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255,255,255,.055);
+        color: #dbe7ff;
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        transition: border-color .2s ease, background .2s ease, transform .2s ease;
+      }
+
+      .data-btn:hover {
+        border-color: var(--line-strong);
+        background: rgba(94,161,255,.13);
+        transform: translateY(-1px);
+      }
+
+      .file-input { display: none; }
+
+      .data-note {
+        width: 100%;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: right;
+      }
+
       .live-dot {
         width: 7px;
         height: 7px;
@@ -448,6 +484,8 @@
         .shell { width: min(100% - 24px, 1480px); padding-top: 14px; }
         .topbar { align-items: flex-start; }
         .live-pill { display: none; }
+        .top-actions { max-width: 190px; }
+        .data-note { display: none; }
         .hero-main { min-height: 360px; padding: 24px; }
         h1 { font-size: 40px; }
         .hero-copy { font-size: 14px; }
@@ -468,7 +506,13 @@
             <span>trend.haidong.chat</span>
           </div>
         </div>
-        <div class="live-pill"><i class="live-dot"></i><span id="clock">实时分析中</span></div>
+        <div class="top-actions">
+          <div class="live-pill"><i class="live-dot"></i><span id="clock">实时分析中</span></div>
+          <button class="data-btn" type="button" id="importBtn">导入数据</button>
+          <button class="data-btn" type="button" id="sampleBtn">示例数据</button>
+          <input class="file-input" id="dataFile" type="file" accept=".csv,.json" />
+          <div class="data-note" id="dataNote">支持 CSV / JSON，导入后实时刷新大盘</div>
+        </div>
       </header>
 
       <section class="hero">
@@ -502,22 +546,22 @@
       <section class="kpis" aria-label="关键指标">
         <article class="kpi panel">
           <span>总监测商品</span>
-          <strong data-counter="1284">0</strong>
+          <strong id="kpiTotal" data-counter="1284">0</strong>
           <small>↗ 较昨日 +8.6%</small>
         </article>
         <article class="kpi panel">
           <span>爆品候选</span>
-          <strong data-counter="73">0</strong>
+          <strong id="kpiHot" data-counter="73">0</strong>
           <small>↗ 新增 12 个机会</small>
         </article>
         <article class="kpi panel">
           <span>平均爆发倍数</span>
-          <strong data-counter="3.8">0</strong>
+          <strong id="kpiAvg" data-counter="3.8">0</strong>
           <small>↗ 增长动能增强</small>
         </article>
         <article class="kpi panel danger">
           <span>库存风险</span>
-          <strong data-counter="18">0</strong>
+          <strong id="kpiRisk" data-counter="18">0</strong>
           <small>↘ 需要补货关注</small>
         </article>
       </section>
@@ -571,7 +615,7 @@
     </div>
 
     <script>
-      const products = [
+      let products = [
         ["户外折叠椅", "露营", 96],
         ["高速吹风机", "个护", 91],
         ["猫咪饮水机", "宠物", 88],
@@ -579,9 +623,9 @@
         ["防晒冰袖", "服饰", 79],
       ];
 
-      const categories = ["露营", "个护", "宠物", "家电", "服饰", "收纳", "运动", "母婴", "厨房", "数码", "户外", "清洁", "美妆", "文具"];
+      let categories = ["露营", "个护", "宠物", "家电", "服饰", "收纳", "运动", "母婴", "厨房", "数码", "户外", "清洁", "美妆", "文具"];
 
-      const events = [
+      let events = [
         "露营类目出现连续 3 小时销量抬升",
         "高速吹风机搜索热度超过过去 7 日均值",
         "猫咪饮水机库存可售天数低于安全线",
@@ -597,8 +641,7 @@
       tickClock();
       setInterval(tickClock, 1000);
 
-      document.querySelectorAll("[data-counter]").forEach((el) => {
-        const target = Number(el.dataset.counter);
+      function animateCounter(el, target) {
         const isFloat = !Number.isInteger(target);
         let value = 0;
         const step = target / 42;
@@ -610,6 +653,111 @@
           }
           el.textContent = isFloat ? value.toFixed(1) : Math.round(value).toLocaleString("zh-CN");
         }, 28);
+      }
+
+      function animateInitialCounters() {
+        document.querySelectorAll("[data-counter]").forEach((el) => {
+          animateCounter(el, Number(el.dataset.counter));
+        });
+      }
+      animateInitialCounters();
+
+      function setCounter(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = Number.isInteger(value) ? value.toLocaleString("zh-CN") : value.toFixed(1);
+      }
+
+      function updateKpis(rows) {
+        const total = rows.length;
+        const hot = rows.filter((row) => row.score >= 75).length;
+        const avg = rows.reduce((sum, row) => sum + row.multiple, 0) / Math.max(rows.length, 1);
+        const risk = rows.filter((row) => row.stockDays > 0 && row.stockDays <= 7).length;
+        setCounter("kpiTotal", total);
+        setCounter("kpiHot", hot);
+        setCounter("kpiAvg", avg);
+        setCounter("kpiRisk", risk);
+        document.getElementById("radarScore").textContent = Math.min(99, Math.round(72 + hot * 2 + avg * 2));
+      }
+
+      function normalizeRow(row, index) {
+        const pick = (...keys) => {
+          for (const key of keys) {
+            if (row[key] !== undefined && row[key] !== "") return row[key];
+          }
+          return "";
+        };
+        const name = String(pick("商品名称", "商品", "产品", "name", "product") || `商品 ${index + 1}`).trim();
+        const category = String(pick("类目", "分类", "category") || "未分类").trim();
+        const sales = Number(String(pick("今日销量", "销量", "sales", "todaySales")).replace(/,/g, "")) || 0;
+        const multiple = Number(pick("爆发倍数", "倍数", "multiple", "growth")) || Math.max(1, sales / 100);
+        const stockDays = Number(pick("库存可售天数", "库存天数", "stockDays", "stock")) || 0;
+        const score = Math.max(1, Math.min(99, Math.round(Number(pick("机会分", "热度", "score")) || sales / 8 + multiple * 15 - stockDays)));
+        return { name, category, sales, multiple, stockDays, score };
+      }
+
+      function parseCsv(text) {
+        const lines = text.trim().split(/\r?\n/).filter(Boolean);
+        if (lines.length < 2) return [];
+        const split = (line) => line.split(",").map((cell) => cell.trim().replace(/^"|"$/g, ""));
+        const headers = split(lines[0]);
+        return lines.slice(1).map((line) => {
+          const values = split(line);
+          return Object.fromEntries(headers.map((header, index) => [header, values[index] || ""]));
+        });
+      }
+
+      function applyRows(rawRows, sourceName = "已导入数据") {
+        const rows = rawRows.map(normalizeRow).filter((row) => row.name);
+        if (!rows.length) {
+          document.getElementById("dataNote").textContent = "未识别到有效数据，请检查 CSV/JSON 字段。";
+          return;
+        }
+        rows.sort((a, b) => b.score - a.score);
+        products = rows.slice(0, 8).map((row) => [row.name, row.category, row.score]);
+        categories = [...new Set(rows.map((row) => row.category))].slice(0, 21);
+        events = rows.slice(0, 8).map((row) => `${row.category} · ${row.name} 机会分 ${row.score}，爆发倍数 ${row.multiple.toFixed(1)}x`);
+        seriesA = rows.slice(0, 42).map((row) => Math.max(18, Math.min(78, row.sales / 12 + row.score / 2)));
+        seriesB = rows.slice(0, 42).map((row) => Math.max(18, Math.min(78, row.multiple * 12 + 18)));
+        while (seriesA.length < 42) seriesA.push(32 + Math.random() * 16);
+        while (seriesB.length < 42) seriesB.push(28 + Math.random() * 14);
+        updateKpis(rows);
+        renderRanks();
+        renderHeat();
+        document.getElementById("eventStream").innerHTML = "";
+        for (let i = 0; i < 5; i++) pushEvent();
+        drawChart();
+        document.getElementById("dataNote").textContent = `${sourceName}：已接入 ${rows.length} 条记录`;
+      }
+
+      async function handleFile(file) {
+        const text = await file.text();
+        const rows = file.name.toLowerCase().endsWith(".json") ? JSON.parse(text) : parseCsv(text);
+        applyRows(Array.isArray(rows) ? rows : rows.data || [], file.name);
+      }
+
+      document.getElementById("importBtn").addEventListener("click", () => {
+        document.getElementById("dataFile").click();
+      });
+
+      document.getElementById("dataFile").addEventListener("change", async (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        try {
+          await handleFile(file);
+        } catch (error) {
+          document.getElementById("dataNote").textContent = `导入失败：${error.message}`;
+        }
+      });
+
+      document.getElementById("sampleBtn").addEventListener("click", () => {
+        applyRows([
+          { "商品名称": "AI 降噪耳机", "类目": "数码", "今日销量": 1860, "爆发倍数": 4.8, "库存可售天数": 5 },
+          { "商品名称": "桌面收纳柜", "类目": "收纳", "今日销量": 1240, "爆发倍数": 3.9, "库存可售天数": 11 },
+          { "商品名称": "防晒冰袖", "类目": "服饰", "今日销量": 2160, "爆发倍数": 5.4, "库存可售天数": 4 },
+          { "商品名称": "猫咪饮水机", "类目": "宠物", "今日销量": 980, "爆发倍数": 3.6, "库存可售天数": 6 },
+          { "商品名称": "便携咖啡机", "类目": "家电", "今日销量": 760, "爆发倍数": 2.8, "库存可售天数": 15 }
+        ], "示例数据");
       });
 
       function renderRanks() {
