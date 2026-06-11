@@ -714,9 +714,27 @@
         }
         const buffer = await file.arrayBuffer();
         const workbook = XLSX.read(buffer, { type: "array" });
-        const firstSheet = workbook.SheetNames[0];
-        if (!firstSheet) return [];
-        return XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { defval: "" });
+        const headerSignals = ["商品名称", "商品", "产品", "类目", "今日销量", "销量", "爆发倍数", "库存可售天数"];
+
+        for (const sheetName of workbook.SheetNames) {
+          const sheet = workbook.Sheets[sheetName];
+          const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+          const headerIndex = matrix.findIndex((row) => {
+            const cells = row.map((cell) => String(cell).trim());
+            const hits = headerSignals.filter((signal) => cells.includes(signal)).length;
+            return hits >= 3;
+          });
+          if (headerIndex === -1) continue;
+
+          const headers = matrix[headerIndex].map((cell) => String(cell).trim());
+          const rows = matrix.slice(headerIndex + 1)
+            .filter((row) => row.some((cell) => String(cell).trim() !== ""))
+            .map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] ?? ""])));
+          rows.__sheetName = sheetName;
+          return rows;
+        }
+
+        throw new Error("没有找到包含商品数据的工作表");
       }
 
       function applyRows(rawRows, sourceName = "已导入数据") {
@@ -727,7 +745,10 @@
         }
         rows.sort((a, b) => b.score - a.score);
         products = rows.slice(0, 8).map((row) => [row.name, row.category, row.score]);
-        categories = [...new Set(rows.map((row) => row.category))].slice(0, 21);
+        const uniqueCategories = [...new Set(rows.map((row) => row.category).filter(Boolean))];
+        categories = uniqueCategories.length > 1
+          ? uniqueCategories.slice(0, 21)
+          : rows.slice(0, 14).map((row) => row.name);
         events = rows.slice(0, 8).map((row) => `${row.category} · ${row.name} 机会分 ${row.score}，爆发倍数 ${row.multiple.toFixed(1)}x`);
         seriesA = rows.slice(0, 42).map((row) => Math.max(18, Math.min(78, row.sales / 12 + row.score / 2)));
         seriesB = rows.slice(0, 42).map((row) => Math.max(18, Math.min(78, row.multiple * 12 + 18)));
@@ -745,13 +766,15 @@
       async function handleFile(file) {
         const lowerName = file.name.toLowerCase();
         let rows = [];
+        let sheetName = "";
         if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xls")) {
           rows = await parseExcel(file);
+          sheetName = rows.__sheetName ? ` / ${rows.__sheetName}` : "";
         } else {
           const text = await file.text();
           rows = lowerName.endsWith(".json") ? JSON.parse(text) : parseCsv(text);
         }
-        applyRows(Array.isArray(rows) ? rows : rows.data || [], file.name);
+        applyRows(Array.isArray(rows) ? rows : rows.data || [], `${file.name}${sheetName}`);
       }
 
       document.getElementById("importBtn").addEventListener("click", () => {
