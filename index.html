@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <canvas class="matrix-rain" aria-hidden="true"></canvas>
+    <div class="scanline-layer" aria-hidden="true"></div>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="回到首页">
         <span class="brand-mark" aria-hidden="true">
@@ -46,6 +48,11 @@
           <p class="hero-copy">
             一个低调的个人 AI 工作台。这里收纳我用 AI 搭建的工具、自动化工作流，以及关于效率、内容和生活方式的长期思考。
           </p>
+          <div class="system-hud" aria-label="系统状态">
+            <span>NODE: HZ-AI-01</span>
+            <span>MODE: AUTONOMOUS</span>
+            <span>LATENCY: 18MS</span>
+          </div>
           <div class="hero-actions">
             <a class="button primary" href="#tools">看看工具</a>
             <a class="button ghost" href="#writing">读点想法</a>
@@ -60,6 +67,7 @@
               <p><span class="terminal-muted">haidong@ai-lab</span>:<span class="terminal-path">~/workspace</span>$</p>
               <p class="terminal-command"><span>run workflow --tools --notes --daily</span></p>
               <p><span class="terminal-ok">READY</span> tools indexed · notes synced · automation online</p>
+              <p><span class="terminal-muted">matrix</span> stream attached · neural route stable</p>
             </div>
           </div>
         </div>
@@ -229,5 +237,52 @@
       <span>© 2026 Haidong</span>
       <span>Quiet tools and long-term notes.</span>
     </footer>
+    <script>
+      (() => {
+        const canvas = document.querySelector(".matrix-rain");
+        if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const ctx = canvas.getContext("2d");
+        const glyphs = "01AI海东WORKFLOWNODEPROMPT模型自动化{}[]<>/|";
+        let width = 0;
+        let height = 0;
+        let columns = [];
+        let frame = 0;
+
+        const resize = () => {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          canvas.style.width = `${width}px`;
+          canvas.style.height = `${height}px`;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          columns = Array.from({ length: Math.ceil(width / 18) }, () => Math.random() * -height);
+        };
+
+        const draw = () => {
+          frame += 1;
+          if (frame % 2) {
+            requestAnimationFrame(draw);
+            return;
+          }
+          ctx.fillStyle = "rgba(6, 8, 12, 0.08)";
+          ctx.fillRect(0, 0, width, height);
+          ctx.font = "14px ui-monospace, SFMono-Regular, Menlo, monospace";
+          columns.forEach((y, index) => {
+            const text = glyphs[Math.floor(Math.random() * glyphs.length)];
+            const x = index * 18;
+            ctx.fillStyle = Math.random() > 0.985 ? "rgba(231, 237, 244, 0.72)" : "rgba(97, 211, 148, 0.42)";
+            ctx.fillText(text, x, y);
+            columns[index] = y > height + Math.random() * 1200 ? Math.random() * -140 : y + 18;
+          });
+          requestAnimationFrame(draw);
+        };
+
+        resize();
+        draw();
+        window.addEventListener("resize", resize, { passive: true });
+      })();
+    </script>
   </body>
 </html>

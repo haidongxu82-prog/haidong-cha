@@ -909,6 +909,28 @@ body {
     "PingFang SC", "Microsoft YaHei", monospace;
 }
 
+.matrix-rain,
+.scanline-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.matrix-rain {
+  z-index: -3;
+  opacity: 0.7;
+}
+
+.scanline-layer {
+  z-index: -1;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.025) 50%, rgba(0, 0, 0, 0.06) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.018), rgba(0, 255, 120, 0.012), rgba(0, 120, 255, 0.018));
+  background-size: 100% 4px, 6px 100%;
+  mix-blend-mode: screen;
+  opacity: 0.28;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -922,10 +944,35 @@ body::before {
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92), transparent 88%);
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto 0 0;
+  z-index: -2;
+  height: 46vh;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(97, 211, 148, 0.18), rgba(97, 211, 148, 0)),
+    repeating-linear-gradient(90deg, rgba(97, 211, 148, 0.12) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, rgba(97, 211, 148, 0.1) 0 1px, transparent 1px 42px);
+  transform: perspective(520px) rotateX(64deg);
+  transform-origin: bottom;
+  opacity: 0.32;
+}
+
+.site-header,
+.hero-content,
+.status-strip,
+.section,
+.site-footer {
+  position: relative;
+}
+
 .site-header {
   color: var(--ink);
   background: rgba(6, 8, 12, 0.72);
   border-bottom-color: var(--line);
+  box-shadow: 0 1px 0 rgba(97, 211, 148, 0.08), 0 18px 60px rgba(0, 0, 0, 0.26);
 }
 
 .brand-mark {
@@ -955,7 +1002,8 @@ body::before {
 
 .hero-shade {
   background:
-    linear-gradient(90deg, rgba(6, 8, 12, 0.98) 0%, rgba(6, 8, 12, 0.9) 46%, rgba(6, 8, 12, 0.5) 100%),
+    radial-gradient(circle at 72% 34%, rgba(97, 211, 148, 0.18), transparent 30vw),
+    linear-gradient(90deg, rgba(6, 8, 12, 0.98) 0%, rgba(6, 8, 12, 0.88) 46%, rgba(6, 8, 12, 0.48) 100%),
     linear-gradient(180deg, rgba(86, 168, 255, 0.08), rgba(6, 8, 12, 0.92));
 }
 
@@ -964,11 +1012,14 @@ body::before {
 }
 
 .hero-content::after {
-  content: "01001000 01000100";
-  bottom: -94px;
-  color: rgba(86, 168, 255, 0.07);
-  font-size: clamp(42px, 7vw, 94px);
-  letter-spacing: 0.04em;
+  content: "SYSTEM ONLINE";
+  right: -20vw;
+  left: auto;
+  bottom: 0;
+  color: rgba(97, 211, 148, 0.075);
+  font-size: clamp(46px, 8vw, 112px);
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
 }
 
 .hero h1 {
@@ -976,6 +1027,7 @@ body::before {
   background: linear-gradient(92deg, #e7edf4 0%, #56a8ff 48%, #61d394 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  text-shadow: 0 0 34px rgba(86, 168, 255, 0.18);
 }
 
 .hero-copy,
@@ -999,7 +1051,25 @@ body::before {
   background: rgba(14, 19, 28, 0.58);
 }
 
+.system-hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.system-hud span {
+  padding: 7px 10px;
+  border: 1px solid rgba(97, 211, 148, 0.22);
+  border-radius: 999px;
+  background: rgba(97, 211, 148, 0.055);
+  color: rgba(231, 237, 244, 0.78);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
 .terminal-card {
+  position: relative;
   width: min(620px, 100%);
   margin-top: 30px;
   overflow: hidden;
@@ -1009,6 +1079,20 @@ body::before {
   box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+}
+
+.terminal-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(97, 211, 148, 0.24), transparent 28%, transparent 72%, rgba(86, 168, 255, 0.18)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
 }
 
 .terminal-bar {
@@ -1102,8 +1186,15 @@ body::before {
   background: rgba(12, 17, 25, 0.72);
 }
 
+.tool-card,
+.place-notes span,
+.post-row {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
 .tool-card:hover {
   background: rgba(16, 23, 34, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(97, 211, 148, 0.2), 0 18px 60px rgba(0, 0, 0, 0.24);
 }
 
 .tool-card a,
@@ -1137,6 +1228,14 @@ body::before {
 }
 
 @media (max-width: 620px) {
+  .matrix-rain {
+    opacity: 0.36;
+  }
+
+  .scanline-layer {
+    opacity: 0.18;
+  }
+
   .site-header {
     background: rgba(6, 8, 12, 0.88);
   }
@@ -1147,6 +1246,10 @@ body::before {
 
   .hero h1 {
     font-size: clamp(54px, 16vw, 72px);
+  }
+
+  .hero-content::after {
+    display: none;
   }
 
   .hero-shade {
