@@ -240,47 +240,59 @@
     <script>
       (() => {
         const canvas = document.querySelector(".matrix-rain");
-        if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+        if (!canvas || reduceMotion || coarsePointer) return;
         const ctx = canvas.getContext("2d");
-        const glyphs = "01AI海东WORKFLOWNODEPROMPT模型自动化{}[]<>/|";
+        const glyphs = "01AIWORKFLOWNODEPROMPT{}[]<>/|";
         let width = 0;
         let height = 0;
         let columns = [];
-        let frame = 0;
+        let lastDraw = 0;
+        let running = true;
+        const fpsInterval = 1000 / 12;
 
         const resize = () => {
-          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const dpr = 1;
           width = window.innerWidth;
-          height = window.innerHeight;
+          height = Math.min(window.innerHeight, 900);
           canvas.width = Math.floor(width * dpr);
           canvas.height = Math.floor(height * dpr);
           canvas.style.width = `${width}px`;
           canvas.style.height = `${height}px`;
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          columns = Array.from({ length: Math.ceil(width / 18) }, () => Math.random() * -height);
+          columns = Array.from({ length: Math.ceil(width / 28) }, () => Math.random() * -height);
         };
 
-        const draw = () => {
-          frame += 1;
-          if (frame % 2) {
+        const draw = (time = 0) => {
+          if (!running || document.hidden || window.scrollY > window.innerHeight * 1.2) {
             requestAnimationFrame(draw);
             return;
           }
-          ctx.fillStyle = "rgba(6, 8, 12, 0.08)";
+          if (time - lastDraw < fpsInterval) {
+            requestAnimationFrame(draw);
+            return;
+          }
+          lastDraw = time;
+          ctx.fillStyle = "rgba(6, 8, 12, 0.18)";
           ctx.fillRect(0, 0, width, height);
-          ctx.font = "14px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.font = "13px ui-monospace, SFMono-Regular, Menlo, monospace";
           columns.forEach((y, index) => {
             const text = glyphs[Math.floor(Math.random() * glyphs.length)];
-            const x = index * 18;
-            ctx.fillStyle = Math.random() > 0.985 ? "rgba(231, 237, 244, 0.72)" : "rgba(97, 211, 148, 0.42)";
+            const x = index * 28;
+            ctx.fillStyle = Math.random() > 0.992 ? "rgba(231, 237, 244, 0.58)" : "rgba(97, 211, 148, 0.28)";
             ctx.fillText(text, x, y);
-            columns[index] = y > height + Math.random() * 1200 ? Math.random() * -140 : y + 18;
+            columns[index] = y > height + Math.random() * 900 ? Math.random() * -160 : y + 28;
           });
           requestAnimationFrame(draw);
         };
 
         resize();
         draw();
+        document.addEventListener("visibilitychange", () => {
+          running = !document.hidden;
+          if (running) requestAnimationFrame(draw);
+        });
         window.addEventListener("resize", resize, { passive: true });
       })();
     </script>
