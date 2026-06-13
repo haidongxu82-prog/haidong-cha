@@ -2297,3 +2297,139 @@ body {
   opacity: 0.06;
   filter: saturate(0.8) contrast(1.04) brightness(0.95);
 }
+
+/* Final jade glass skin */
+:root {
+  --ink: #f4fff9;
+  --muted: #c8e5d7;
+  --line: rgba(210, 255, 230, 0.3);
+  --line-soft: rgba(210, 255, 230, 0.16);
+  --gold: #c9ffe1;
+  --green: #78f0b1;
+  --blue: #baf7e4;
+  --purple: #d7f7ec;
+}
+
+body {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(248, 255, 246, 0.78), transparent 13vw),
+    radial-gradient(circle at 24% 22%, rgba(139, 255, 186, 0.36), transparent 25vw),
+    radial-gradient(circle at 74% 16%, rgba(192, 255, 226, 0.34), transparent 30vw),
+    radial-gradient(circle at 58% 76%, rgba(31, 128, 91, 0.28), transparent 35vw),
+    linear-gradient(160deg, #eafff4 0%, #8dddb5 38%, #184c3f 72%, #071812 100%);
+  color: #f4fff9;
+}
+
+.liquid-sky {
+  background:
+    radial-gradient(ellipse at 45% 10%, rgba(255, 255, 246, 0.76), transparent 24%),
+    radial-gradient(circle at 62% 36%, rgba(157, 255, 205, 0.22), transparent 24vw),
+    linear-gradient(135deg, rgba(197, 255, 223, 0.78), rgba(88, 185, 138, 0.5) 44%, rgba(8, 54, 43, 0.78));
+  filter: saturate(1.12) hue-rotate(-8deg);
+}
+
+.liquid-sky::after {
+  background:
+    linear-gradient(120deg, transparent 0 31%, rgba(255, 255, 255, 0.16) 32%, transparent 42%),
+    radial-gradient(circle at 18% 72%, rgba(227, 255, 236, 0.28), transparent 18vw),
+    radial-gradient(circle at 76% 34%, rgba(188, 255, 222, 0.22), transparent 20vw),
+    linear-gradient(180deg, transparent, rgba(4, 22, 15, 0.56));
+}
+
+.bubble-field span {
+  border-color: rgba(225, 255, 237, 0.44);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 246, 0.86), rgba(213, 255, 228, 0.22) 22%, rgba(109, 220, 158, 0.08) 58%),
+    linear-gradient(135deg, rgba(245, 255, 239, 0.24), rgba(57, 181, 118, 0.1));
+  box-shadow:
+    inset -20px -24px 44px rgba(0, 92, 65, 0.2),
+    inset 18px 20px 44px rgba(255, 255, 245, 0.28),
+    0 28px 92px rgba(13, 92, 67, 0.2);
+  opacity: 0.48;
+}
+
+body::before {
+  background-image:
+    linear-gradient(rgba(210, 255, 230, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(210, 255, 230, 0.08) 1px, transparent 1px);
+  opacity: 0.28;
+}
+
+.hero-shade {
+  background:
+    linear-gradient(90deg, rgba(236, 255, 243, 0.34), rgba(17, 87, 66, 0.12)),
+    linear-gradient(180deg, rgba(255, 255, 246, 0.16), rgba(3, 24, 17, 0.5));
+}
+
+.site-header,
+.hero-content,
+.cover-tool,
+.magazine-meta span {
+  border-color: rgba(218, 255, 232, 0.42);
+  background:
+    linear-gradient(145deg, rgba(246, 255, 239, 0.34), rgba(176, 255, 205, 0.1)),
+    rgba(6, 54, 39, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 246, 0.58),
+    inset 0 -1px 0 rgba(138, 255, 184, 0.14),
+    0 24px 88px rgba(4, 66, 48, 0.28);
+  backdrop-filter: blur(24px) saturate(1.42);
+  -webkit-backdrop-filter: blur(24px) saturate(1.42);
+}
+
+.brand-mark {
+  background:
+    radial-gradient(circle at 26% 18%, rgba(255, 255, 246, 0.92), rgba(183, 255, 210, 0.22) 34%, transparent 58%),
+    linear-gradient(145deg, rgba(214, 255, 229, 0.28), rgba(5, 84, 63, 0.3));
+  border-color: rgba(226, 255, 234, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 246, 0.72),
+    0 16px 48px rgba(7, 91, 65, 0.28);
+}
+
+.hero-copy {
+  color: #f4fff9;
+  background: linear-gradient(115deg, #ffffff 0%, #e8fff0 28%, #9bf7bd 58%, #ecfff5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 20px 64px rgba(4, 58, 43, 0.35);
+}
+
+.eyebrow,
+.compact-note span {
+  color: rgba(226, 255, 235, 0.94);
+  text-shadow: 0 0 22px rgba(91, 240, 162, 0.26);
+}
+
+.cover-tool.primary {
+  background:
+    linear-gradient(135deg, rgba(159, 255, 193, 0.36), rgba(237, 255, 243, 0.18)),
+    rgba(8, 72, 53, 0.16);
+}
+
+.cover-tool:hover {
+  background:
+    linear-gradient(145deg, rgba(249, 255, 244, 0.42), rgba(154, 255, 194, 0.16)),
+    rgba(10, 78, 57, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(233, 255, 239, 0.34),
+    0 26px 90px rgba(4, 71, 51, 0.32);
+}
+
+.cover-tool strong {
+  color: #fafff9;
+}
+
+.magazine-meta span,
+.cover-tool span,
+.cover-tool em,
+.compact-note,
+.site-footer,
+.nav a {
+  color: rgba(230, 255, 239, 0.76);
+}
+
+.hero-media img {
+  opacity: 0.045;
+  filter: saturate(0.65) hue-rotate(86deg) contrast(1.08) brightness(0.82);
+}
