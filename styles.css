@@ -2208,3 +2208,92 @@ body::before {
     animation: none;
   }
 }
+
+/* Cache-busted final liquid glass skin */
+:root {
+  --ink: #f7fcff;
+  --muted: #d7e8f6;
+  --line: rgba(255, 255, 255, 0.28);
+  --line-soft: rgba(255, 255, 255, 0.16);
+  --gold: #d9f6ff;
+  --green: #b8fff3;
+  --blue: #9fe8ff;
+  --purple: #dccbff;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.86), transparent 16vw),
+    radial-gradient(circle at 18% 18%, rgba(159, 232, 255, 0.42), transparent 34vw),
+    radial-gradient(circle at 78% 18%, rgba(220, 203, 255, 0.38), transparent 34vw),
+    radial-gradient(circle at 58% 78%, rgba(184, 255, 243, 0.24), transparent 34vw),
+    linear-gradient(180deg, #eaf8ff 0%, #9ecdf2 42%, #102340 100%);
+}
+
+.hero-shade {
+  background:
+    linear-gradient(90deg, rgba(235, 249, 255, 0.36), rgba(70, 119, 174, 0.14)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(11, 28, 56, 0.42));
+}
+
+.site-header,
+.hero-content,
+.cover-tool,
+.magazine-meta span {
+  border-color: rgba(255, 255, 255, 0.34);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12)),
+    rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 24px 88px rgba(21, 63, 118, 0.24);
+  backdrop-filter: blur(24px) saturate(1.38);
+  -webkit-backdrop-filter: blur(24px) saturate(1.38);
+}
+
+.hero-content {
+  color: #fff;
+}
+
+.hero-copy {
+  color: #fff;
+  background: linear-gradient(115deg, #ffffff 0%, #ebfbff 34%, #caefff 60%, #efe8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.eyebrow,
+.compact-note span {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.magazine-meta span,
+.cover-tool span,
+.cover-tool em,
+.compact-note,
+.site-footer,
+.nav a {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.cover-tool strong {
+  color: #fff;
+}
+
+.cover-tool.primary {
+  background:
+    linear-gradient(135deg, rgba(159, 232, 255, 0.36), rgba(220, 203, 255, 0.24)),
+    rgba(255, 255, 255, 0.13);
+}
+
+.cover-tool:hover {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.16)),
+    rgba(255, 255, 255, 0.16);
+}
+
+.hero-media img {
+  opacity: 0.06;
+  filter: saturate(0.8) contrast(1.04) brightness(0.95);
+}
