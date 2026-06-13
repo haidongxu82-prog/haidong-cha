@@ -889,8 +889,8 @@ h2 {
   z-index: 1;
   width: var(--content);
   display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
-  gap: clamp(28px, 5vw, 76px);
+  grid-template-columns: minmax(240px, 0.58fr) minmax(520px, 1.42fr);
+  gap: clamp(28px, 5vw, 72px);
   align-items: end;
 }
 
@@ -991,7 +991,10 @@ h2 {
 }
 
 .hero-copy {
-  max-width: 520px;
+  max-width: 360px;
+  margin-top: 22px;
+  font-size: clamp(21px, 2.5vw, 36px);
+  line-height: 1.32;
 }
 
 .magazine-meta {
@@ -1545,11 +1548,12 @@ body::after,
 
 .hero-content::after {
   content: "HAIDONG";
-  right: clamp(-120px, -8vw, -40px);
-  bottom: -34px;
-  color: rgba(214, 168, 79, 0.08);
+  right: auto;
+  left: 0;
+  bottom: -110px;
+  color: rgba(214, 168, 79, 0.05);
   font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(84px, 14vw, 190px);
+  font-size: clamp(48px, 7vw, 108px);
   font-weight: 900;
   letter-spacing: 0.1em;
   writing-mode: horizontal-tb;
@@ -1749,10 +1753,7 @@ h3 {
   }
 
   .hero-content::after {
-    display: block;
-    right: 0;
-    bottom: -58px;
-    font-size: 54px;
+    display: none;
   }
 
   .magazine-meta span {
