@@ -6,106 +6,107 @@
     <title>海东 AI</title>
     <meta
       name="description"
-      content="海东的个人 AI 工作台，收纳自动化工作流、小工具和关于 AI 的个人文章。"
+      content="海东的个人 AI 工具入口，收纳已经跑通的自动化工作流和小工具。"
     />
     <meta property="og:title" content="海东 AI" />
     <meta
       property="og:description"
-      content="一个低调的个人 AI 工作台，收纳可用工具、自动化工作流和长期文章。"
+      content="一个低调的 AI 工作流入口，只放已经能用的工具和案例。"
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="styles.css?v=20260613-jade-glass" />
+    <link rel="stylesheet" href="home.css?v=20260613-codex-console" />
   </head>
   <body>
-    <div class="liquid-sky" aria-hidden="true"></div>
-    <div class="bubble-field" aria-hidden="true">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="回到首页">
-        <span class="brand-mark" aria-hidden="true">
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="signal-grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="https://haidong.chat/" aria-label="海东 AI 首页">
+        <span class="brand-mark">
           <img src="assets/logo-hd-minimal.svg" alt="" />
         </span>
         <span>海东 AI</span>
       </a>
       <nav class="nav" aria-label="主导航">
-        <a href="#tools">工具</a>
         <a href="https://ai.haidong.chat/">AI 对话</a>
-        <a href="https://trend.haidong.chat/">趋势</a>
+        <a href="https://trend.haidong.chat/">趋势大盘</a>
+        <a href="mailto:hello@haidong.chat">联系</a>
       </nav>
     </header>
 
-    <main id="top">
-      <section class="hero">
-        <div class="hero-media" aria-hidden="true">
-          <img src="assets/hero-hangzhou.png" alt="" />
+    <main class="shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="kicker">HAIDONG · AI WORKFLOW INDEX</p>
+          <h1 id="page-title">把跑通的 AI 能力，放在一个安静入口。</h1>
+          <p class="summary">
+            不做热闹的展示页。这里只保留能打开、能使用、能继续迭代的工具。
+          </p>
         </div>
-        <div class="hero-shade" aria-hidden="true"></div>
-        <div class="magazine-cover">
-          <div class="hero-content">
-            <p class="eyebrow">Jade Glass · AI Workflow Index</p>
-            <p class="hero-copy">
-              已跑通的 AI 工具和自动化案例。少放介绍，多放入口。
-            </p>
-            <div class="magazine-meta" aria-label="封面信息">
-              <span>JADE GLASS EDITION</span>
-              <span>AI TOOLS</span>
-              <span>LIVE CASES</span>
-            </div>
+
+        <div class="console" aria-label="状态面板">
+          <div class="console-head">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
-          <div id="tools" class="cover-tools" aria-label="已跑通工具">
-            <a class="cover-tool primary" href="https://ai.haidong.chat/">
-              <span>01</span>
-              <strong>AI 对话</strong>
-              <em>多模型工作台</em>
-            </a>
-            <a class="cover-tool" href="https://trend.haidong.chat/">
-              <span>02</span>
-              <strong>趋势大盘</strong>
-              <em>Excel 数据分析</em>
-            </a>
-            <a class="cover-tool" href="https://wash.haidong.chat/">
-              <span>03</span>
-              <strong>洗图工坊</strong>
-              <em>商业图生成</em>
-            </a>
-            <a class="cover-tool" href="https://detail.haidong.chat/">
-              <span>04</span>
-              <strong>详情页工坊</strong>
-              <em>电商详情图</em>
-            </a>
-            <a class="cover-tool" href="https://design.haidong.chat/">
-              <span>05</span>
-              <strong>AI 设计工坊</strong>
-              <em>视觉测试</em>
-            </a>
-            <a class="cover-tool" href="mailto:hello@haidong.chat">
-              <span>06</span>
-              <strong>联系海东</strong>
-              <em>定制工作流</em>
-            </a>
+          <div class="console-body">
+            <p><span>$</span> tools.status</p>
+            <p>ai_chat: online</p>
+            <p>trend_dashboard: online</p>
+            <p>wash_workshop: online</p>
+            <p>detail_workshop: online</p>
           </div>
         </div>
       </section>
 
-      <section class="compact-note" aria-label="站点说明">
-        <span>JADE GLASS AI WORKFLOW INDEX</span>
-        <p>这个页面只保留已经能打开的工具入口；后续新增案例，继续往这里补。</p>
-      </section>
+      <section class="tool-panel" aria-labelledby="tools-title">
+        <div class="panel-title">
+          <p>AVAILABLE SYSTEMS</p>
+          <h2 id="tools-title">工具入口</h2>
+        </div>
 
+        <div class="tool-grid">
+          <a class="tool-card primary" href="https://ai.haidong.chat/">
+            <span class="index">01</span>
+            <strong>AI 对话</strong>
+            <em>多模型工作台</em>
+          </a>
+          <a class="tool-card" href="https://trend.haidong.chat/">
+            <span class="index">02</span>
+            <strong>趋势大盘</strong>
+            <em>Excel 数据分析</em>
+          </a>
+          <a class="tool-card" href="https://wash.haidong.chat/">
+            <span class="index">03</span>
+            <strong>洗图工坊</strong>
+            <em>商业图生成</em>
+          </a>
+          <a class="tool-card" href="https://detail.haidong.chat/">
+            <span class="index">04</span>
+            <strong>详情页工坊</strong>
+            <em>电商详情图</em>
+          </a>
+          <a class="tool-card" href="https://design.haidong.chat/">
+            <span class="index">05</span>
+            <strong>AI 设计工坊</strong>
+            <em>视觉实验</em>
+          </a>
+          <a class="tool-card" href="mailto:hello@haidong.chat">
+            <span class="index">06</span>
+            <strong>联系海东</strong>
+            <em>定制工作流</em>
+          </a>
+        </div>
+      </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="footer">
       <span>© 2026 Haidong</span>
-      <span>Quiet tools and long-term notes.</span>
+      <span>Quiet systems. Working tools.</span>
     </footer>
   </body>
 </html>
