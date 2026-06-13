@@ -20,8 +20,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <canvas class="matrix-rain" aria-hidden="true"></canvas>
-    <div class="scanline-layer" aria-hidden="true"></div>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="回到首页">
         <span class="brand-mark" aria-hidden="true">
@@ -43,32 +41,19 @@
         </div>
         <div class="hero-shade" aria-hidden="true"></div>
         <div class="hero-content">
-          <p class="eyebrow">Haidong AI Workspace</p>
+          <p class="eyebrow">Issue 01 · AI Workflow Magazine</p>
           <h1>海东 AI</h1>
           <p class="hero-copy">
             一个低调的个人 AI 工作台。这里收纳我用 AI 搭建的工具、自动化工作流，以及关于效率、内容和生活方式的长期思考。
           </p>
-          <div class="system-hud" aria-label="系统状态">
-            <span>NODE: HZ-AI-01</span>
-            <span>MODE: AUTONOMOUS</span>
-            <span>LATENCY: 18MS</span>
+          <div class="magazine-meta" aria-label="封面信息">
+            <span>AI TOOLS</span>
+            <span>AUTOMATION</span>
+            <span>LONG-FORM NOTES</span>
           </div>
           <div class="hero-actions">
             <a class="button primary" href="#tools">看看工具</a>
             <a class="button ghost" href="#writing">读点想法</a>
-          </div>
-          <div class="terminal-card" aria-label="终端输入动画">
-            <div class="terminal-bar" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="terminal-body">
-              <p><span class="terminal-muted">haidong@ai-lab</span>:<span class="terminal-path">~/workspace</span>$</p>
-              <p class="terminal-command"><span>run workflow --tools --notes --daily</span></p>
-              <p><span class="terminal-ok">READY</span> tools indexed · notes synced · automation online</p>
-              <p><span class="terminal-muted">matrix</span> stream attached · neural route stable</p>
-            </div>
           </div>
         </div>
         <div class="status-strip" aria-label="站点内容概览">
@@ -237,64 +222,5 @@
       <span>© 2026 Haidong</span>
       <span>Quiet tools and long-term notes.</span>
     </footer>
-    <script>
-      (() => {
-        const canvas = document.querySelector(".matrix-rain");
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-        if (!canvas || reduceMotion || coarsePointer) return;
-        const ctx = canvas.getContext("2d");
-        const glyphs = "01AIWORKFLOWNODEPROMPT{}[]<>/|";
-        let width = 0;
-        let height = 0;
-        let columns = [];
-        let lastDraw = 0;
-        let running = true;
-        const fpsInterval = 1000 / 12;
-
-        const resize = () => {
-          const dpr = 1;
-          width = window.innerWidth;
-          height = Math.min(window.innerHeight, 900);
-          canvas.width = Math.floor(width * dpr);
-          canvas.height = Math.floor(height * dpr);
-          canvas.style.width = `${width}px`;
-          canvas.style.height = `${height}px`;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          columns = Array.from({ length: Math.ceil(width / 28) }, () => Math.random() * -height);
-        };
-
-        const draw = (time = 0) => {
-          if (!running || document.hidden || window.scrollY > window.innerHeight * 1.2) {
-            requestAnimationFrame(draw);
-            return;
-          }
-          if (time - lastDraw < fpsInterval) {
-            requestAnimationFrame(draw);
-            return;
-          }
-          lastDraw = time;
-          ctx.fillStyle = "rgba(6, 8, 12, 0.18)";
-          ctx.fillRect(0, 0, width, height);
-          ctx.font = "13px ui-monospace, SFMono-Regular, Menlo, monospace";
-          columns.forEach((y, index) => {
-            const text = glyphs[Math.floor(Math.random() * glyphs.length)];
-            const x = index * 28;
-            ctx.fillStyle = Math.random() > 0.992 ? "rgba(231, 237, 244, 0.58)" : "rgba(97, 211, 148, 0.28)";
-            ctx.fillText(text, x, y);
-            columns[index] = y > height + Math.random() * 900 ? Math.random() * -160 : y + 28;
-          });
-          requestAnimationFrame(draw);
-        };
-
-        resize();
-        draw();
-        document.addEventListener("visibilitychange", () => {
-          running = !document.hidden;
-          if (running) requestAnimationFrame(draw);
-        });
-        window.addEventListener("resize", resize, { passive: true });
-      })();
-    </script>
   </body>
 </html>

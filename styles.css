@@ -1286,3 +1286,311 @@ body::after {
     max-width: 28ch;
   }
 }
+
+/* Black-gold technology magazine direction */
+:root {
+  color-scheme: dark;
+  --ink: #f1eadc;
+  --muted: #9f988c;
+  --paper: #070706;
+  --paper-2: #11100e;
+  --line: rgba(214, 168, 79, 0.24);
+  --line-soft: rgba(214, 168, 79, 0.13);
+  --green: #d6a84f;
+  --gold: #d6a84f;
+  --blue: #d6a84f;
+  --purple: #f1eadc;
+  --white: #fff8e8;
+}
+
+body {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(214, 168, 79, 0.16), transparent 32vw),
+    linear-gradient(180deg, #050504 0%, #0d0c0a 48%, #050504 100%);
+  color: var(--ink);
+  font-family: ui-serif, "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
+}
+
+body::before {
+  background-image:
+    linear-gradient(rgba(214, 168, 79, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(214, 168, 79, 0.055) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.72), transparent 75%);
+}
+
+body::after,
+.scanline-layer,
+.matrix-rain {
+  display: none;
+}
+
+.site-header {
+  background: rgba(5, 5, 4, 0.82);
+  border-bottom-color: var(--line-soft);
+  box-shadow: none;
+}
+
+.brand {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.brand-mark {
+  border: 1px solid var(--line);
+  background: rgba(214, 168, 79, 0.08);
+  box-shadow: none;
+}
+
+.nav a {
+  color: rgba(241, 234, 220, 0.72);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+.nav a:hover {
+  background: rgba(214, 168, 79, 0.1);
+  color: var(--ink);
+}
+
+.hero {
+  min-height: 94vh;
+  padding-top: 120px;
+}
+
+.hero-media img {
+  opacity: 0.22;
+  filter: grayscale(1) sepia(0.35) contrast(1.2) brightness(0.56);
+}
+
+.hero-shade {
+  background:
+    linear-gradient(90deg, rgba(5, 5, 4, 0.98) 0%, rgba(5, 5, 4, 0.84) 48%, rgba(5, 5, 4, 0.44) 100%),
+    linear-gradient(180deg, rgba(214, 168, 79, 0.08), rgba(5, 5, 4, 0.9));
+}
+
+.hero-content {
+  width: min(900px, 100%);
+  padding-top: clamp(28px, 5vw, 70px);
+  border-top: 1px solid var(--line);
+}
+
+.hero-content::after {
+  content: "HAIDONG";
+  right: clamp(-120px, -8vw, -40px);
+  bottom: -34px;
+  color: rgba(214, 168, 79, 0.08);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(84px, 14vw, 190px);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  writing-mode: horizontal-tb;
+}
+
+.eyebrow,
+.section-kicker,
+.card-meta {
+  color: var(--gold);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  letter-spacing: 0.18em;
+}
+
+.hero h1 {
+  max-width: 8em;
+  font-size: clamp(82px, 12vw, 168px);
+  line-height: 0.92;
+  font-weight: 500;
+  background: linear-gradient(90deg, #fff8e8, #d6a84f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+}
+
+.hero-copy {
+  max-width: 680px;
+  margin-top: 30px;
+  color: rgba(241, 234, 220, 0.72);
+  font-size: clamp(17px, 1.6vw, 21px);
+  line-height: 1.9;
+}
+
+.magazine-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+.magazine-meta span {
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  color: rgba(241, 234, 220, 0.72);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+
+.button {
+  border-radius: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.button.primary {
+  background: var(--gold);
+  color: #080705;
+  box-shadow: none;
+}
+
+.button.ghost {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.status-strip {
+  border-top-color: var(--line);
+  background: transparent;
+  color: rgba(241, 234, 220, 0.62);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+.status-strip strong {
+  color: var(--gold);
+  letter-spacing: 0.12em;
+}
+
+h2,
+h3 {
+  font-family: ui-serif, "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
+  font-weight: 520;
+}
+
+.intro,
+.pulse-section,
+.place-section,
+.site-footer,
+.post-list,
+.post-row {
+  border-color: var(--line-soft);
+}
+
+.intro-grid {
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+
+.intro p,
+.pulse-grid p,
+.tool-card p,
+.post-row p,
+.place-copy p {
+  color: rgba(241, 234, 220, 0.62);
+}
+
+.pulse-grid {
+  gap: 1px;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+
+.pulse-grid article {
+  min-height: 230px;
+  padding: 24px;
+  background: rgba(10, 9, 7, 0.78);
+}
+
+.pulse-grid span {
+  color: var(--gold);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+.tool-grid,
+.place-notes {
+  border-color: var(--line-soft);
+  background: var(--line-soft);
+  border-radius: 0;
+}
+
+.tool-card,
+.feature-card,
+.place-notes span {
+  background: rgba(10, 9, 7, 0.82);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.tool-card:hover {
+  background: rgba(18, 16, 12, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(214, 168, 79, 0.34);
+}
+
+.tool-card h3,
+.post-row h3 {
+  font-size: 24px;
+}
+
+.tool-card a,
+.text-link,
+.feature-card a,
+.post-row time,
+.place-notes span {
+  color: var(--gold);
+}
+
+.tool-facts {
+  color: rgba(241, 234, 220, 0.5);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+.place-notes span {
+  min-height: 118px;
+  background: rgba(214, 168, 79, 0.055);
+}
+
+.writing-band {
+  background: rgba(214, 168, 79, 0.025);
+}
+
+.post-row {
+  padding: 32px 0;
+}
+
+.site-footer {
+  color: rgba(241, 234, 220, 0.55);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+
+@media (max-width: 620px) {
+  .site-header {
+    background: rgba(5, 5, 4, 0.9);
+  }
+
+  .hero {
+    min-height: 92svh;
+    padding-top: 66px;
+  }
+
+  .hero-content {
+    padding-top: 26px;
+  }
+
+  .hero h1 {
+    font-size: clamp(66px, 18vw, 92px);
+    line-height: 0.96;
+  }
+
+  .hero-content::after {
+    display: block;
+    right: 0;
+    bottom: -58px;
+    font-size: 54px;
+  }
+
+  .magazine-meta span {
+    font-size: 10px;
+  }
+
+  .pulse-grid article {
+    min-height: auto;
+  }
+}
