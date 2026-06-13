@@ -883,6 +883,175 @@ h2 {
   }
 }
 
+/* Compact black-gold tool index */
+.magazine-cover {
+  position: relative;
+  z-index: 1;
+  width: var(--content);
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
+  gap: clamp(28px, 5vw, 76px);
+  align-items: end;
+}
+
+.magazine-cover .hero-content {
+  width: 100%;
+}
+
+.cover-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+  background: var(--line-soft);
+}
+
+.cover-tool {
+  min-height: 118px;
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  padding: 18px;
+  background: rgba(10, 9, 7, 0.84);
+  color: var(--ink);
+}
+
+.cover-tool:hover {
+  background: rgba(24, 20, 13, 0.95);
+  box-shadow: inset 0 0 0 1px rgba(214, 168, 79, 0.34);
+}
+
+.cover-tool span,
+.cover-tool em {
+  color: rgba(241, 234, 220, 0.56);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cover-tool strong {
+  color: var(--gold);
+  font-size: clamp(22px, 2.2vw, 34px);
+  font-weight: 520;
+  line-height: 1.05;
+}
+
+.cover-tool.primary {
+  background: rgba(214, 168, 79, 0.12);
+}
+
+.compact-note {
+  width: var(--content);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: -18px auto 38px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+  color: rgba(241, 234, 220, 0.58);
+}
+
+.compact-note span {
+  color: var(--gold);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.compact-note p {
+  max-width: 560px;
+  margin: 0;
+  text-align: right;
+}
+
+.hero .status-strip,
+.intro,
+.pulse-section,
+#tools.section,
+.place-section,
+.writing-band {
+  display: none;
+}
+
+.hero {
+  min-height: calc(100svh - 72px);
+  padding-bottom: 70px;
+}
+
+.hero-content {
+  padding-top: clamp(22px, 4vw, 54px);
+}
+
+.hero h1 {
+  font-size: clamp(78px, 10vw, 148px);
+}
+
+.hero-copy {
+  max-width: 520px;
+}
+
+.magazine-meta {
+  margin-top: 22px;
+}
+
+.hero-actions {
+  margin-top: 24px;
+}
+
+@media (max-width: 880px) {
+  .magazine-cover {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .cover-tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compact-note {
+    margin-top: 0;
+    flex-direction: column;
+  }
+
+  .compact-note p {
+    text-align: left;
+  }
+}
+
+@media (max-width: 620px) {
+  .magazine-cover {
+    width: 100%;
+    gap: 24px;
+  }
+
+  .cover-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .cover-tool {
+    min-height: 88px;
+    padding: 15px;
+  }
+
+  .cover-tool strong {
+    font-size: 23px;
+  }
+
+  .compact-note {
+    width: calc(100% - 32px);
+    margin-bottom: 26px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-bottom: 44px;
+  }
+}
+
 /* Final effective code theme */
 :root {
   color-scheme: dark;
