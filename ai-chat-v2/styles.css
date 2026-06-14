@@ -258,6 +258,38 @@ h1{
 }
 .models{margin-top:10px}
 .model.is-hidden{display:none}
+.token-meter{
+  width:max-content;
+  max-width:100%;
+  min-height:30px;
+  margin:12px auto 0;
+  padding:5px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.34);
+  color:var(--muted);
+  font-size:11.5px;
+  line-height:1.2;
+}
+[data-theme="dark"] .token-meter{background:rgba(255,255,255,.035)}
+.token-meter span{
+  font-size:10px;
+  font-weight:720;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.token-meter strong{
+  color:var(--text);
+  font-size:12px;
+  font-weight:760;
+}
+.token-meter em{
+  font-style:normal;
+}
 
 .conversation{
   min-height:0;
@@ -308,6 +340,19 @@ h1{
 }
 .message.ai{background:transparent}
 .message .model-tag{margin-bottom:6px;color:var(--muted);font-size:12px}
+.token-usage{
+  width:max-content;
+  max-width:100%;
+  margin-top:8px;
+  padding:4px 8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  background:rgba(255,255,255,.28);
+  font-size:11px;
+  line-height:1.25;
+}
+[data-theme="dark"] .token-usage{background:rgba(255,255,255,.035)}
 .message .generated-image{display:block;max-width:min(100%,420px);border-radius:18px;margin:0 0 12px}
 .error-text{color:#c94a4a}
 
@@ -430,6 +475,19 @@ textarea::placeholder{color:var(--muted);opacity:.72}
     font-size:11.2px;
     line-height:1.14;
     overflow:hidden;
+  }
+  .token-meter{
+    width:100%;
+    min-height:34px;
+    margin-top:9px;
+    justify-content:space-between;
+    font-size:10.5px;
+  }
+  .token-meter em{
+    max-width:54%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .conversation{align-items:flex-start;justify-content:flex-start;text-align:left;padding-top:4px}
   .empty-copy strong{

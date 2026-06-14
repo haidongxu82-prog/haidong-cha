@@ -35,6 +35,7 @@ let currentModel = modelData.chat?.[0]?.id || "GPT-5.4 Pro";
 let messages = [];
 let conversationId = makeId();
 let abortController = null;
+let tokenTotals = { prompt: 0, completion: 0, total: 0, estimated: false };
 
 const root = document.documentElement;
 const historyButton = document.querySelector(".rail-btn.history");
@@ -48,6 +49,7 @@ const composer = document.querySelector(".composer");
 const composerTextarea = document.querySelector(".composer textarea");
 const sendButton = document.querySelector(".composer button");
 const modelsWrap = document.querySelector(".models");
+const tokenMeter = document.querySelector(".token-meter");
 
 function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -66,6 +68,71 @@ function renderText(value) {
   const image = imageMatch ? `<img class="generated-image" src="${imageMatch[1]}" alt="生成图片">` : "";
   const cleanText = imageMatch ? text.replace(imageMatch[0], "").trim() : text;
   return `${image}${escapeHtml(cleanText).replace(/\n/g, "<br>")}`;
+}
+
+function estimateTokens(value) {
+  const text = String(value || "").trim();
+  if (!text) return 0;
+  const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+  const latinWords = (text.match(/[A-Za-z0-9_]+/g) || []).length;
+  const otherChars = Math.max(0, [...text].length - chineseChars);
+  return Math.max(1, Math.ceil(chineseChars * 0.72 + latinWords * 1.25 + otherChars * 0.22));
+}
+
+function normalizeUsage(payload) {
+  const usage = payload?.usage || payload?.data?.usage || payload?.response?.usage;
+  if (!usage || typeof usage !== "object") return null;
+  const prompt = Number(usage.prompt_tokens ?? usage.input_tokens ?? usage.prompt ?? 0);
+  const completion = Number(usage.completion_tokens ?? usage.output_tokens ?? usage.completion ?? 0);
+  const total = Number(usage.total_tokens ?? usage.total ?? prompt + completion);
+  if (!prompt && !completion && !total) return null;
+  return {
+    prompt: Math.max(0, prompt || Math.max(0, total - completion)),
+    completion: Math.max(0, completion),
+    total: Math.max(0, total || prompt + completion),
+    estimated: false,
+  };
+}
+
+function estimateUsage(input, output) {
+  const prompt = estimateTokens(input);
+  const completion = estimateTokens(output);
+  return { prompt, completion, total: prompt + completion, estimated: true };
+}
+
+function formatUsage(usage) {
+  const prefix = usage.estimated ? "约 " : "";
+  return `${prefix}${usage.total.toLocaleString()} tokens · 输入 ${usage.prompt.toLocaleString()} / 输出 ${usage.completion.toLocaleString()}`;
+}
+
+function addUsage(usage) {
+  tokenTotals.prompt += usage.prompt;
+  tokenTotals.completion += usage.completion;
+  tokenTotals.total += usage.total;
+  tokenTotals.estimated = tokenTotals.estimated || usage.estimated;
+  updateTokenMeter();
+}
+
+function updateTokenMeter() {
+  if (!tokenMeter) return;
+  const total = tokenMeter.querySelector("strong");
+  const note = tokenMeter.querySelector("em");
+  if (total) total.textContent = tokenTotals.total.toLocaleString();
+  if (note) {
+    const prefix = tokenTotals.estimated ? "含估算" : "真实用量";
+    note.textContent = `${prefix} · 输入 ${tokenTotals.prompt.toLocaleString()} / 输出 ${tokenTotals.completion.toLocaleString()}`;
+  }
+}
+
+function attachUsage(message, usage) {
+  if (!message || !usage) return;
+  let meta = message.querySelector(".token-usage");
+  if (!meta) {
+    meta = document.createElement("div");
+    meta.className = "token-usage";
+    message.appendChild(meta);
+  }
+  meta.textContent = formatUsage(usage);
 }
 
 function setBusy(busy) {
@@ -154,6 +221,7 @@ async function sendMessage() {
   const aiMessage = appendMessage("ai", "", currentModel);
   const bubble = aiMessage.querySelector(".bubble");
   let reply = "";
+  let responseUsage = null;
   abortController = new AbortController();
   setBusy(true);
 
@@ -192,6 +260,7 @@ async function sendMessage() {
         if (data === "[DONE]") continue;
         const parsed = JSON.parse(data);
         if (parsed.error) throw new Error(parsed.error);
+        responseUsage = normalizeUsage(parsed) || responseUsage;
         const delta = parsed.choices?.[0]?.delta?.content || "";
         if (!delta) continue;
         reply += delta;
@@ -200,6 +269,9 @@ async function sendMessage() {
       }
     }
 
+    const finalUsage = responseUsage || estimateUsage(text, reply);
+    addUsage(finalUsage);
+    attachUsage(aiMessage, finalUsage);
     messages.push({ role: "assistant", content: reply });
     await saveMessage("assistant", reply);
   } catch (error) {
@@ -215,6 +287,8 @@ async function sendMessage() {
 function resetChat() {
   messages = [];
   conversationId = makeId();
+  tokenTotals = { prompt: 0, completion: 0, total: 0, estimated: false };
+  updateTokenMeter();
   conversation.innerHTML = "";
   conversation.classList.remove("has-messages");
   composerTextarea.value = "";
@@ -320,3 +394,4 @@ composerTextarea.addEventListener("keydown", (event) => {
 });
 
 renderModels();
+updateTokenMeter();
