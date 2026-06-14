@@ -36,13 +36,23 @@ let messages = [];
 let conversationId = makeId();
 let abortController = null;
 let tokenTotals = { prompt: 0, completion: 0, total: 0, estimated: false };
+const TOKEN_LOG_KEY = "haidong_ai_token_log";
+const GUEST_MODE_KEY = "haidong_ai_guest_mode";
+let tokenLog = readTokenLog();
+let guestMode = localStorage.getItem(GUEST_MODE_KEY) === "1";
 
 const root = document.documentElement;
 const historyButton = document.querySelector(".rail-btn.history");
+const tokenButton = document.querySelector(".rail-btn.token");
+const guestButton = document.querySelector(".rail-btn.guest");
 const themeButton = document.querySelector(".rail-btn.theme");
 const drawerClose = document.querySelector(".drawer-close");
+const tokenClose = document.querySelector(".token-close");
+const guestClose = document.querySelector(".guest-close");
 const historyDrawer = document.querySelector(".history-drawer");
 const historyList = document.querySelector(".history-drawer");
+const tokenDrawer = document.querySelector(".token-drawer");
+const guestDrawer = document.querySelector(".guest-drawer");
 const newChatButton = document.querySelector(".new-chat");
 const conversation = document.querySelector(".conversation");
 const composer = document.querySelector(".composer");
@@ -50,6 +60,9 @@ const composerTextarea = document.querySelector(".composer textarea");
 const sendButton = document.querySelector(".composer button");
 const modelsWrap = document.querySelector(".models");
 const tokenMeter = document.querySelector(".token-meter");
+const guestTitle = document.querySelector("[data-guest-title]");
+const guestCopy = document.querySelector("[data-guest-copy]");
+const guestToggle = document.querySelector(".guest-toggle");
 
 function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -94,6 +107,19 @@ function normalizeUsage(payload) {
   };
 }
 
+function readTokenLog() {
+  try {
+    const value = JSON.parse(localStorage.getItem(TOKEN_LOG_KEY) || "[]");
+    return Array.isArray(value) ? value.slice(0, 80) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeTokenLog() {
+  localStorage.setItem(TOKEN_LOG_KEY, JSON.stringify(tokenLog.slice(0, 80)));
+}
+
 function estimateUsage(input, output) {
   const prompt = estimateTokens(input);
   const completion = estimateTokens(output);
@@ -110,7 +136,18 @@ function addUsage(usage) {
   tokenTotals.completion += usage.completion;
   tokenTotals.total += usage.total;
   tokenTotals.estimated = tokenTotals.estimated || usage.estimated;
+  tokenLog.unshift({
+    at: new Date().toISOString(),
+    model: currentModel,
+    group: currentGroup,
+    prompt: usage.prompt,
+    completion: usage.completion,
+    total: usage.total,
+    estimated: usage.estimated,
+  });
+  writeTokenLog();
   updateTokenMeter();
+  renderTokenDrawer();
 }
 
 function updateTokenMeter() {
@@ -126,6 +163,47 @@ function updateTokenMeter() {
     const prefix = tokenTotals.estimated ? "含估算" : "真实用量";
     note.textContent = `${prefix} · 输入 ${tokenTotals.prompt.toLocaleString()} / 输出 ${tokenTotals.completion.toLocaleString()}`;
   }
+}
+
+function renderTokenDrawer() {
+  const current = document.querySelector("[data-token-current]");
+  const history = document.querySelector("[data-token-history]");
+  const input = document.querySelector("[data-token-input]");
+  const output = document.querySelector("[data-token-output]");
+  const mode = document.querySelector("[data-token-mode]");
+  const log = document.querySelector("[data-token-log]");
+  const historyTotal = tokenLog.reduce((sum, item) => sum + Number(item.total || 0), 0);
+  if (current) current.textContent = tokenTotals.total.toLocaleString();
+  if (history) history.textContent = historyTotal.toLocaleString();
+  if (input) input.textContent = `输入 ${tokenTotals.prompt.toLocaleString()}`;
+  if (output) output.textContent = `输出 ${tokenTotals.completion.toLocaleString()}`;
+  if (mode) mode.textContent = tokenTotals.estimated ? "当前含估算" : tokenTotals.total ? "当前真实用量" : "等待对话";
+  if (!log) return;
+  if (!tokenLog.length) {
+    log.innerHTML = "<p>暂无消耗记录</p>";
+    return;
+  }
+  log.innerHTML = tokenLog
+    .slice(0, 30)
+    .map((item) => {
+      const time = new Date(item.at).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+      const flag = item.estimated ? "估算" : "真实";
+      return `<div class="token-log-item"><strong>${escapeHtml(item.model || "AI")}</strong><span>${Number(item.total || 0).toLocaleString()} tokens · 输入 ${Number(item.prompt || 0).toLocaleString()} / 输出 ${Number(item.completion || 0).toLocaleString()}</span><small>${time} · ${flag}</small></div>`;
+    })
+    .join("");
+}
+
+function updateGuestMode() {
+  document.body.classList.toggle("guest-mode", guestMode);
+  guestButton?.classList.toggle("is-active", guestMode);
+  guestButton?.setAttribute("aria-pressed", guestMode ? "true" : "false");
+  if (guestTitle) guestTitle.textContent = guestMode ? "已开启" : "已关闭";
+  if (guestCopy) {
+    guestCopy.textContent = guestMode
+      ? "当前会以游客身份发送请求。如果后端已开放游客权限，就可以直接使用。"
+      : "开启后，前端会以游客身份发送请求；如果后端允许游客访问，就可以直接对话。";
+  }
+  if (guestToggle) guestToggle.textContent = guestMode ? "关闭游客模式" : "开启游客模式";
 }
 
 function attachUsage(message, usage) {
@@ -233,8 +311,8 @@ async function sendMessage() {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: currentModel, messages }),
+      headers: { "Content-Type": "application/json", "X-Guest-Mode": guestMode ? "1" : "0" },
+      body: JSON.stringify({ model: currentModel, messages, guest: guestMode }),
       signal: abortController.signal,
     });
 
@@ -292,7 +370,11 @@ async function sendMessage() {
     await saveMessage("assistant", reply);
   } catch (error) {
     if (error.name !== "AbortError") {
-      bubble.innerHTML = `<span class="error-text">${escapeHtml(error.message || "发送失败")}</span>`;
+      const message = String(error.message || "发送失败");
+      const authHint = /401|403|未授权|unauthorized|forbidden/i.test(message)
+        ? "后端未开放当前访问权限。可以尝试开启游客模式；如果仍失败，需要服务器接口允许游客请求。"
+        : message;
+      bubble.innerHTML = `<span class="error-text">${escapeHtml(authHint)}</span>`;
     }
   } finally {
     abortController = null;
@@ -305,6 +387,7 @@ function resetChat() {
   conversationId = makeId();
   tokenTotals = { prompt: 0, completion: 0, total: 0, estimated: false };
   updateTokenMeter();
+  renderTokenDrawer();
   conversation.innerHTML = "";
   conversation.classList.remove("has-messages");
   composerTextarea.value = "";
@@ -313,6 +396,8 @@ function resetChat() {
 }
 
 function openHistory() {
+  closeTokenDrawer();
+  closeGuestDrawer();
   document.body.classList.add("history-open");
   historyButton.setAttribute("aria-expanded", "true");
   loadHistory();
@@ -321,6 +406,30 @@ function openHistory() {
 function closeHistory() {
   document.body.classList.remove("history-open");
   historyButton.setAttribute("aria-expanded", "false");
+}
+
+function openTokenDrawer() {
+  closeHistory();
+  closeGuestDrawer();
+  renderTokenDrawer();
+  document.body.classList.add("token-open");
+  tokenButton?.setAttribute("aria-expanded", "true");
+}
+
+function closeTokenDrawer() {
+  document.body.classList.remove("token-open");
+  tokenButton?.setAttribute("aria-expanded", "false");
+}
+
+function openGuestDrawer() {
+  closeHistory();
+  closeTokenDrawer();
+  updateGuestMode();
+  document.body.classList.add("guest-open");
+}
+
+function closeGuestDrawer() {
+  document.body.classList.remove("guest-open");
 }
 
 async function loadHistory() {
@@ -376,12 +485,33 @@ historyButton.addEventListener("click", () => {
   document.body.classList.contains("history-open") ? closeHistory() : openHistory();
 });
 
+tokenButton?.addEventListener("click", () => {
+  document.body.classList.contains("token-open") ? closeTokenDrawer() : openTokenDrawer();
+});
+
+guestButton?.addEventListener("click", () => {
+  document.body.classList.contains("guest-open") ? closeGuestDrawer() : openGuestDrawer();
+});
+
 drawerClose.addEventListener("click", closeHistory);
+tokenClose?.addEventListener("click", closeTokenDrawer);
+guestClose?.addEventListener("click", closeGuestDrawer);
+guestToggle?.addEventListener("click", () => {
+  guestMode = !guestMode;
+  localStorage.setItem(GUEST_MODE_KEY, guestMode ? "1" : "0");
+  updateGuestMode();
+});
 
 document.addEventListener("pointerdown", (event) => {
-  if (!document.body.classList.contains("history-open")) return;
-  if (historyDrawer.contains(event.target) || historyButton.contains(event.target)) return;
-  closeHistory();
+  if (document.body.classList.contains("history-open")) {
+    if (!historyDrawer.contains(event.target) && !historyButton.contains(event.target)) closeHistory();
+  }
+  if (document.body.classList.contains("token-open")) {
+    if (!tokenDrawer.contains(event.target) && !tokenButton.contains(event.target)) closeTokenDrawer();
+  }
+  if (document.body.classList.contains("guest-open")) {
+    if (!guestDrawer.contains(event.target) && !guestButton.contains(event.target)) closeGuestDrawer();
+  }
 });
 
 newChatButton.addEventListener("click", resetChat);
@@ -411,3 +541,5 @@ composerTextarea.addEventListener("keydown", (event) => {
 
 renderModels();
 updateTokenMeter();
+renderTokenDrawer();
+updateGuestMode();

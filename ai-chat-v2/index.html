@@ -24,6 +24,8 @@
       </svg>
     </a>
     <button class="rail-btn history" type="button" aria-label="历史" aria-expanded="false"></button>
+    <button class="rail-btn token" type="button" aria-label="Token 消耗" aria-expanded="false"></button>
+    <button class="rail-btn guest" type="button" aria-label="游客模式" aria-pressed="false"></button>
     <button class="rail-btn theme" type="button" aria-label="切换主题"></button>
   </aside>
 
@@ -44,6 +46,43 @@
       <span>图片生成提示词</span>
       <small>周三</small>
     </button>
+  </aside>
+
+  <aside class="token-drawer" aria-label="Token 消耗">
+    <div class="drawer-head">
+      <span>Token 消耗</span>
+      <button class="token-close" type="button" aria-label="关闭 Token 面板"></button>
+    </div>
+    <div class="token-summary">
+      <div>
+        <span>本次对话</span>
+        <strong data-token-current>0</strong>
+      </div>
+      <div>
+        <span>历史累计</span>
+        <strong data-token-history>0</strong>
+      </div>
+    </div>
+    <div class="token-detail">
+      <span data-token-input>输入 0</span>
+      <span data-token-output>输出 0</span>
+      <span data-token-mode>等待对话</span>
+    </div>
+    <div class="token-log" data-token-log>
+      <p>暂无消耗记录</p>
+    </div>
+  </aside>
+
+  <aside class="guest-drawer" aria-label="游客模式">
+    <div class="drawer-head">
+      <span>游客模式</span>
+      <button class="guest-close" type="button" aria-label="关闭游客模式面板"></button>
+    </div>
+    <div class="guest-card">
+      <strong data-guest-title>已关闭</strong>
+      <p data-guest-copy>开启后，前端会以游客身份发送请求；如果后端允许游客访问，就可以直接对话。</p>
+      <button class="guest-toggle" type="button">开启游客模式</button>
+    </div>
   </aside>
 
   <main class="shell">
