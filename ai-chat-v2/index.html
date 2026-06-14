@@ -56,6 +56,11 @@
 
     <section class="workspace">
       <section class="model-wall" aria-label="模型墙">
+        <div class="token-meter" aria-live="polite">
+          <span>本次消耗</span>
+          <strong>0 tokens</strong>
+          <em>等待对话</em>
+        </div>
         <div class="mode-tabs">
           <button class="mode active" data-group="chat" type="button">对话</button>
           <button class="mode" data-group="image" type="button">生图</button>
@@ -81,11 +86,6 @@
           <button class="model is-hidden" data-group="image" type="button">🎨 GPT-Image-1</button>
           <button class="model is-hidden" data-group="image" type="button">📸 Gemini 3.1 Image</button>
           <button class="model is-hidden" data-group="image" type="button">✨ Gemini 2.5 Image</button>
-        </div>
-        <div class="token-meter" aria-live="polite">
-          <span>Tokens</span>
-          <strong>0</strong>
-          <em>本轮对话消耗统计</em>
         </div>
       </section>
 

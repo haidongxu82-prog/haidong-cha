@@ -117,8 +117,12 @@ function updateTokenMeter() {
   if (!tokenMeter) return;
   const total = tokenMeter.querySelector("strong");
   const note = tokenMeter.querySelector("em");
-  if (total) total.textContent = tokenTotals.total.toLocaleString();
+  if (total) total.textContent = `${tokenTotals.total.toLocaleString()} tokens`;
   if (note) {
+    if (!tokenTotals.total) {
+      note.textContent = "等待对话";
+      return;
+    }
     const prefix = tokenTotals.estimated ? "含估算" : "真实用量";
     note.textContent = `${prefix} · 输入 ${tokenTotals.prompt.toLocaleString()} / 输出 ${tokenTotals.completion.toLocaleString()}`;
   }
@@ -133,6 +137,7 @@ function attachUsage(message, usage) {
     message.appendChild(meta);
   }
   meta.textContent = formatUsage(usage);
+  meta.scrollIntoView({ block: "end", behavior: "smooth" });
 }
 
 function setBusy(busy) {
@@ -237,35 +242,46 @@ async function sendMessage() {
     if (contentType.includes("application/json")) {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      throw new Error("接口没有返回可显示内容");
-    }
+      responseUsage = normalizeUsage(data) || responseUsage;
+      reply =
+        data.content ||
+        data.message ||
+        data.reply ||
+        data.response ||
+        data.choices?.[0]?.message?.content ||
+        data.choices?.[0]?.text ||
+        "";
+      if (!reply) throw new Error("接口没有返回可显示内容");
+      bubble.innerHTML = renderText(reply);
+      aiMessage.scrollIntoView({ block: "end", behavior: "smooth" });
+    } else {
+      if (!response.ok || !response.body) throw new Error(`接口返回 ${response.status}`);
 
-    if (!response.ok || !response.body) throw new Error(`接口返回 ${response.status}`);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split("\n\n");
+        buffer = chunks.pop() || "";
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const chunks = buffer.split("\n\n");
-      buffer = chunks.pop() || "";
-
-      for (const chunk of chunks) {
-        const line = chunk.split("\n").find((item) => item.startsWith("data: "));
-        if (!line) continue;
-        const data = line.slice(6).trim();
-        if (data === "[DONE]") continue;
-        const parsed = JSON.parse(data);
-        if (parsed.error) throw new Error(parsed.error);
-        responseUsage = normalizeUsage(parsed) || responseUsage;
-        const delta = parsed.choices?.[0]?.delta?.content || "";
-        if (!delta) continue;
-        reply += delta;
-        bubble.innerHTML = renderText(reply);
-        aiMessage.scrollIntoView({ block: "end", behavior: "smooth" });
+        for (const chunk of chunks) {
+          const line = chunk.split("\n").find((item) => item.startsWith("data: "));
+          if (!line) continue;
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") continue;
+          const parsed = JSON.parse(data);
+          if (parsed.error) throw new Error(parsed.error);
+          responseUsage = normalizeUsage(parsed) || responseUsage;
+          const delta = parsed.choices?.[0]?.delta?.content || "";
+          if (!delta) continue;
+          reply += delta;
+          bubble.innerHTML = renderText(reply);
+          aiMessage.scrollIntoView({ block: "end", behavior: "smooth" });
+        }
       }
     }
 
