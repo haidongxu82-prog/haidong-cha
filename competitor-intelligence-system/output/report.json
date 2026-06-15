@@ -1,0 +1,590 @@
+{
+  "results": [
+    {
+      "shop": {
+        "platform": "douyin",
+        "shop_name": "民族风竞品A",
+        "shop_url": "https://example.com/douyin/shop-a",
+        "category": "民族服饰"
+      },
+      "products": [
+        {
+          "product_name": "民族风刺绣衬衫",
+          "price": 129.0,
+          "sales": 980,
+          "publish_time": "2026-06-15 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/douyin/shop-a/image-1.jpg",
+          "image_style": "极简白底",
+          "sales_rank": 1,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "high"
+        },
+        {
+          "product_name": "妈妈装宽松套装",
+          "price": 139.0,
+          "sales": 860,
+          "publish_time": "2026-06-13 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/douyin/shop-a/image-2.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 2,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "high"
+        },
+        {
+          "product_name": "基础福利T恤",
+          "price": 29.0,
+          "sales": 760,
+          "publish_time": "2026-06-09 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-4.jpg",
+          "image_style": "促销风",
+          "sales_rank": 3,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "直播福利打底衫",
+          "price": 19.0,
+          "sales": 680,
+          "publish_time": "2026-05-30 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-9.jpg",
+          "image_style": "促销风",
+          "sales_rank": 4,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "新中式盘扣上衣",
+          "price": 169.0,
+          "sales": 520,
+          "publish_time": "2026-06-11 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/douyin/shop-a/image-3.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 5,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "高腰阔腿休闲裤",
+          "price": 99.0,
+          "sales": 430,
+          "publish_time": "2026-06-07 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-5.jpg",
+          "image_style": "极简白底",
+          "sales_rank": 6,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "民族风半身裙",
+          "price": 119.0,
+          "sales": 360,
+          "publish_time": "2026-05-26 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/douyin/shop-a/image-11.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 7,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "轻薄防晒开衫",
+          "price": 69.0,
+          "sales": 310,
+          "publish_time": "2026-06-05 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-6.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 8,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "复古印花短袖",
+          "price": 59.0,
+          "sales": 220,
+          "publish_time": "2026-06-03 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-7.jpg",
+          "image_style": "促销风",
+          "sales_rank": 9,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "通勤桑蚕丝感衬衫",
+          "price": 199.0,
+          "sales": 190,
+          "publish_time": "2026-05-28 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-10.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 10,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "香云纱感上衣",
+          "price": 229.0,
+          "sales": 160,
+          "publish_time": "2026-06-01 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-8.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 11,
+          "is_hot": false,
+          "sku_type": "利润款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "小香风短外套",
+          "price": 189.0,
+          "sales": 140,
+          "publish_time": "2026-05-24 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/douyin/shop-a/image-12.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 12,
+          "is_hot": false,
+          "sku_type": "利润款",
+          "sales_level": "low"
+        }
+      ],
+      "analysis": {
+        "爆款占比": 0.8333,
+        "SKU结构": {
+          "爆款": 10,
+          "利润款": 2
+        },
+        "价格带分布": {
+          "0-30": 2,
+          "30-60": 1,
+          "60-100": 2,
+          "100+": 7
+        },
+        "上新频率": "稳定上新",
+        "商品数": 12,
+        "总销量": 5610,
+        "均价": 120.67
+      },
+      "trends": {
+        "dominant_image_styles": {
+          "品牌质感": 4,
+          "生活场景": 3,
+          "促销风": 3,
+          "极简白底": 2
+        },
+        "dominant_categories": {
+          "女装": 8,
+          "民族服饰": 4
+        },
+        "hot_product_image_styles": {
+          "生活场景": 3,
+          "促销风": 3,
+          "极简白底": 2,
+          "品牌质感": 2
+        }
+      },
+      "profile": {
+        "shop_name": "民族风竞品A",
+        "platform": "douyin",
+        "category": "民族服饰",
+        "model_guess": "爆款集中型",
+        "top_products": [
+          {
+            "product_name": "民族风刺绣衬衫",
+            "price": 129.0,
+            "sales": 980,
+            "publish_time": "2026-06-15 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/douyin/shop-a/image-1.jpg",
+            "image_style": "极简白底",
+            "sales_rank": 1,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "high"
+          },
+          {
+            "product_name": "妈妈装宽松套装",
+            "price": 139.0,
+            "sales": 860,
+            "publish_time": "2026-06-13 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/douyin/shop-a/image-2.jpg",
+            "image_style": "生活场景",
+            "sales_rank": 2,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "high"
+          },
+          {
+            "product_name": "基础福利T恤",
+            "price": 29.0,
+            "sales": 760,
+            "publish_time": "2026-06-09 10:00:00",
+            "category": "女装",
+            "image_url": "https://example.com/douyin/shop-a/image-4.jpg",
+            "image_style": "促销风",
+            "sales_rank": 3,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          },
+          {
+            "product_name": "直播福利打底衫",
+            "price": 19.0,
+            "sales": 680,
+            "publish_time": "2026-05-30 10:00:00",
+            "category": "女装",
+            "image_url": "https://example.com/douyin/shop-a/image-9.jpg",
+            "image_style": "促销风",
+            "sales_rank": 4,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          },
+          {
+            "product_name": "新中式盘扣上衣",
+            "price": 169.0,
+            "sales": 520,
+            "publish_time": "2026-06-11 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/douyin/shop-a/image-3.jpg",
+            "image_style": "品牌质感",
+            "sales_rank": 5,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          }
+        ],
+        "analysis": {
+          "爆款占比": 0.8333,
+          "SKU结构": {
+            "爆款": 10,
+            "利润款": 2
+          },
+          "价格带分布": {
+            "0-30": 2,
+            "30-60": 1,
+            "60-100": 2,
+            "100+": 7
+          },
+          "上新频率": "稳定上新",
+          "商品数": 12,
+          "总销量": 5610,
+          "均价": 120.67
+        }
+      },
+      "prompt": "你是电商竞品分析专家，请根据以下数据分析该店铺的起店逻辑：\n\n【店铺结构数据】\n{'爆款占比': 0.8333, 'SKU结构': {'爆款': 10, '利润款': 2}, '价格带分布': {'0-30': 2, '30-60': 1, '60-100': 2, '100+': 7}, '上新频率': '稳定上新', '商品数': 12, '总销量': 5610, '均价': 120.67}\n\n【SKU明细摘要】\n[{'product_name': '民族风刺绣衬衫', 'price': 129.0, 'sales': 980, 'publish_time': '2026-06-15 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/douyin/shop-a/image-1.jpg', 'image_style': '极简白底', 'sales_rank': 1, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'high'}, {'product_name': '妈妈装宽松套装', 'price': 139.0, 'sales': 860, 'publish_time': '2026-06-13 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/douyin/shop-a/image-2.jpg', 'image_style': '生活场景', 'sales_rank': 2, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'high'}, {'product_name': '基础福利T恤', 'price': 29.0, 'sales': 760, 'publish_time': '2026-06-09 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-4.jpg', 'image_style': '促销风', 'sales_rank': 3, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '直播福利打底衫', 'price': 19.0, 'sales': 680, 'publish_time': '2026-05-30 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-9.jpg', 'image_style': '促销风', 'sales_rank': 4, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '新中式盘扣上衣', 'price': 169.0, 'sales': 520, 'publish_time': '2026-06-11 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/douyin/shop-a/image-3.jpg', 'image_style': '品牌质感', 'sales_rank': 5, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '高腰阔腿休闲裤', 'price': 99.0, 'sales': 430, 'publish_time': '2026-06-07 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-5.jpg', 'image_style': '极简白底', 'sales_rank': 6, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '民族风半身裙', 'price': 119.0, 'sales': 360, 'publish_time': '2026-05-26 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/douyin/shop-a/image-11.jpg', 'image_style': '生活场景', 'sales_rank': 7, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '轻薄防晒开衫', 'price': 69.0, 'sales': 310, 'publish_time': '2026-06-05 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-6.jpg', 'image_style': '生活场景', 'sales_rank': 8, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '复古印花短袖', 'price': 59.0, 'sales': 220, 'publish_time': '2026-06-03 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-7.jpg', 'image_style': '促销风', 'sales_rank': 9, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'low'}, {'product_name': '通勤桑蚕丝感衬衫', 'price': 199.0, 'sales': 190, 'publish_time': '2026-05-28 10:00:00', 'category': '女装', 'image_url': 'https://example.com/douyin/shop-a/image-10.jpg', 'image_style': '品牌质感', 'sales_rank': 10, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'low'}]\n\n请输出：\n1. 起店模型判断\n2. 选款策略\n3. 定价策略\n4. 流量策略\n5. 可复制方法",
+      "report": "# 民族风竞品A 竞品策略分析\n\n## 起店模型判断\n- 爆款集中型\n\n## 关键洞察\n- 爆款占比较高，店铺依赖少数高销量SKU拉动。\n- 价格带偏中高，具备利润款运营特征。\n\n## 选款策略\n- 爆款占比：83.33%\n- SKU结构：{'爆款': 10, '利润款': 2}\n\n## 定价策略\n- 均价：120.67\n- 价格带分布：{'0-30': 2, '30-60': 1, '60-100': 2, '100+': 7}\n\n## 流量策略\n- 热销商品视觉风格：{'生活场景': 3, '促销风': 3, '极简白底': 2, '品牌质感': 2}\n\n## 可复制方法\n- 拆解Top SKU主图、价格、标题关键词，优先复制已验证结构。\n- 引流款负责拉点击，利润款负责承接转化和毛利。\n- 每周跟踪新增SKU和爆款排名变化。\n"
+    },
+    {
+      "shop": {
+        "platform": "taobao",
+        "shop_name": "女装竞品B",
+        "shop_url": "https://example.com/taobao/shop-b",
+        "category": "女装"
+      },
+      "products": [
+        {
+          "product_name": "民族风刺绣衬衫",
+          "price": 129.0,
+          "sales": 980,
+          "publish_time": "2026-06-15 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/taobao/shop-b/image-1.jpg",
+          "image_style": "极简白底",
+          "sales_rank": 1,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "high"
+        },
+        {
+          "product_name": "妈妈装宽松套装",
+          "price": 139.0,
+          "sales": 860,
+          "publish_time": "2026-06-13 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/taobao/shop-b/image-2.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 2,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "high"
+        },
+        {
+          "product_name": "基础福利T恤",
+          "price": 29.0,
+          "sales": 760,
+          "publish_time": "2026-06-09 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-4.jpg",
+          "image_style": "促销风",
+          "sales_rank": 3,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "直播福利打底衫",
+          "price": 19.0,
+          "sales": 680,
+          "publish_time": "2026-05-30 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-9.jpg",
+          "image_style": "促销风",
+          "sales_rank": 4,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "新中式盘扣上衣",
+          "price": 169.0,
+          "sales": 520,
+          "publish_time": "2026-06-11 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/taobao/shop-b/image-3.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 5,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "高腰阔腿休闲裤",
+          "price": 99.0,
+          "sales": 430,
+          "publish_time": "2026-06-07 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-5.jpg",
+          "image_style": "极简白底",
+          "sales_rank": 6,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "民族风半身裙",
+          "price": 119.0,
+          "sales": 360,
+          "publish_time": "2026-05-26 10:00:00",
+          "category": "民族服饰",
+          "image_url": "https://example.com/taobao/shop-b/image-11.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 7,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "轻薄防晒开衫",
+          "price": 69.0,
+          "sales": 310,
+          "publish_time": "2026-06-05 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-6.jpg",
+          "image_style": "生活场景",
+          "sales_rank": 8,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "medium"
+        },
+        {
+          "product_name": "复古印花短袖",
+          "price": 59.0,
+          "sales": 220,
+          "publish_time": "2026-06-03 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-7.jpg",
+          "image_style": "促销风",
+          "sales_rank": 9,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "通勤桑蚕丝感衬衫",
+          "price": 199.0,
+          "sales": 190,
+          "publish_time": "2026-05-28 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-10.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 10,
+          "is_hot": true,
+          "sku_type": "爆款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "香云纱感上衣",
+          "price": 229.0,
+          "sales": 160,
+          "publish_time": "2026-06-01 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-8.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 11,
+          "is_hot": false,
+          "sku_type": "利润款",
+          "sales_level": "low"
+        },
+        {
+          "product_name": "小香风短外套",
+          "price": 189.0,
+          "sales": 140,
+          "publish_time": "2026-05-24 10:00:00",
+          "category": "女装",
+          "image_url": "https://example.com/taobao/shop-b/image-12.jpg",
+          "image_style": "品牌质感",
+          "sales_rank": 12,
+          "is_hot": false,
+          "sku_type": "利润款",
+          "sales_level": "low"
+        }
+      ],
+      "analysis": {
+        "爆款占比": 0.8333,
+        "SKU结构": {
+          "爆款": 10,
+          "利润款": 2
+        },
+        "价格带分布": {
+          "0-30": 2,
+          "30-60": 1,
+          "60-100": 2,
+          "100+": 7
+        },
+        "上新频率": "稳定上新",
+        "商品数": 12,
+        "总销量": 5610,
+        "均价": 120.67
+      },
+      "trends": {
+        "dominant_image_styles": {
+          "品牌质感": 4,
+          "生活场景": 3,
+          "促销风": 3,
+          "极简白底": 2
+        },
+        "dominant_categories": {
+          "女装": 8,
+          "民族服饰": 4
+        },
+        "hot_product_image_styles": {
+          "生活场景": 3,
+          "促销风": 3,
+          "极简白底": 2,
+          "品牌质感": 2
+        }
+      },
+      "profile": {
+        "shop_name": "女装竞品B",
+        "platform": "taobao",
+        "category": "女装",
+        "model_guess": "爆款集中型",
+        "top_products": [
+          {
+            "product_name": "民族风刺绣衬衫",
+            "price": 129.0,
+            "sales": 980,
+            "publish_time": "2026-06-15 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/taobao/shop-b/image-1.jpg",
+            "image_style": "极简白底",
+            "sales_rank": 1,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "high"
+          },
+          {
+            "product_name": "妈妈装宽松套装",
+            "price": 139.0,
+            "sales": 860,
+            "publish_time": "2026-06-13 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/taobao/shop-b/image-2.jpg",
+            "image_style": "生活场景",
+            "sales_rank": 2,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "high"
+          },
+          {
+            "product_name": "基础福利T恤",
+            "price": 29.0,
+            "sales": 760,
+            "publish_time": "2026-06-09 10:00:00",
+            "category": "女装",
+            "image_url": "https://example.com/taobao/shop-b/image-4.jpg",
+            "image_style": "促销风",
+            "sales_rank": 3,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          },
+          {
+            "product_name": "直播福利打底衫",
+            "price": 19.0,
+            "sales": 680,
+            "publish_time": "2026-05-30 10:00:00",
+            "category": "女装",
+            "image_url": "https://example.com/taobao/shop-b/image-9.jpg",
+            "image_style": "促销风",
+            "sales_rank": 4,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          },
+          {
+            "product_name": "新中式盘扣上衣",
+            "price": 169.0,
+            "sales": 520,
+            "publish_time": "2026-06-11 10:00:00",
+            "category": "民族服饰",
+            "image_url": "https://example.com/taobao/shop-b/image-3.jpg",
+            "image_style": "品牌质感",
+            "sales_rank": 5,
+            "is_hot": true,
+            "sku_type": "爆款",
+            "sales_level": "medium"
+          }
+        ],
+        "analysis": {
+          "爆款占比": 0.8333,
+          "SKU结构": {
+            "爆款": 10,
+            "利润款": 2
+          },
+          "价格带分布": {
+            "0-30": 2,
+            "30-60": 1,
+            "60-100": 2,
+            "100+": 7
+          },
+          "上新频率": "稳定上新",
+          "商品数": 12,
+          "总销量": 5610,
+          "均价": 120.67
+        }
+      },
+      "prompt": "你是电商竞品分析专家，请根据以下数据分析该店铺的起店逻辑：\n\n【店铺结构数据】\n{'爆款占比': 0.8333, 'SKU结构': {'爆款': 10, '利润款': 2}, '价格带分布': {'0-30': 2, '30-60': 1, '60-100': 2, '100+': 7}, '上新频率': '稳定上新', '商品数': 12, '总销量': 5610, '均价': 120.67}\n\n【SKU明细摘要】\n[{'product_name': '民族风刺绣衬衫', 'price': 129.0, 'sales': 980, 'publish_time': '2026-06-15 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/taobao/shop-b/image-1.jpg', 'image_style': '极简白底', 'sales_rank': 1, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'high'}, {'product_name': '妈妈装宽松套装', 'price': 139.0, 'sales': 860, 'publish_time': '2026-06-13 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/taobao/shop-b/image-2.jpg', 'image_style': '生活场景', 'sales_rank': 2, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'high'}, {'product_name': '基础福利T恤', 'price': 29.0, 'sales': 760, 'publish_time': '2026-06-09 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-4.jpg', 'image_style': '促销风', 'sales_rank': 3, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '直播福利打底衫', 'price': 19.0, 'sales': 680, 'publish_time': '2026-05-30 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-9.jpg', 'image_style': '促销风', 'sales_rank': 4, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '新中式盘扣上衣', 'price': 169.0, 'sales': 520, 'publish_time': '2026-06-11 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/taobao/shop-b/image-3.jpg', 'image_style': '品牌质感', 'sales_rank': 5, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '高腰阔腿休闲裤', 'price': 99.0, 'sales': 430, 'publish_time': '2026-06-07 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-5.jpg', 'image_style': '极简白底', 'sales_rank': 6, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '民族风半身裙', 'price': 119.0, 'sales': 360, 'publish_time': '2026-05-26 10:00:00', 'category': '民族服饰', 'image_url': 'https://example.com/taobao/shop-b/image-11.jpg', 'image_style': '生活场景', 'sales_rank': 7, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '轻薄防晒开衫', 'price': 69.0, 'sales': 310, 'publish_time': '2026-06-05 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-6.jpg', 'image_style': '生活场景', 'sales_rank': 8, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'medium'}, {'product_name': '复古印花短袖', 'price': 59.0, 'sales': 220, 'publish_time': '2026-06-03 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-7.jpg', 'image_style': '促销风', 'sales_rank': 9, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'low'}, {'product_name': '通勤桑蚕丝感衬衫', 'price': 199.0, 'sales': 190, 'publish_time': '2026-05-28 10:00:00', 'category': '女装', 'image_url': 'https://example.com/taobao/shop-b/image-10.jpg', 'image_style': '品牌质感', 'sales_rank': 10, 'is_hot': True, 'sku_type': '爆款', 'sales_level': 'low'}]\n\n请输出：\n1. 起店模型判断\n2. 选款策略\n3. 定价策略\n4. 流量策略\n5. 可复制方法",
+      "report": "# 女装竞品B 竞品策略分析\n\n## 起店模型判断\n- 爆款集中型\n\n## 关键洞察\n- 爆款占比较高，店铺依赖少数高销量SKU拉动。\n- 价格带偏中高，具备利润款运营特征。\n\n## 选款策略\n- 爆款占比：83.33%\n- SKU结构：{'爆款': 10, '利润款': 2}\n\n## 定价策略\n- 均价：120.67\n- 价格带分布：{'0-30': 2, '30-60': 1, '60-100': 2, '100+': 7}\n\n## 流量策略\n- 热销商品视觉风格：{'生活场景': 3, '促销风': 3, '极简白底': 2, '品牌质感': 2}\n\n## 可复制方法\n- 拆解Top SKU主图、价格、标题关键词，优先复制已验证结构。\n- 引流款负责拉点击，利润款负责承接转化和毛利。\n- 每周跟踪新增SKU和爆款排名变化。\n"
+    }
+  ]
+}

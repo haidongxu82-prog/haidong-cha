@@ -1,0 +1,26 @@
+{
+  "shops": [
+    {
+      "platform": "douyin",
+      "shop_name": "民族风竞品A",
+      "shop_url": "https://example.com/douyin/shop-a",
+      "category": "民族服饰"
+    },
+    {
+      "platform": "taobao",
+      "shop_name": "女装竞品B",
+      "shop_url": "https://example.com/taobao/shop-b",
+      "category": "女装"
+    }
+  ],
+  "report": {
+    "daily_output": "output/daily_report.md",
+    "weekly_output": "output/weekly_report.md",
+    "json_output": "output/report.json"
+  },
+  "analysis": {
+    "hot_rank_threshold": 10,
+    "traffic_price_threshold": 30,
+    "profit_price_threshold": 80
+  }
+}
