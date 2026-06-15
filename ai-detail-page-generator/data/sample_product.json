@@ -1,0 +1,19 @@
+{
+  "product_id": "SKU12345",
+  "title_seed": "法式收腰连衣裙",
+  "category": "女装/连衣裙",
+  "price": 199,
+  "material": "",
+  "color": ["黑色", "米白"],
+  "images": {
+    "main_white_bg": ["https://example.com/images/sku12345-main-1.jpg", "https://example.com/images/sku12345-main-2.jpg"],
+    "detail_images": ["https://example.com/images/sku12345-detail-1.jpg", "https://example.com/images/sku12345-detail-2.jpg"],
+    "reference_images": ["https://example.com/images/sku12345-ref-1.jpg"]
+  },
+  "attributes": {
+    "style": "通勤/法式/简约",
+    "season": "春夏",
+    "fit": "修身"
+  },
+  "brand_tone": "轻奢/简约/年轻"
+}

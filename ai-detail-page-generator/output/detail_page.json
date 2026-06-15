@@ -1,0 +1,126 @@
+{
+  "title_options": [
+    "春夏通勤/法式/简约法式收腰连衣裙 连衣裙通勤日常款",
+    "法式收腰连衣裙女 通勤/法式/简约显气质春夏穿搭",
+    "连衣裙法式收腰连衣裙 通勤/法式/简约约会通勤两穿"
+  ],
+  "sections": [
+    {
+      "type": "hero",
+      "content": {
+        "title": "春夏通勤/法式/简约法式收腰连衣裙 连衣裙通勤日常款",
+        "subtitle": "轻松穿出利落与气质"
+      }
+    },
+    {
+      "type": "selling_points",
+      "items": [
+        {
+          "type": "显瘦",
+          "text": "收腰线条修饰比例"
+        },
+        {
+          "type": "百搭",
+          "text": "通勤日常都能搭"
+        },
+        {
+          "type": "高级感",
+          "text": "法式简约更显气质"
+        },
+        {
+          "type": "耐看",
+          "text": "低调设计不易过时"
+        }
+      ]
+    },
+    {
+      "type": "fabric",
+      "content": "面料信息待确认，不可编造。建议补充材质、厚薄、弹力和洗护信息后发布。"
+    },
+    {
+      "type": "fit_analysis",
+      "content": {
+        "is_slimming": true,
+        "covers_body": false,
+        "body_shape_effect": "强调腰线，修饰上下身比例",
+        "recommended_people": [
+          "通勤人群",
+          "偏气质穿搭用户"
+        ],
+        "confidence": 0.78,
+        "require_human_review": false
+      }
+    },
+    {
+      "type": "scene",
+      "items": [
+        {
+          "scene": "通勤",
+          "match": 0.9,
+          "copy": "上班通勤保持利落气质"
+        },
+        {
+          "scene": "约会",
+          "match": 0.82,
+          "copy": "约会场景更显温柔精致"
+        },
+        {
+          "scene": "日常",
+          "match": 0.78,
+          "copy": "日常出门简单搭配即可"
+        },
+        {
+          "scene": "度假",
+          "match": 0.55,
+          "copy": "适合轻松拍照场景，需搭配配饰"
+        }
+      ]
+    },
+    {
+      "type": "detail_showcase",
+      "image_mapping": [
+        {
+          "image": "https://example.com/images/sku12345-detail-1.jpg",
+          "purpose": "细节展示 1"
+        },
+        {
+          "image": "https://example.com/images/sku12345-detail-2.jpg",
+          "purpose": "细节展示 2"
+        }
+      ]
+    },
+    {
+      "type": "size_guide",
+      "content": "尺码表占位，后续接ERP。当前不可自动生成尺码数据。"
+    }
+  ],
+  "image_layout": {
+    "main_white_bg": [
+      {
+        "source": "https://example.com/images/sku12345-main-1.jpg",
+        "target_size": "1000x1000",
+        "background": "#FFFFFF"
+      },
+      {
+        "source": "https://example.com/images/sku12345-main-2.jpg",
+        "target_size": "1000x1000",
+        "background": "#FFFFFF"
+      }
+    ],
+    "detail_images": [
+      {
+        "source": "https://example.com/images/sku12345-detail-1.jpg",
+        "processing": "sharpen+denoise"
+      },
+      {
+        "source": "https://example.com/images/sku12345-detail-2.jpg",
+        "processing": "sharpen+denoise"
+      }
+    ]
+  },
+  "html": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>春夏通勤/法式/简约法式收腰连衣裙 连衣裙通勤日常款</title>\n  <style>\n    body { margin: 0; background: #f7f4ef; color: #1f2328; font-family: -apple-system, BlinkMacSystemFont, \"PingFang SC\", sans-serif; }\n    .product-detail { max-width: 920px; margin: 0 auto; background: #fff; }\n    section { padding: 48px 40px; border-bottom: 1px solid #eee8df; }\n    .hero { text-align: center; background: #fbfaf7; }\n    h1 { font-size: 42px; margin: 0 0 12px; }\n    h2 { font-size: 26px; margin: 0 0 22px; }\n    .images { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 28px; }\n    .image-box { aspect-ratio: 1; background: #fff; border: 1px solid #eee8df; display: grid; place-items: center; color: #8a8f98; }\n    .points { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }\n    .point, .scene-card, .fit-box { border: 1px solid #eee8df; padding: 18px; background: #fffdfa; }\n    .muted { color: #6b7280; }\n  </style>\n</head>\n<body>\n  <div class=\"product-detail\">\n    <section class=\"hero\">\n      <h1>春夏通勤/法式/简约法式收腰连衣裙 连衣裙通勤日常款</h1>\n      <p class=\"muted\">轻松穿出利落与气质</p>\n      <div class=\"images\">\n        <div class=\"image-box\">主图：https://example.com/images/sku12345-main-1.jpg</div>\n<div class=\"image-box\">主图：https://example.com/images/sku12345-main-2.jpg</div>\n      </div>\n    </section>\n    <section class=\"selling-points\">\n      <h2>核心卖点</h2>\n      <div class=\"points\"><div class=\"point\"><strong>显瘦</strong><p>收腰线条修饰比例</p></div>\n<div class=\"point\"><strong>百搭</strong><p>通勤日常都能搭</p></div>\n<div class=\"point\"><strong>高级感</strong><p>法式简约更显气质</p></div>\n<div class=\"point\"><strong>耐看</strong><p>低调设计不易过时</p></div></div>\n    </section>\n    <section class=\"fabric\">\n      <h2>面料说明</h2>\n      <p>面料信息待确认，不可编造。建议补充材质、厚薄、弹力和洗护信息后发布。</p>\n    </section>\n    <section class=\"fit\">\n      <h2>版型分析</h2>\n      <div class=\"fit-box\">\n        <p>强调腰线，修饰上下身比例</p>\n        <p class=\"muted\">推荐人群：通勤人群、偏气质穿搭用户</p>\n        <p class=\"muted\">置信度：0.78</p>\n      </div>\n    </section>\n    <section class=\"scene\">\n      <h2>穿着场景</h2>\n      <div class=\"points\"><div class=\"scene-card\"><strong>通勤</strong><p>上班通勤保持利落气质</p><p class=\"muted\">匹配度：0.9</p></div>\n<div class=\"scene-card\"><strong>约会</strong><p>约会场景更显温柔精致</p><p class=\"muted\">匹配度：0.82</p></div>\n<div class=\"scene-card\"><strong>日常</strong><p>日常出门简单搭配即可</p><p class=\"muted\">匹配度：0.78</p></div>\n<div class=\"scene-card\"><strong>度假</strong><p>适合轻松拍照场景，需搭配配饰</p><p class=\"muted\">匹配度：0.55</p></div></div>\n    </section>\n    <section class=\"detail-images\">\n      <h2>细节展示</h2>\n      <div class=\"images\"><div class=\"image-box\">细节展示 1：https://example.com/images/sku12345-detail-1.jpg</div>\n<div class=\"image-box\">细节展示 2：https://example.com/images/sku12345-detail-2.jpg</div></div>\n    </section>\n    <section class=\"size-guide\">\n      <h2>尺码说明</h2>\n      <p>尺码表占位，后续接ERP。当前不可自动生成尺码数据。</p>\n    </section>\n  </div>\n</body>\n</html>",
+  "risk_flags": [
+    "missing_material"
+  ],
+  "confidence_score": 0.72
+}
