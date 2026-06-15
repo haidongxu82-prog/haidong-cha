@@ -1,0 +1,11 @@
+product_id,title,price,current_sales,past_sales,likes,favorites,comments,exposure_estimation,platform,shop_name,category,url,crawl_time,image_urls,description
+P001,法式碎花收腰雪纺连衣裙,139,2600,1300,12800,3600,1320,86000,douyin,花间女装,女装,https://example.com/p001,2026-06-15,"https://example.com/p001.jpg",夏季法式碎花裙 收腰显瘦
+P002,新中式刺绣盘扣棉麻外套,329,760,420,5200,1800,640,42000,xiaohongshu,东方衣橱,女装,https://example.com/p002,2026-06-15,"https://example.com/p002.jpg",刺绣盘扣 棉麻 新中式外套
+P003,小香风粗花呢短外套,269,970,900,3100,900,280,36000,taobao,轻熟衣社,女装,https://example.com/p003,2026-06-15,"https://example.com/p003.jpg",春秋短外套 小香风 粗花呢
+P004,运动速干防晒上衣,79,3100,2100,4200,600,330,98000,douyin,户外日常,女装,https://example.com/p004,2026-06-15,"https://example.com/p004.jpg",速干防晒 运动休闲
+P005,真丝高级感通勤衬衫,399,620,700,1700,480,120,26000,taobao,质感衣橱,女装,https://example.com/p005,2026-06-15,"https://example.com/p005.jpg",真丝衬衫 通勤 高级感
+P006,Y2K短款牛仔上衣,189,1800,600,9000,2400,860,72000,xiaohongshu,街头女孩,女装,https://example.com/p006,2026-06-15,"https://example.com/p006.jpg",短款 牛仔 Y2K 街头
+P007,极简纯色针织开衫,119,2800,2400,2600,850,210,88000,taobao,日常基本款,女装,https://example.com/p007,2026-06-15,"https://example.com/p007.jpg",极简纯色 针织开衫
+P008,镂空设计夏季针织背心,99,2100,700,7600,2100,740,64000,douyin,夏日衣柜,女装,https://example.com/p008,2026-06-15,"https://example.com/p008.jpg",镂空 针织 背心 夏季
+P009,复古印花雪纺衬衫,129,1500,1200,3300,1100,390,56000,xiaohongshu,复古衣局,女装,https://example.com/p009,2026-06-15,"https://example.com/p009.jpg",复古印花 雪纺衬衫
+P010,皮革拉链机车短外套,459,530,260,6100,1500,510,30000,douyin,酷感衣社,女装,https://example.com/p010,2026-06-15,"https://example.com/p010.jpg",皮革 拉链 机车 短外套

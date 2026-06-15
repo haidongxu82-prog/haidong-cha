@@ -1,0 +1,15 @@
+{
+  "report_period": "weekly",
+  "top_n": 20,
+  "score_weights": {
+    "growth_rate": 0.4,
+    "engagement": 0.3,
+    "conversion": 0.2,
+    "supply_chain": 0.1
+  },
+  "level_thresholds": {
+    "A": 80,
+    "B": 60
+  },
+  "platforms": ["taobao", "xiaohongshu", "douyin"]
+}
