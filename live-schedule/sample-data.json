@@ -1,0 +1,90 @@
+{
+  "date": "2026-06-15",
+  "slot_duration_hours": 1,
+  "groups": [
+    {
+      "group_id": "A",
+      "host_name": "阿岚组",
+      "avg_gmv": 36000,
+      "peak_gmv": 62000,
+      "stability_score": 0.88,
+      "max_daily_hours": 3,
+      "unavailable": ["14:00-15:00"],
+      "min_rest_slots": 1,
+      "preferred_slots": ["20:00-21:00", "21:00-22:00"]
+    },
+    {
+      "group_id": "B",
+      "host_name": "小乔组",
+      "avg_gmv": 28000,
+      "peak_gmv": 48000,
+      "stability_score": 0.74,
+      "max_daily_hours": 3,
+      "unavailable": ["10:00-11:00"],
+      "min_rest_slots": 1,
+      "preferred_slots": ["15:00-16:00", "16:00-17:00"]
+    },
+    {
+      "group_id": "C",
+      "host_name": "民族风专场组",
+      "avg_gmv": 42000,
+      "peak_gmv": 71000,
+      "stability_score": 0.81,
+      "max_daily_hours": 4,
+      "unavailable": [],
+      "min_rest_slots": 1,
+      "preferred_slots": ["19:00-20:00", "20:00-21:00"]
+    }
+  ],
+  "slots": [
+    {
+      "slot_id": "10:00-11:00",
+      "uv": 4200,
+      "gmv": 22000,
+      "conversion_rate": 0.028,
+      "is_promo": false
+    },
+    {
+      "slot_id": "14:00-15:00",
+      "uv": 5200,
+      "gmv": 26000,
+      "conversion_rate": 0.031,
+      "is_promo": false
+    },
+    {
+      "slot_id": "15:00-16:00",
+      "uv": 6500,
+      "gmv": 32000,
+      "conversion_rate": 0.034,
+      "is_promo": true
+    },
+    {
+      "slot_id": "16:00-17:00",
+      "uv": 6100,
+      "gmv": 30000,
+      "conversion_rate": 0.032,
+      "is_promo": false
+    },
+    {
+      "slot_id": "19:00-20:00",
+      "uv": 9800,
+      "gmv": 56000,
+      "conversion_rate": 0.044,
+      "is_promo": true
+    },
+    {
+      "slot_id": "20:00-21:00",
+      "uv": 12800,
+      "gmv": 76000,
+      "conversion_rate": 0.052,
+      "is_promo": true
+    },
+    {
+      "slot_id": "21:00-22:00",
+      "uv": 11200,
+      "gmv": 69000,
+      "conversion_rate": 0.049,
+      "is_promo": false
+    }
+  ]
+}
