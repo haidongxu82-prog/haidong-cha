@@ -1,0 +1,52 @@
+[
+  {
+    "channel": "douyin",
+    "ad_group": "A",
+    "date_time": "2026-06-15T09:00:00+08:00",
+    "impressions": 10000,
+    "clicks": 500,
+    "cost": 1000,
+    "orders": 20,
+    "gmv": 3000
+  },
+  {
+    "channel": "douyin",
+    "ad_group": "B",
+    "date_time": "2026-06-15T09:00:00+08:00",
+    "impressions": 8000,
+    "clicks": 300,
+    "cost": 800,
+    "orders": 5,
+    "gmv": 500
+  },
+  {
+    "channel": "taobao",
+    "ad_group": "民族风连衣裙-拉新",
+    "date_time": "2026-06-15T09:00:00+08:00",
+    "impressions": 22000,
+    "clicks": 1320,
+    "cost": 2600,
+    "orders": 58,
+    "gmv": 7200
+  },
+  {
+    "channel": "google",
+    "ad_group": "brand-search",
+    "date_time": "2026-06-15T09:00:00+08:00",
+    "impressions": 6000,
+    "clicks": 420,
+    "cost": 900,
+    "orders": 18,
+    "gmv": 1700
+  },
+  {
+    "channel": "meta",
+    "ad_group": "中老年穿搭素材-测试",
+    "date_time": "2026-06-15T09:00:00+08:00",
+    "impressions": 18000,
+    "clicks": 540,
+    "cost": 1600,
+    "orders": 8,
+    "gmv": 1200
+  }
+]

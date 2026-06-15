@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>广告预算动态分配 · 海东 AI</title>
+    <meta
+      name="description"
+      content="基于实时 ROI 的广告投放预算动态分配 MVP，输出各广告组预算调整建议和渠道汇总。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#input">输入</a>
+        <a href="#results">结果</a>
+        <a href="#summary">汇总</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">ROI BUDGET ALLOCATOR · MVP</p>
+        <h1>让广告预算跟着 ROI 走。</h1>
+        <p class="summary">
+          输入渠道、广告组、花费、点击、订单和 GMV，系统自动计算 CTR、CPC、CVR、CPA、ROI，并给出扩量、维持或降预算建议。
+        </p>
+      </section>
+
+      <section class="workspace">
+        <section id="input" class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>INPUT</p>
+              <h2>广告数据 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="calculateButton" type="button">计算预算建议</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 只输出建议，不自动调整真实广告预算。</p>
+        </section>
+
+        <section id="results" class="result-panel" aria-live="polite">
+          <div class="score-strip">
+            <article>
+              <span>总花费</span>
+              <strong id="totalCost">0</strong>
+            </article>
+            <article>
+              <span>总 GMV</span>
+              <strong id="totalGmv">0</strong>
+            </article>
+            <article>
+              <span>整体 ROI</span>
+              <strong id="overallRoi">0.00</strong>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>渠道</th>
+                  <th>广告组</th>
+                  <th>CTR</th>
+                  <th>CVR</th>
+                  <th>ROI</th>
+                  <th>建议</th>
+                </tr>
+              </thead>
+              <tbody id="resultRows">
+                <tr>
+                  <td colspan="6">等待计算。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <section id="summary" class="summary-panel">
+            <div class="panel-head compact">
+              <div>
+                <p>CHANNEL SUMMARY</p>
+                <h2>渠道汇总</h2>
+              </div>
+            </div>
+            <div id="channelSummary" class="summary-grid">
+              <article>
+                <span>暂无数据</span>
+                <p>填入广告数据后生成渠道报表。</p>
+              </article>
+            </div>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看机器可读 JSON</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
