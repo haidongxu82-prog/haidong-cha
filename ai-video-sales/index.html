@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI短视频销售系统 · 海东 AI</title>
+    <meta
+      name="description"
+      content="从产品信息生成短视频脚本、分镜、剪辑指令、发布任务和复盘建议的 MVP。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#input">输入</a>
+        <a href="#factory">内容工厂</a>
+        <a href="#workflow">流程</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">AI VIDEO SALES · MVP</p>
+        <h1>从一个产品，生成一条短视频销售链路。</h1>
+        <p class="summary">
+          输入产品、卖点、目标人群和平台，输出脚本、分镜、标题、标签、剪辑 DSL、发布任务和数据复盘规则。
+        </p>
+      </section>
+
+      <section id="input" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>PRODUCT BRIEF</p>
+              <h2>产品输入 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="generateButton" type="button">生成销售链路</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 不直接发布视频，只生成可审核、可交给剪辑/RPA执行的结构化指令。</p>
+        </section>
+
+        <section id="factory" class="result-panel" aria-live="polite">
+          <div class="metric-strip">
+            <article>
+              <span>平台</span>
+              <strong id="platformLabel">-</strong>
+            </article>
+            <article>
+              <span>模板</span>
+              <strong id="templateLabel">-</strong>
+            </article>
+            <article>
+              <span>动作数</span>
+              <strong id="actionCount">0</strong>
+            </article>
+          </div>
+
+          <section class="script-card">
+            <div class="notice-head">
+              <span>短视频脚本</span>
+              <button id="copyJson" type="button">复制 JSON</button>
+            </div>
+            <div id="scriptOutput" class="script-output">等待生成。</div>
+          </section>
+
+          <div class="scene-table">
+            <div class="table-head">
+              <span>时间</span>
+              <span>画面</span>
+              <span>字幕</span>
+              <span>旁白</span>
+            </div>
+            <div id="sceneRows" class="table-body"></div>
+          </div>
+
+          <section class="dsl-card">
+            <div class="notice-head">
+              <span>剪辑指令预览</span>
+            </div>
+            <div id="dslRows" class="dsl-list"></div>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看完整 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="workflow" class="workflow-panel">
+        <div class="panel-head">
+          <div>
+            <p>WORKFLOW</p>
+            <h2>自动化链路</h2>
+          </div>
+        </div>
+        <div class="workflow-grid">
+          <article><span>01</span><p>产品输入</p></article>
+          <article><span>02</span><p>脚本生成</p></article>
+          <article><span>03</span><p>模板映射</p></article>
+          <article><span>04</span><p>剪辑 DSL</p></article>
+          <article><span>05</span><p>发布任务</p></article>
+          <article><span>06</span><p>数据复盘</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
