@@ -1,0 +1,15 @@
+{
+  "platform": "抖音",
+  "category": "女装",
+  "competitor_urls": [
+    "https://example.com/shop/a",
+    "https://example.com/shop/b"
+  ],
+  "top_n_products": 20,
+  "analysis_scope": {
+    "include_homepage": true,
+    "include_product_detail": true,
+    "include_main_images": true
+  },
+  "output_language": "zh"
+}

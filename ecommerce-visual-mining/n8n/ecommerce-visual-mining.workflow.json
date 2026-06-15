@@ -1,0 +1,47 @@
+{
+  "name": "电商视觉分析与爆款挖掘 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "ecommerce-visual-mining",
+        "httpMethod": "POST",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook",
+      "name": "竞品URL输入 Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/api/ecommerce-visual-mining/run",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.body}}"
+      },
+      "id": "api-call",
+      "name": "调用视觉分析API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 0]
+    }
+  ],
+  "connections": {
+    "竞品URL输入 Webhook": {
+      "main": [
+        [
+          {
+            "node": "调用视觉分析API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

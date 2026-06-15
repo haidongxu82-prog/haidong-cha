@@ -1,0 +1,364 @@
+{
+  "input": {
+    "platform": "抖音",
+    "category": "女装",
+    "competitor_urls": [
+      "https://example.com/shop/a",
+      "https://example.com/shop/b"
+    ],
+    "top_n_products": 20,
+    "analysis_scope": {
+      "include_homepage": true,
+      "include_product_detail": true,
+      "include_main_images": true
+    },
+    "output_language": "zh"
+  },
+  "hot_products": [
+    {
+      "product_name": "女装显瘦通勤连衣裙",
+      "shop_id": "shop_1",
+      "price": 84,
+      "hot_score": 97.0,
+      "reason": "销量信号强 + 互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 900,
+        "engagement": 2820,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.88
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-1-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-1-detail-1.jpg",
+        "https://example.com/shop-1/product-1-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装显瘦通勤连衣裙",
+      "shop_id": "shop_2",
+      "price": 89,
+      "hot_score": 94.54,
+      "reason": "销量信号强 + 互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 855,
+        "engagement": 2740,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.88
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-1-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-1-detail-1.jpg",
+        "https://example.com/shop-2/product-1-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装高腰阔腿休闲裤",
+      "shop_id": "shop_1",
+      "price": 104,
+      "hot_score": 89.26,
+      "reason": "销量信号强 + 互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 790,
+        "engagement": 2542,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.84
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-2-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-2-detail-1.jpg",
+        "https://example.com/shop-1/product-2-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装高腰阔腿休闲裤",
+      "shop_id": "shop_2",
+      "price": 109,
+      "hot_score": 86.8,
+      "reason": "销量信号强 + 互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 745,
+        "engagement": 2462,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.84
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-2-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-2-detail-1.jpg",
+        "https://example.com/shop-2/product-2-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装轻薄防晒开衫",
+      "shop_id": "shop_1",
+      "price": 124,
+      "hot_score": 81.52,
+      "reason": "销量信号强 + 互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 680,
+        "engagement": 2264,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.8
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-3-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-3-detail-1.jpg",
+        "https://example.com/shop-1/product-3-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装轻薄防晒开衫",
+      "shop_id": "shop_2",
+      "price": 129,
+      "hot_score": 79.06,
+      "reason": "互动表现好 + 主图清晰度高 + 多店重复出现",
+      "signals": {
+        "sales": 635,
+        "engagement": 2184,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.8
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-3-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-3-detail-1.jpg",
+        "https://example.com/shop-2/product-3-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装复古印花短袖",
+      "shop_id": "shop_1",
+      "price": 144,
+      "hot_score": 73.77,
+      "reason": "互动表现好 + 多店重复出现",
+      "signals": {
+        "sales": 570,
+        "engagement": 1986,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.76
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-4-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-4-detail-1.jpg",
+        "https://example.com/shop-1/product-4-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装复古印花短袖",
+      "shop_id": "shop_2",
+      "price": 149,
+      "hot_score": 71.31,
+      "reason": "互动表现好 + 多店重复出现",
+      "signals": {
+        "sales": 525,
+        "engagement": 1906,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.76
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-4-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-4-detail-1.jpg",
+        "https://example.com/shop-2/product-4-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装小香风短外套",
+      "shop_id": "shop_1",
+      "price": 164,
+      "hot_score": 66.03,
+      "reason": "多店重复出现",
+      "signals": {
+        "sales": 460,
+        "engagement": 1708,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.72
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-5-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-5-detail-1.jpg",
+        "https://example.com/shop-1/product-5-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装小香风短外套",
+      "shop_id": "shop_2",
+      "price": 169,
+      "hot_score": 63.57,
+      "reason": "多店重复出现",
+      "signals": {
+        "sales": 415,
+        "engagement": 1628,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.72
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-5-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-5-detail-1.jpg",
+        "https://example.com/shop-2/product-5-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装基础百搭T恤",
+      "shop_id": "shop_1",
+      "price": 184,
+      "hot_score": 58.29,
+      "reason": "多店重复出现",
+      "signals": {
+        "sales": 350,
+        "engagement": 1430,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.68
+      },
+      "image_urls": [
+        "https://example.com/shop-1/product-6-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-1/product-6-detail-1.jpg",
+        "https://example.com/shop-1/product-6-detail-2.jpg"
+      ]
+    },
+    {
+      "product_name": "女装基础百搭T恤",
+      "shop_id": "shop_2",
+      "price": 189,
+      "hot_score": 55.83,
+      "reason": "多店重复出现",
+      "signals": {
+        "sales": 305,
+        "engagement": 1350,
+        "appears_in_multiple_shops": true,
+        "visual_clarity_score": 0.68
+      },
+      "image_urls": [
+        "https://example.com/shop-2/product-6-main.jpg"
+      ],
+      "detail_images": [
+        "https://example.com/shop-2/product-6-detail-1.jpg",
+        "https://example.com/shop-2/product-6-detail-2.jpg"
+      ]
+    }
+  ],
+  "visual_analysis": {
+    "main_image_style": "极简白底",
+    "homepage_style": "品牌型",
+    "detail_page_style": "结构化长图",
+    "color_system": [
+      "#F8F5EF",
+      "#222222",
+      "#C9A45C",
+      "#FFFFFF",
+      "#D94B3D"
+    ],
+    "design_keywords": [
+      "低信息密度",
+      "场景化",
+      "品牌化",
+      "结构清晰"
+    ],
+    "shop_breakdown": [
+      {
+        "shop_id": "shop_1",
+        "shop_url": "https://example.com/shop/a",
+        "visual_profile": {
+          "main_image_style": "极简白底",
+          "homepage_style": "品牌型",
+          "detail_page_style": "结构化长图",
+          "color_system": [
+            "#F8F5EF",
+            "#222222",
+            "#C9A45C"
+          ],
+          "information_density": "低"
+        }
+      },
+      {
+        "shop_id": "shop_2",
+        "shop_url": "https://example.com/shop/b",
+        "visual_profile": {
+          "main_image_style": "生活场景",
+          "homepage_style": "混合型",
+          "detail_page_style": "信息流型",
+          "color_system": [
+            "#FFFFFF",
+            "#D94B3D",
+            "#2B2B2B"
+          ],
+          "information_density": "中"
+        }
+      }
+    ]
+  },
+  "visual_patterns": [
+    {
+      "pattern_name": "高转化主图结构A",
+      "description": "白底或低干扰背景，产品居中放大，旁边保留1个核心卖点。",
+      "use_case": "女装",
+      "why_it_works": "降低认知成本，让用户先看清商品，再理解卖点。"
+    },
+    {
+      "pattern_name": "重复爆款识别结构",
+      "description": "多店重复出现的款式优先拆解主图、标题和价格带。",
+      "use_case": "竞品跟踪",
+      "why_it_works": "重复出现说明市场已验证，适合作为选品或素材参考。"
+    },
+    {
+      "pattern_name": "详情页高转化结构",
+      "description": "痛点引入 → 卖点拆解 → 场景展示 → 对比证明 → 参数 → 评价 → CTA。",
+      "use_case": "女装",
+      "why_it_works": "按照用户决策顺序组织信息，减少跳失。"
+    }
+  ],
+  "optimization_plan": {
+    "main_image": [
+      "统一使用白底或低干扰背景，避免复杂装饰抢占注意力。",
+      "每张主图只表达1个核心卖点，文字元素不超过3个。",
+      "产品主体占画面60%-75%，优先保证轮廓清晰。",
+      "对爆款商品增加对比结构，例如升级前 vs 升级后、普通款 vs 本款。",
+      "保留价格/利益点锚点，但不要遮挡产品主体。"
+    ],
+    "homepage": [
+      "Banner保留品牌主视觉，不堆叠过多促销文字。",
+      "爆款区优先展示：女装显瘦通勤连衣裙, 女装显瘦通勤连衣裙, 女装高腰阔腿休闲裤。",
+      "分类入口按人群/场景/功能拆分，减少用户选择成本。",
+      "增加推荐专区，把同风格或同场景商品做组合陈列。",
+      "加入销量、评价、售后保障等信任模块。"
+    ],
+    "detail_page": [
+      "痛点引入：先说明用户为什么需要这个商品。",
+      "核心卖点：保留3-5条，配合图标或局部特写。",
+      "场景展示：展示真实使用或穿搭场景。",
+      "对比图：普通款 vs 本款，突出差异。",
+      "参数说明：尺码、材质、工艺、适用人群。",
+      "用户评价：优先展示与痛点相关的评价。",
+      "CTA收口：强调适用场景和购买理由。"
+    ]
+  },
+  "design_guidelines": [
+    "女装类目视觉要先清晰，再高级。",
+    "不要让促销信息压过商品本身。",
+    "主图、首页、详情页的色彩和字体要统一。",
+    "所有设计建议必须能落到具体页面模块。"
+  ],
+  "source_summary": {
+    "shop_count": 2,
+    "product_count": 12
+  }
+}
