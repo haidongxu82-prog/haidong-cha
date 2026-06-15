@@ -1,0 +1,16 @@
+[
+  {
+    "sku_id": "12345",
+    "generated_images": [
+      "https://cdn.example.com/virtual-model/12345/female_model_01_studio_white_front-001.jpg"
+    ],
+    "qa_score": 0.917,
+    "status": "pending_review",
+    "reject_reasons": [],
+    "allowed_transitions": [
+      "approved",
+      "rejected",
+      "regenerated"
+    ]
+  }
+]

@@ -1,0 +1,77 @@
+{
+  "status": "success",
+  "sku_id": "12345",
+  "route": "upper_body_model",
+  "template": {
+    "model_profile": "female_model_01",
+    "pose": "front_stand",
+    "scene": "studio_white",
+    "lighting": "softbox",
+    "camera": "50mm",
+    "supported_routes": [
+      "upper_body_model",
+      "full_body_model"
+    ],
+    "template_id": "female_model_01_studio_white_front",
+    "model_profile_detail": {
+      "label": "亚洲标准",
+      "identity_lock": "female_model_01",
+      "face_policy": "fixed_reference_only"
+    },
+    "scene_detail": {
+      "description": "clean white studio background",
+      "background_policy": "template_only"
+    },
+    "pose_detail": "front standing"
+  },
+  "generated": {
+    "status": "success",
+    "sku_id": "12345",
+    "template_id": "female_model_01_studio_white_front",
+    "image_url": "https://cdn.example.com/virtual-model/12345/female_model_01_studio_white_front-001.jpg",
+    "prompt": "Generate a professional e-commerce model image.\n\nConstraints:\n- Keep clothing exactly same as reference image\n- Do not change design, pattern, color, texture\n- Product category: shirt\n- Product title: 白色衬衫\n- Product color: white\n- Product fabric: cotton\n- Product fit: regular\n- Use fixed model identity: female_model_01\n- Scene: studio_white\n- Lighting: softbox professional photography\n- Pose: front standing\n- Camera: 50mm\n- Style: clean commercial photography\n\nInput:\n- product image white background: https://example.com/sku-12345-white-shirt.jpg",
+    "generation_mode": "mock_image_to_image_adapter",
+    "constraints": {
+      "fixed_model_identity": "female_model_01",
+      "fixed_scene": "studio_white",
+      "fixed_pose": "front_stand",
+      "preserve_product_design": true
+    }
+  },
+  "qa": {
+    "qa_score": 0.917,
+    "clip_score": 0.9,
+    "color_similarity": 0.94,
+    "structure_check": {
+      "neckline": true,
+      "cuff": true,
+      "hem": true,
+      "pattern_position": true,
+      "score": 0.91
+    },
+    "face_consistency": 0.93,
+    "background_template_ok": true,
+    "passed": true,
+    "reject_reasons": []
+  },
+  "review": {
+    "sku_id": "12345",
+    "generated_images": [
+      "https://cdn.example.com/virtual-model/12345/female_model_01_studio_white_front-001.jpg"
+    ],
+    "qa_score": 0.917,
+    "status": "pending_review",
+    "reject_reasons": [],
+    "allowed_transitions": [
+      "approved",
+      "rejected",
+      "regenerated"
+    ]
+  },
+  "output": {
+    "source": "https://cdn.example.com/virtual-model/12345/female_model_01_studio_white_front-001.jpg",
+    "oss_url": "oss://bucket/virtual-model/12345/female_model_01_studio_white_front-001.jpg",
+    "cdn_url": "https://cdn.example.com/virtual-model/12345/female_model_01_studio_white_front-001.jpg"
+  },
+  "publish_policy": "manual_review_required"
+}

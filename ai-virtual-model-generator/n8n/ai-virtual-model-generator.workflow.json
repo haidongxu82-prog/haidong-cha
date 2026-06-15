@@ -1,0 +1,79 @@
+{
+  "name": "电商AI虚拟模特图生成系统 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "virtual-model-generate",
+        "httpMethod": "POST",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook",
+      "name": "Webhook SKU输入",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/generate/model-image",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.body}}"
+      },
+      "id": "generate",
+      "name": "AI生成模块",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{$json.qa_score}}",
+              "rightValue": 0.85,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      },
+      "id": "qa-if",
+      "name": "QA评分通过",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [520, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"虚拟模特图已生成，等待人工审核。\" } }"
+      },
+      "id": "review-notify",
+      "name": "人工审核通知",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 0]
+    }
+  ],
+  "connections": {
+    "Webhook SKU输入": {
+      "main": [[{"node": "AI生成模块", "type": "main", "index": 0}]]
+    },
+    "AI生成模块": {
+      "main": [[{"node": "QA评分通过", "type": "main", "index": 0}]]
+    },
+    "QA评分通过": {
+      "main": [[{"node": "人工审核通知", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

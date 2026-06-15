@@ -1,0 +1,17 @@
+{
+  "sku_id": "12345",
+  "title": "白色衬衫",
+  "category": "shirt",
+  "images": {
+    "white_background": "https://example.com/sku-12345-white-shirt.jpg",
+    "detail": [
+      "https://example.com/sku-12345-collar.jpg",
+      "https://example.com/sku-12345-cuff.jpg"
+    ]
+  },
+  "attributes": {
+    "color": "white",
+    "fabric": "cotton",
+    "fit": "regular"
+  }
+}
