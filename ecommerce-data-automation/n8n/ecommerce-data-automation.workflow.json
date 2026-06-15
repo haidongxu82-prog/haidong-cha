@@ -1,0 +1,93 @@
+{
+  "name": "电商数据自动化系统 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-cron",
+      "name": "每日 02:00 触发",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd /path/to/ecommerce-data-automation && python pipeline/run_daily_report.py"
+      },
+      "id": "run-report",
+      "name": "运行日报脚本",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "filePath": "/path/to/ecommerce-data-automation/output/diagnosis_report.json"
+      },
+      "id": "read-report",
+      "name": "读取诊断结果",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"电商数据自动化日报已生成，请查看服务器 output 目录。\" } }"
+      },
+      "id": "feishu-alert",
+      "name": "飞书提醒",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 0]
+    }
+  ],
+  "connections": {
+    "每日 02:00 触发": {
+      "main": [
+        [
+          {
+            "node": "运行日报脚本",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "运行日报脚本": {
+      "main": [
+        [
+          {
+            "node": "读取诊断结果",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "读取诊断结果": {
+      "main": [
+        [
+          {
+            "node": "飞书提醒",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

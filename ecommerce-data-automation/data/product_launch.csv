@@ -1,0 +1,13 @@
+id,sku,product_id,title,platform,shop_id,launch_time,category,price,status
+1,SKU1001,P1001,中老年民族风刺绣衬衫,douyin,shop_a,2026-06-01 09:20:00,民族服饰,129.00,online
+2,SKU1002,P1002,夏季显瘦碎花连衣裙,douyin,shop_a,2026-06-02 10:15:00,女装,89.00,online
+3,SKU1003,P1003,轻薄防晒开衫,taobao,shop_b,2026-06-03 14:10:00,女装,69.00,online
+4,SKU1004,P1004,新中式盘扣上衣,douyin,shop_a,2026-06-04 11:00:00,民族服饰,159.00,online
+5,SKU1005,P1005,高腰阔腿休闲裤,douyin,shop_a,2026-06-05 16:30:00,女装,99.00,online
+6,SKU1006,P1006,桑蚕丝感通勤衬衫,taobao,shop_b,2026-06-06 13:40:00,女装,199.00,online
+7,SKU1007,P1007,妈妈装宽松套装,douyin,shop_c,2026-06-07 20:10:00,中老年女装,139.00,online
+8,SKU1008,P1008,复古印花短袖,douyin,shop_c,2026-06-08 08:30:00,女装,59.00,online
+9,SKU1009,P1009,民族风半身裙,douyin,shop_a,2026-06-09 17:45:00,民族服饰,119.00,online
+10,SKU1010,P1010,简约通勤西装裤,taobao,shop_b,2026-06-10 12:10:00,女装,149.00,online
+11,SKU1011,P1011,直播间福利基础T恤,douyin,shop_c,2026-06-11 19:00:00,女装,39.00,online
+12,SKU1012,P1012,高端香云纱感上衣,douyin,shop_a,2026-06-12 15:20:00,民族服饰,299.00,online

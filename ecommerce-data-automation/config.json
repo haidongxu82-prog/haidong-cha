@@ -1,0 +1,30 @@
+{
+  "health_score": {
+    "weights": {
+      "ctr": 0.35,
+      "conversion_rate": 0.4,
+      "paid_amount": 0.25
+    },
+    "normalization": {
+      "ctr_target": 0.05,
+      "conversion_rate_target": 0.08,
+      "paid_amount_target": 10000
+    }
+  },
+  "diagnosis_rules": {
+    "zero_conversion_clicks_threshold": 50,
+    "low_ctr_impressions_threshold": 1000,
+    "low_ctr_threshold": 0.01,
+    "bad_cover_impressions_threshold": 2000,
+    "bad_cover_ctr_threshold": 0.005,
+    "high_click_no_payment_threshold": 100
+  },
+  "health_status": {
+    "healthy_min_score": 70,
+    "warning_min_score": 40
+  },
+  "report": {
+    "default_start_date": "2026-06-01",
+    "default_end_date": "2026-06-15"
+  }
+}

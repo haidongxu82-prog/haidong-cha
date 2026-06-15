@@ -1,0 +1,586 @@
+{
+  "period": {
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-15"
+  },
+  "summary": {
+    "total_launch_products": 12,
+    "paid_products": 8,
+    "product_success_rate": 0.6667,
+    "orders": 266,
+    "paid_orders": 208,
+    "payment_rate": 0.782,
+    "paid_amount": 19342.0,
+    "high_risk_count": 4,
+    "warning_count": 2
+  },
+  "daily_new_products": [
+    {
+      "date": "2026-06-01",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-02",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-03",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-04",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-05",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-06",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-07",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-08",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-09",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-10",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-11",
+      "new_products": 1
+    },
+    {
+      "date": "2026-06-12",
+      "new_products": 1
+    }
+  ],
+  "daily_payment_rate": [
+    {
+      "stat_date": "2026-06-01",
+      "orders": 19,
+      "paid_orders": 13,
+      "paid_amount": 1677.0,
+      "payment_rate": 0.6842105263157895
+    },
+    {
+      "stat_date": "2026-06-02",
+      "orders": 45,
+      "paid_orders": 39,
+      "paid_amount": 3471.0,
+      "payment_rate": 0.8666666666666667
+    },
+    {
+      "stat_date": "2026-06-03",
+      "orders": 6,
+      "paid_orders": 4,
+      "paid_amount": 276.0,
+      "payment_rate": 0.6666666666666666
+    },
+    {
+      "stat_date": "2026-06-04",
+      "orders": 1,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "payment_rate": 0.0
+    },
+    {
+      "stat_date": "2026-06-05",
+      "orders": 8,
+      "paid_orders": 4,
+      "paid_amount": 396.0,
+      "payment_rate": 0.5
+    },
+    {
+      "stat_date": "2026-06-06",
+      "orders": 23,
+      "paid_orders": 19,
+      "paid_amount": 3781.0,
+      "payment_rate": 0.8260869565217391
+    },
+    {
+      "stat_date": "2026-06-07",
+      "orders": 36,
+      "paid_orders": 30,
+      "paid_amount": 4170.0,
+      "payment_rate": 0.8333333333333334
+    },
+    {
+      "stat_date": "2026-06-08",
+      "orders": 14,
+      "paid_orders": 8,
+      "paid_amount": 1032.0,
+      "payment_rate": 0.5714285714285714
+    },
+    {
+      "stat_date": "2026-06-09",
+      "orders": 1,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "payment_rate": 0.0
+    },
+    {
+      "stat_date": "2026-06-10",
+      "orders": 11,
+      "paid_orders": 9,
+      "paid_amount": 1341.0,
+      "payment_rate": 0.8181818181818182
+    },
+    {
+      "stat_date": "2026-06-11",
+      "orders": 91,
+      "paid_orders": 82,
+      "paid_amount": 3198.0,
+      "payment_rate": 0.9010989010989011
+    },
+    {
+      "stat_date": "2026-06-12",
+      "orders": 4,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "payment_rate": 0.0
+    },
+    {
+      "stat_date": "2026-06-14",
+      "orders": 7,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "payment_rate": 0.0
+    }
+  ],
+  "category_summary": [
+    {
+      "category": "中老年女装",
+      "products": 1,
+      "impressions": 12000,
+      "clicks": 420,
+      "orders": 36,
+      "paid_orders": 30,
+      "paid_amount": 4170.0,
+      "avg_health_score": 82.84,
+      "ctr": 0.035,
+      "conversion_rate": 0.07142857142857142,
+      "payment_rate": 0.8333333333333334
+    },
+    {
+      "category": "女装",
+      "products": 7,
+      "impressions": 48200,
+      "clicks": 2093,
+      "orders": 185,
+      "paid_orders": 157,
+      "paid_amount": 12463.0,
+      "avg_health_score": 68.2,
+      "ctr": 0.043423236514522824,
+      "conversion_rate": 0.07501194457716197,
+      "payment_rate": 0.8486486486486486
+    },
+    {
+      "category": "民族服饰",
+      "products": 4,
+      "impressions": 36200,
+      "clicks": 754,
+      "orders": 45,
+      "paid_orders": 21,
+      "paid_amount": 2709.0,
+      "avg_health_score": 29.09,
+      "ctr": 0.020828729281767957,
+      "conversion_rate": 0.027851458885941646,
+      "payment_rate": 0.4666666666666667
+    }
+  ],
+  "diagnosis": [
+    {
+      "sku": "SKU1001",
+      "product_id": "P1001",
+      "title": "中老年民族风刺绣衬衫",
+      "category": "民族服饰",
+      "platform": "douyin",
+      "health_score": 79.47,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 9000,
+      "clicks": 309,
+      "ctr": 0.0343,
+      "orders": 31,
+      "paid_orders": 21,
+      "paid_amount": 2709.0,
+      "conversion_rate": 0.068,
+      "payment_rate": 0.6774,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1002",
+      "product_id": "P1002",
+      "title": "夏季显瘦碎花连衣裙",
+      "category": "女装",
+      "platform": "douyin",
+      "health_score": 96.76,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 8800,
+      "clicks": 492,
+      "ctr": 0.0559,
+      "orders": 45,
+      "paid_orders": 39,
+      "paid_amount": 3471.0,
+      "conversion_rate": 0.0793,
+      "payment_rate": 0.8667,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1003",
+      "product_id": "P1003",
+      "title": "轻薄防晒开衫",
+      "category": "女装",
+      "platform": "taobao",
+      "health_score": 67.92,
+      "status": "warning",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 2600,
+      "clicks": 47,
+      "ctr": 0.0181,
+      "orders": 6,
+      "paid_orders": 4,
+      "paid_amount": 276.0,
+      "conversion_rate": 0.0851,
+      "payment_rate": 0.6667,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1004",
+      "product_id": "P1004",
+      "title": "新中式盘扣上衣",
+      "category": "民族服饰",
+      "platform": "douyin",
+      "health_score": 2.58,
+      "status": "high_risk",
+      "flags": [
+        "LOW_CTR",
+        "BAD_COVER_IMAGE_OR_TITLE"
+      ],
+      "issues": [
+        "CTR过低",
+        "高曝光低点击"
+      ],
+      "possible_causes": [
+        "主图、标题或搜索关键词吸引力不足",
+        "封面图或标题未匹配推荐人群"
+      ],
+      "recommendations": [
+        "优化主图第一视觉和标题关键词",
+        "测试新封面、利益点前置和人群关键词"
+      ],
+      "impressions": 9500,
+      "clicks": 35,
+      "ctr": 0.0037,
+      "orders": 2,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "conversion_rate": 0.0,
+      "payment_rate": 0.0,
+      "ai_explanation": {
+        "reason": "主图、标题或搜索关键词吸引力不足；封面图或标题未匹配推荐人群",
+        "priority": "medium",
+        "actions": [
+          "优化主图第一视觉和标题关键词",
+          "测试新封面、利益点前置和人群关键词"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1005",
+      "product_id": "P1005",
+      "title": "高腰阔腿休闲裤",
+      "category": "女装",
+      "platform": "douyin",
+      "health_score": 55.09,
+      "status": "warning",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 3900,
+      "clicks": 132,
+      "ctr": 0.0338,
+      "orders": 8,
+      "paid_orders": 4,
+      "paid_amount": 396.0,
+      "conversion_rate": 0.0303,
+      "payment_rate": 0.5,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1006",
+      "product_id": "P1006",
+      "title": "桑蚕丝感通勤衬衫",
+      "category": "女装",
+      "platform": "taobao",
+      "health_score": 84.23,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 7100,
+      "clicks": 268,
+      "ctr": 0.0377,
+      "orders": 23,
+      "paid_orders": 19,
+      "paid_amount": 3781.0,
+      "conversion_rate": 0.0709,
+      "payment_rate": 0.8261,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1007",
+      "product_id": "P1007",
+      "title": "妈妈装宽松套装",
+      "category": "中老年女装",
+      "platform": "douyin",
+      "health_score": 82.84,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 12000,
+      "clicks": 420,
+      "ctr": 0.035,
+      "orders": 36,
+      "paid_orders": 30,
+      "paid_amount": 4170.0,
+      "conversion_rate": 0.0714,
+      "payment_rate": 0.8333,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1008",
+      "product_id": "P1008",
+      "title": "复古印花短袖",
+      "category": "女装",
+      "platform": "douyin",
+      "health_score": 3.82,
+      "status": "high_risk",
+      "flags": [
+        "LOW_CTR"
+      ],
+      "issues": [
+        "CTR过低"
+      ],
+      "possible_causes": [
+        "主图、标题或搜索关键词吸引力不足"
+      ],
+      "recommendations": [
+        "优化主图第一视觉和标题关键词"
+      ],
+      "impressions": 3300,
+      "clicks": 18,
+      "ctr": 0.0055,
+      "orders": 2,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "conversion_rate": 0.0,
+      "payment_rate": 0.0,
+      "ai_explanation": {
+        "reason": "主图、标题或搜索关键词吸引力不足",
+        "priority": "medium",
+        "actions": [
+          "优化主图第一视觉和标题关键词"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1009",
+      "product_id": "P1009",
+      "title": "民族风半身裙",
+      "category": "民族服饰",
+      "platform": "douyin",
+      "health_score": 2.09,
+      "status": "high_risk",
+      "flags": [
+        "LOW_CTR",
+        "BAD_COVER_IMAGE_OR_TITLE"
+      ],
+      "issues": [
+        "CTR过低",
+        "高曝光低点击"
+      ],
+      "possible_causes": [
+        "主图、标题或搜索关键词吸引力不足",
+        "封面图或标题未匹配推荐人群"
+      ],
+      "recommendations": [
+        "优化主图第一视觉和标题关键词",
+        "测试新封面、利益点前置和人群关键词"
+      ],
+      "impressions": 9400,
+      "clicks": 28,
+      "ctr": 0.003,
+      "orders": 1,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "conversion_rate": 0.0,
+      "payment_rate": 0.0,
+      "ai_explanation": {
+        "reason": "主图、标题或搜索关键词吸引力不足；封面图或标题未匹配推荐人群",
+        "priority": "medium",
+        "actions": [
+          "优化主图第一视觉和标题关键词",
+          "测试新封面、利益点前置和人群关键词"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1010",
+      "product_id": "P1010",
+      "title": "简约通勤西装裤",
+      "category": "女装",
+      "platform": "taobao",
+      "health_score": 72.66,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 4500,
+      "clicks": 156,
+      "ctr": 0.0347,
+      "orders": 11,
+      "paid_orders": 9,
+      "paid_amount": 1341.0,
+      "conversion_rate": 0.0577,
+      "payment_rate": 0.8182,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1011",
+      "product_id": "P1011",
+      "title": "直播间福利基础T恤",
+      "category": "女装",
+      "platform": "douyin",
+      "health_score": 96.91,
+      "status": "healthy",
+      "flags": [],
+      "issues": [],
+      "possible_causes": [],
+      "recommendations": [],
+      "impressions": 18000,
+      "clicks": 980,
+      "ctr": 0.0544,
+      "orders": 90,
+      "paid_orders": 82,
+      "paid_amount": 3198.0,
+      "conversion_rate": 0.0837,
+      "payment_rate": 0.9111,
+      "ai_explanation": {
+        "reason": "当前未命中主要异常规则，保持观察。",
+        "priority": "low",
+        "actions": [
+          "继续跟踪曝光、点击和支付变化"
+        ]
+      }
+    },
+    {
+      "sku": "SKU1012",
+      "product_id": "P1012",
+      "title": "高端香云纱感上衣",
+      "category": "民族服饰",
+      "platform": "douyin",
+      "health_score": 32.22,
+      "status": "high_risk",
+      "flags": [
+        "PRICE_OR_PRODUCT_ISSUE"
+      ],
+      "issues": [
+        "高点击但无支付"
+      ],
+      "possible_causes": [
+        "价格偏高、款式竞争力不足或下单链路阻塞"
+      ],
+      "recommendations": [
+        "测试价格带、优惠券、详情页信任元素"
+      ],
+      "impressions": 8300,
+      "clicks": 382,
+      "ctr": 0.046,
+      "orders": 11,
+      "paid_orders": 0,
+      "paid_amount": 0.0,
+      "conversion_rate": 0.0,
+      "payment_rate": 0.0,
+      "ai_explanation": {
+        "reason": "价格偏高、款式竞争力不足或下单链路阻塞",
+        "priority": "high",
+        "actions": [
+          "测试价格带、优惠券、详情页信任元素"
+        ]
+      }
+    }
+  ],
+  "priority_actions": [
+    "优先处理 high_risk 商品：检查主图、价格、详情页承接和支付链路。",
+    "对低CTR商品做主图A/B测试，并重写标题关键词。",
+    "对高点击低支付商品测试价格、优惠券和信任证明。"
+  ]
+}
