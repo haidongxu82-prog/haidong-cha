@@ -1,0 +1,244 @@
+{
+  "items": [
+    {
+      "sku_id": "SKU1001",
+      "product_name": "中老年民族风刺绣衬衫",
+      "category": "民族服饰",
+      "brand": "海东严选",
+      "cost_price": 58.0,
+      "market_price": {
+        "min": 129.0,
+        "max": 139.0,
+        "avg": 134.0,
+        "sample_count": 4,
+        "filtered_count": 2
+      },
+      "pricing": {
+        "min_price": 72.5,
+        "suggest_price": 134,
+        "max_price": 139.0,
+        "promotion_price": 123,
+        "price_band": "mid",
+        "margin_rate": 0.5672
+      },
+      "sales": {
+        "sku_id": "SKU1001",
+        "sales_7d": 42,
+        "sales_30d": 166,
+        "conversion_rate": 0.071
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 134,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可保留促销价用于直播间限时转化。"
+      }
+    },
+    {
+      "sku_id": "SKU1002",
+      "product_name": "夏季显瘦碎花连衣裙",
+      "category": "女装",
+      "brand": "海东严选",
+      "cost_price": 42.0,
+      "market_price": {
+        "min": 79.0,
+        "max": 99.0,
+        "avg": 89.0,
+        "sample_count": 3,
+        "filtered_count": 3
+      },
+      "pricing": {
+        "min_price": 52.5,
+        "suggest_price": 89,
+        "max_price": 99.0,
+        "promotion_price": 82,
+        "price_band": "mid",
+        "margin_rate": 0.5281
+      },
+      "sales": {
+        "sku_id": "SKU1002",
+        "sales_7d": 88,
+        "sales_30d": 310,
+        "conversion_rate": 0.084
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 89,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可保留促销价用于直播间限时转化。"
+      }
+    },
+    {
+      "sku_id": "SKU1003",
+      "product_name": "轻薄防晒开衫",
+      "category": "女装",
+      "brand": "海东严选",
+      "cost_price": 31.0,
+      "market_price": {
+        "min": 59.0,
+        "max": 75.0,
+        "avg": 67.67,
+        "sample_count": 3,
+        "filtered_count": 3
+      },
+      "pricing": {
+        "min_price": 38.75,
+        "suggest_price": 68,
+        "max_price": 75.0,
+        "promotion_price": 63,
+        "price_band": "mid",
+        "margin_rate": 0.5441
+      },
+      "sales": {
+        "sku_id": "SKU1003",
+        "sales_7d": 18,
+        "sales_30d": 96,
+        "conversion_rate": 0.052
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 68,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可保留促销价用于直播间限时转化。"
+      }
+    },
+    {
+      "sku_id": "SKU1004",
+      "product_name": "新中式盘扣上衣",
+      "category": "民族服饰",
+      "brand": "海东严选",
+      "cost_price": 73.0,
+      "market_price": {
+        "min": 149.0,
+        "max": 189.0,
+        "avg": 169.0,
+        "sample_count": 3,
+        "filtered_count": 3
+      },
+      "pricing": {
+        "min_price": 91.25,
+        "suggest_price": 169,
+        "max_price": 189.0,
+        "promotion_price": 155,
+        "price_band": "mid",
+        "margin_rate": 0.568
+      },
+      "sales": {
+        "sku_id": "SKU1004",
+        "sales_7d": 11,
+        "sales_30d": 72,
+        "conversion_rate": 0.028
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 169,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可测试短期促销价，但不得低于最低毛利价 91.25。"
+      }
+    },
+    {
+      "sku_id": "SKU1005",
+      "product_name": "高腰阔腿休闲裤",
+      "category": "女装",
+      "brand": "海东严选",
+      "cost_price": 48.0,
+      "market_price": {
+        "min": 89.0,
+        "max": 129.0,
+        "avg": 105.67,
+        "sample_count": 3,
+        "filtered_count": 3
+      },
+      "pricing": {
+        "min_price": 60.0,
+        "suggest_price": 106,
+        "max_price": 129.0,
+        "promotion_price": 98,
+        "price_band": "mid",
+        "margin_rate": 0.5472
+      },
+      "sales": {
+        "sku_id": "SKU1005",
+        "sales_7d": 35,
+        "sales_30d": 144,
+        "conversion_rate": 0.061
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 106,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可保留促销价用于直播间限时转化。"
+      }
+    },
+    {
+      "sku_id": "SKU1006",
+      "product_name": "桑蚕丝感通勤衬衫",
+      "category": "女装",
+      "brand": "海东严选",
+      "cost_price": 96.0,
+      "market_price": {
+        "min": 179.0,
+        "max": 199.0,
+        "avg": 189.0,
+        "sample_count": 4,
+        "filtered_count": 2
+      },
+      "pricing": {
+        "min_price": 120.0,
+        "suggest_price": 189,
+        "max_price": 199.0,
+        "promotion_price": 174,
+        "price_band": "mid",
+        "margin_rate": 0.4921
+      },
+      "sales": {
+        "sku_id": "SKU1006",
+        "sales_7d": 24,
+        "sales_30d": 118,
+        "conversion_rate": 0.044
+      },
+      "risk_control": {
+        "auto_price_change": false,
+        "cost_validated": true,
+        "outlier_filter": "P5/P95",
+        "explainable": true
+      },
+      "ai_insight": {
+        "recommended_price": 189,
+        "price_direction": "hold",
+        "reason": "建议价接近市场均价，同时高于最低毛利价，适合作为主推价。",
+        "promotion_suggestion": "可保留促销价用于直播间限时转化。"
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "电商智能定价系统 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-trigger",
+      "name": "每日定价扫描",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd /path/to/pricing-system && python pipeline/run_pricing_report.py"
+      },
+      "id": "run-pricing-report",
+      "name": "生成定价报告",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"电商智能定价报告已生成，请检查 pricing-system/output。\" } }"
+      },
+      "id": "notify-feishu",
+      "name": "飞书提醒",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0]
+    }
+  ],
+  "connections": {
+    "每日定价扫描": {
+      "main": [
+        [
+          {
+            "node": "生成定价报告",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "生成定价报告": {
+      "main": [
+        [
+          {
+            "node": "飞书提醒",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
