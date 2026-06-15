@@ -1,0 +1,11 @@
+{
+  "success_rule": {
+    "orders_gt": 0
+  },
+  "benchmark_gap_threshold": {
+    "ctr_low_ratio": 0.8,
+    "cvr_low_ratio": 0.8,
+    "gmv_low_ratio": 0.8
+  },
+  "report_month": "2026-06"
+}
