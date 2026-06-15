@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>直播 AI 控场系统 · 海东 AI</title>
+    <meta
+      name="description"
+      content="直播间实时数据监控、节奏状态识别和运营动作建议 MVP。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#monitor">监控</a>
+        <a href="#rules">规则</a>
+        <a href="#output">提醒</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">LIVE ROOM AI OPERATOR · MVP</p>
+        <h1>直播间节奏，不靠感觉盯。</h1>
+        <p class="summary">
+          输入最近两段直播指标，系统自动识别冷启动、稳定期、加速期或下滑期，并输出主播可直接使用的运营提醒。
+        </p>
+      </section>
+
+      <section id="monitor" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>LIVE DATA</p>
+              <h2>直播数据 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="analyzeButton" type="button">分析直播节奏</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 只做运营建议，不控制价格、优惠券或直播间操作。</p>
+        </section>
+
+        <section id="output" class="result-panel" aria-live="polite">
+          <div class="status-card stable" id="statusCard">
+            <span>当前状态</span>
+            <strong id="statusLabel">等待分析</strong>
+            <em id="actionLabel">输入数据后生成建议</em>
+          </div>
+
+          <div class="metric-grid">
+            <article>
+              <span>在线变化</span>
+              <strong id="onlineChange">0%</strong>
+            </article>
+            <article>
+              <span>转化变化</span>
+              <strong id="conversionChange">0%</strong>
+            </article>
+            <article>
+              <span>停留变化</span>
+              <strong id="stayChange">0%</strong>
+            </article>
+            <article>
+              <span>加购变化</span>
+              <strong id="cartChange">0%</strong>
+            </article>
+          </div>
+
+          <section class="advice-panel">
+            <article>
+              <span>原因解释</span>
+              <p id="reasonText">暂无分析结果。</p>
+            </article>
+            <article>
+              <span>主播话术建议</span>
+              <p id="scriptText">分析后生成 1-3 句可直接使用的话术。</p>
+            </article>
+          </section>
+
+          <section class="notice-card">
+            <div class="notice-head">
+              <span>推送预览</span>
+              <button id="copyNotice" type="button">复制提醒</button>
+            </div>
+            <pre id="noticeOutput">【直播节奏提醒】等待分析。</pre>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="rules" class="rules-panel">
+        <div class="panel-head">
+          <div>
+            <p>RULE ENGINE</p>
+            <h2>可配置规则</h2>
+          </div>
+        </div>
+        <div class="rule-grid">
+          <article>
+            <span>下滑期</span>
+            <p>在线人数下降 &gt; 15%，或转化率下降 &gt; 20%。</p>
+          </article>
+          <article>
+            <span>内容节奏调整</span>
+            <p>平均停留时长下降 &gt; 30%。</p>
+          </article>
+          <article>
+            <span>加速期</span>
+            <p>加购率上升，且转化率不下降。</p>
+          </article>
+          <article>
+            <span>冷启动</span>
+            <p>在线人数低、互动率低，流量尚未起来。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

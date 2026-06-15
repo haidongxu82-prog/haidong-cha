@@ -1,0 +1,20 @@
+{
+  "live_room": "中老年民族服饰直播间",
+  "product": "民族风刺绣外套",
+  "previous": {
+    "timestamp": "2026-06-15T20:00:00+08:00",
+    "online_users": 1280,
+    "conversion_rate": 0.036,
+    "cart_rate": 0.082,
+    "avg_stay_seconds": 68,
+    "interaction_rate": 0.14
+  },
+  "current": {
+    "timestamp": "2026-06-15T20:05:00+08:00",
+    "online_users": 980,
+    "conversion_rate": 0.027,
+    "cart_rate": 0.076,
+    "avg_stay_seconds": 43,
+    "interaction_rate": 0.09
+  }
+}
