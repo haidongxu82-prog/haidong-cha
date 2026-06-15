@@ -1,0 +1,144 @@
+{
+  "name": "Smart Replenishment Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron",
+      "name": "每天 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/replenishment/run",
+        "method": "GET"
+      },
+      "id": "run-api",
+      "name": "获取补货建议",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.priority}}",
+              "rightValue": "P0",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{$json.priority}}",
+              "rightValue": "P1",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "filter-risk",
+      "name": "过滤P0/P1高风险SKU",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/purchase/create",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"sku_id\": \"{{$json.sku_id}}\", \"qty\": {{$json.recommended_qty}}, \"supplier_id\": \"{{$json.supplier_id}}\" }"
+      },
+      "id": "create-po",
+      "name": "创建采购单草稿",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"补货建议已生成，高风险SKU已进入审批。\" } }"
+      },
+      "id": "notify",
+      "name": "飞书审批提醒",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 0]
+    }
+  ],
+  "connections": {
+    "每天 08:00": {
+      "main": [
+        [
+          {
+            "node": "获取补货建议",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "获取补货建议": {
+      "main": [
+        [
+          {
+            "node": "过滤P0/P1高风险SKU",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "过滤P0/P1高风险SKU": {
+      "main": [
+        [
+          {
+            "node": "创建采购单草稿",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "创建采购单草稿": {
+      "main": [
+        [
+          {
+            "node": "飞书审批提醒",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

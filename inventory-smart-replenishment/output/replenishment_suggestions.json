@@ -1,0 +1,116 @@
+[
+  {
+    "sku_id": "A001",
+    "sku_name": "中老年民族风刺绣衬衫",
+    "supplier_id": "S001",
+    "current_stock": 78,
+    "avg_sales": 28.93,
+    "days_cover": 2.7,
+    "lead_time_days": 7,
+    "safety_stock": 60,
+    "recommended_qty": 262,
+    "priority": "P0",
+    "reason": "库存覆盖2.7天，低于采购提前期7天，存在立即缺货风险。",
+    "predicted_stockout_date": "2026-06-17",
+    "ai_recommendation": {
+      "recommend_qty": 262,
+      "priority": "P0",
+      "reason": "库存覆盖2.7天，低于采购提前期7天，存在立即缺货风险。 同时14天销量呈增长趋势，建议优先审批。"
+    }
+  },
+  {
+    "sku_id": "A002",
+    "sku_name": "夏季显瘦碎花连衣裙",
+    "supplier_id": "S002",
+    "current_stock": 250,
+    "avg_sales": 28.36,
+    "days_cover": 8.82,
+    "lead_time_days": 5,
+    "safety_stock": 80,
+    "recommended_qty": 221,
+    "priority": "P2",
+    "reason": "库存覆盖8.8天，低于两倍采购提前期，建议观察。",
+    "predicted_stockout_date": "2026-06-23",
+    "ai_recommendation": {
+      "recommend_qty": 221,
+      "priority": "P2",
+      "reason": "库存覆盖8.8天，低于两倍采购提前期，建议观察。"
+    }
+  },
+  {
+    "sku_id": "A003",
+    "sku_name": "轻薄防晒开衫",
+    "supplier_id": "S002",
+    "current_stock": 77,
+    "avg_sales": 13.0,
+    "days_cover": 5.92,
+    "lead_time_days": 6,
+    "safety_stock": 50,
+    "recommended_qty": 128,
+    "priority": "P0",
+    "reason": "库存覆盖5.9天，低于采购提前期6天，存在立即缺货风险。",
+    "predicted_stockout_date": "2026-06-20",
+    "ai_recommendation": {
+      "recommend_qty": 128,
+      "priority": "P0",
+      "reason": "库存覆盖5.9天，低于采购提前期6天，存在立即缺货风险。 同时14天销量呈增长趋势，建议优先审批。"
+    }
+  },
+  {
+    "sku_id": "A004",
+    "sku_name": "新中式盘扣上衣",
+    "supplier_id": "S003",
+    "current_stock": 40,
+    "avg_sales": 14.36,
+    "days_cover": 2.79,
+    "lead_time_days": 10,
+    "safety_stock": 40,
+    "recommended_qty": 183,
+    "priority": "P0",
+    "reason": "库存覆盖2.8天，低于采购提前期10天，存在立即缺货风险。",
+    "predicted_stockout_date": "2026-06-17",
+    "ai_recommendation": {
+      "recommend_qty": 183,
+      "priority": "P0",
+      "reason": "库存覆盖2.8天，低于采购提前期10天，存在立即缺货风险。 同时14天销量呈增长趋势，建议优先审批。"
+    }
+  },
+  {
+    "sku_id": "A005",
+    "sku_name": "高腰阔腿休闲裤",
+    "supplier_id": "S004",
+    "current_stock": 142,
+    "avg_sales": 18.36,
+    "days_cover": 7.74,
+    "lead_time_days": 4,
+    "safety_stock": 70,
+    "recommended_qty": 143,
+    "priority": "P2",
+    "reason": "库存覆盖7.7天，低于两倍采购提前期，建议观察。",
+    "predicted_stockout_date": "2026-06-22",
+    "ai_recommendation": {
+      "recommend_qty": 143,
+      "priority": "P2",
+      "reason": "库存覆盖7.7天，低于两倍采购提前期，建议观察。"
+    }
+  },
+  {
+    "sku_id": "A006",
+    "sku_name": "桑蚕丝感通勤衬衫",
+    "supplier_id": "S005",
+    "current_stock": 300,
+    "avg_sales": 5.57,
+    "days_cover": 53.85,
+    "lead_time_days": 12,
+    "safety_stock": 30,
+    "recommended_qty": 0,
+    "priority": "OK",
+    "reason": "库存覆盖53.8天，日均销量5.6，暂不需要补货。",
+    "predicted_stockout_date": "2026-08-07",
+    "ai_recommendation": {
+      "recommend_qty": 0,
+      "priority": "OK",
+      "reason": "库存覆盖53.8天，日均销量5.6，暂不需要补货。"
+    }
+  }
+]

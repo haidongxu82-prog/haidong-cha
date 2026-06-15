@@ -1,0 +1,23 @@
+[
+  {
+    "po_id": 1,
+    "sku_id": "A001",
+    "qty": 262,
+    "supplier_id": "S001",
+    "status": "draft"
+  },
+  {
+    "po_id": 2,
+    "sku_id": "A003",
+    "qty": 128,
+    "supplier_id": "S002",
+    "status": "draft"
+  },
+  {
+    "po_id": 3,
+    "sku_id": "A004",
+    "qty": 183,
+    "supplier_id": "S003",
+    "status": "draft"
+  }
+]
