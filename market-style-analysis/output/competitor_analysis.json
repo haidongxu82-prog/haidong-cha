@@ -1,0 +1,156 @@
+[
+  {
+    "sku_id": "S001",
+    "title": "民族风刺绣棉麻外套",
+    "category": "外套",
+    "competitors": [
+      {
+        "product_id": "M003",
+        "title": "妈妈装民族风刺绣外套",
+        "category": "外套",
+        "price": 199.0,
+        "style": "民族风",
+        "material": "棉麻",
+        "sales_volume": 1800,
+        "gmv": 358200.0,
+        "similarity_score": 0.8156,
+        "style_gap": "same_style",
+        "price_gap": "-20"
+      },
+      {
+        "product_id": "M008",
+        "title": "小香风短外套女春秋",
+        "category": "外套",
+        "price": 269.0,
+        "style": "小香风",
+        "material": "粗花呢",
+        "sales_volume": 970,
+        "gmv": 260930.0,
+        "similarity_score": 0.2904,
+        "style_gap": "民族风 vs 小香风",
+        "price_gap": "+50"
+      }
+    ],
+    "analysis": "竞品主要集中在均价 234 元附近；主要风格为 小香风、民族风。最相似竞品是 妈妈装民族风刺绣外套，相似度 0.82。建议重点对比材质、版型卖点和价格带，保留差异化表达。"
+  },
+  {
+    "sku_id": "S002",
+    "title": "法式碎花收腰雪纺裙",
+    "category": "连衣裙",
+    "competitors": [
+      {
+        "product_id": "M001",
+        "title": "法式碎花收腰连衣裙",
+        "category": "连衣裙",
+        "price": 129.0,
+        "style": "法式",
+        "material": "雪纺",
+        "sales_volume": 2600,
+        "gmv": 335400.0,
+        "similarity_score": 0.9055,
+        "style_gap": "same_style",
+        "price_gap": "-10"
+      },
+      {
+        "product_id": "M006",
+        "title": "度假沙滩印花长裙",
+        "category": "连衣裙",
+        "price": 159.0,
+        "style": "度假",
+        "material": "雪纺",
+        "sales_volume": 2100,
+        "gmv": 333900.0,
+        "similarity_score": 0.4095,
+        "style_gap": "法式 vs 度假",
+        "price_gap": "+20"
+      },
+      {
+        "product_id": "M014",
+        "title": "夏季纯色亚麻连衣裙",
+        "category": "连衣裙",
+        "price": 189.0,
+        "style": "休闲",
+        "material": "亚麻",
+        "sales_volume": 1750,
+        "gmv": 330750.0,
+        "similarity_score": 0.2512,
+        "style_gap": "法式 vs 休闲",
+        "price_gap": "+50"
+      }
+    ],
+    "analysis": "竞品主要集中在均价 159 元附近；主要风格为 休闲、度假、法式。最相似竞品是 法式碎花收腰连衣裙，相似度 0.91。建议重点对比材质、版型卖点和价格带，保留差异化表达。"
+  },
+  {
+    "sku_id": "S003",
+    "title": "通勤显瘦西装裙",
+    "category": "连衣裙",
+    "competitors": [
+      {
+        "product_id": "M002",
+        "title": "通勤显瘦西装连衣裙",
+        "category": "连衣裙",
+        "price": 239.0,
+        "style": "通勤",
+        "material": "聚酯纤维",
+        "sales_volume": 1200,
+        "gmv": 286800.0,
+        "similarity_score": 0.9441,
+        "style_gap": "same_style",
+        "price_gap": "+10"
+      },
+      {
+        "product_id": "M011",
+        "title": "优雅收腰气质连衣裙",
+        "category": "连衣裙",
+        "price": 219.0,
+        "style": "优雅",
+        "material": "聚酯纤维",
+        "sales_volume": 1350,
+        "gmv": 295650.0,
+        "similarity_score": 0.577,
+        "style_gap": "通勤 vs 优雅",
+        "price_gap": "-10"
+      },
+      {
+        "product_id": "M014",
+        "title": "夏季纯色亚麻连衣裙",
+        "category": "连衣裙",
+        "price": 189.0,
+        "style": "休闲",
+        "material": "亚麻",
+        "sales_volume": 1750,
+        "gmv": 330750.0,
+        "similarity_score": 0.3315,
+        "style_gap": "通勤 vs 休闲",
+        "price_gap": "-40"
+      },
+      {
+        "product_id": "M006",
+        "title": "度假沙滩印花长裙",
+        "category": "连衣裙",
+        "price": 159.0,
+        "style": "度假",
+        "material": "雪纺",
+        "sales_volume": 2100,
+        "gmv": 333900.0,
+        "similarity_score": 0.3216,
+        "style_gap": "通勤 vs 度假",
+        "price_gap": "-70"
+      },
+      {
+        "product_id": "M001",
+        "title": "法式碎花收腰连衣裙",
+        "category": "连衣裙",
+        "price": 129.0,
+        "style": "法式",
+        "material": "雪纺",
+        "sales_volume": 2600,
+        "gmv": 335400.0,
+        "similarity_score": 0.2358,
+        "style_gap": "通勤 vs 法式",
+        "price_gap": "-100"
+      }
+    ],
+    "analysis": "竞品主要集中在均价 187 元附近；主要风格为 休闲、优雅、度假、法式。最相似竞品是 通勤显瘦西装连衣裙，相似度 0.94。建议重点对比材质、版型卖点和价格带，保留差异化表达。"
+  }
+]

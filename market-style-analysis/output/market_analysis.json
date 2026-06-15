@@ -1,0 +1,233 @@
+{
+  "style_analysis": [
+    {
+      "style": "休闲",
+      "count": 2,
+      "sales_volume": 5050,
+      "gmv": 624450,
+      "share": 0.14438083523313186
+    },
+    {
+      "style": "民族风",
+      "count": 2,
+      "sales_volume": 3300,
+      "gmv": 581700,
+      "share": 0.1344964878775127
+    },
+    {
+      "style": "通勤",
+      "count": 2,
+      "sales_volume": 2130,
+      "gmv": 527670,
+      "share": 0.12200406009683193
+    },
+    {
+      "style": "法式",
+      "count": 1,
+      "sales_volume": 2600,
+      "gmv": 335400,
+      "share": 0.0775487743409279
+    },
+    {
+      "style": "度假",
+      "count": 1,
+      "sales_volume": 2100,
+      "gmv": 333900,
+      "share": 0.07720195513546758
+    },
+    {
+      "style": "日常",
+      "count": 1,
+      "sales_volume": 2800,
+      "gmv": 333200,
+      "share": 0.07704010617291943
+    },
+    {
+      "style": "优雅",
+      "count": 1,
+      "sales_volume": 1350,
+      "gmv": 295650,
+      "share": 0.06835806539622938
+    },
+    {
+      "style": "韩版",
+      "count": 1,
+      "sales_volume": 4200,
+      "gmv": 289800,
+      "share": 0.06700547049493413
+    },
+    {
+      "style": "小香风",
+      "count": 1,
+      "sales_volume": 970,
+      "gmv": 260930,
+      "share": 0.06033035685384114
+    },
+    {
+      "style": "新中式",
+      "count": 1,
+      "sales_volume": 760,
+      "gmv": 250040,
+      "share": 0.0578124494221992
+    },
+    {
+      "style": "轻奢",
+      "count": 1,
+      "sales_volume": 620,
+      "gmv": 247380,
+      "share": 0.057197423364516234
+    },
+    {
+      "style": "运动",
+      "count": 1,
+      "sales_volume": 3100,
+      "gmv": 244900,
+      "share": 0.0566240156114885
+    }
+  ],
+  "price_segment_analysis": [
+    {
+      "price_segment": "mid_high",
+      "count": 7,
+      "sales_volume": 10100,
+      "gmv": 2107100,
+      "share": 0.4871884985502957
+    },
+    {
+      "price_segment": "mid",
+      "count": 6,
+      "sales_volume": 17500,
+      "gmv": 1720500,
+      "share": 0.39780162866298885
+    },
+    {
+      "price_segment": "high",
+      "count": 2,
+      "sales_volume": 1380,
+      "gmv": 497420,
+      "share": 0.11500987278671544
+    }
+  ],
+  "category_style_analysis": [
+    {
+      "category": "外套",
+      "style": "民族风",
+      "count": 1,
+      "sales_volume": 1800,
+      "gmv": 358200,
+      "share": 0.08282042626392479
+    },
+    {
+      "category": "连衣裙",
+      "style": "法式",
+      "count": 1,
+      "sales_volume": 2600,
+      "gmv": 335400,
+      "share": 0.0775487743409279
+    },
+    {
+      "category": "连衣裙",
+      "style": "度假",
+      "count": 1,
+      "sales_volume": 2100,
+      "gmv": 333900,
+      "share": 0.07720195513546758
+    },
+    {
+      "category": "开衫",
+      "style": "日常",
+      "count": 1,
+      "sales_volume": 2800,
+      "gmv": 333200,
+      "share": 0.07704010617291943
+    },
+    {
+      "category": "连衣裙",
+      "style": "休闲",
+      "count": 1,
+      "sales_volume": 1750,
+      "gmv": 330750,
+      "share": 0.0764736348040009
+    },
+    {
+      "category": "连衣裙",
+      "style": "优雅",
+      "count": 1,
+      "sales_volume": 1350,
+      "gmv": 295650,
+      "share": 0.06835806539622938
+    },
+    {
+      "category": "衬衫",
+      "style": "休闲",
+      "count": 1,
+      "sales_volume": 3300,
+      "gmv": 293700,
+      "share": 0.06790720042913097
+    },
+    {
+      "category": "衬衫",
+      "style": "韩版",
+      "count": 1,
+      "sales_volume": 4200,
+      "gmv": 289800,
+      "share": 0.06700547049493413
+    },
+    {
+      "category": "连衣裙",
+      "style": "通勤",
+      "count": 1,
+      "sales_volume": 1200,
+      "gmv": 286800,
+      "share": 0.06631183208401348
+    },
+    {
+      "category": "外套",
+      "style": "小香风",
+      "count": 1,
+      "sales_volume": 970,
+      "gmv": 260930,
+      "share": 0.06033035685384114
+    },
+    {
+      "category": "外套",
+      "style": "新中式",
+      "count": 1,
+      "sales_volume": 760,
+      "gmv": 250040,
+      "share": 0.0578124494221992
+    },
+    {
+      "category": "衬衫",
+      "style": "轻奢",
+      "count": 1,
+      "sales_volume": 620,
+      "gmv": 247380,
+      "share": 0.057197423364516234
+    },
+    {
+      "category": "上衣",
+      "style": "运动",
+      "count": 1,
+      "sales_volume": 3100,
+      "gmv": 244900,
+      "share": 0.0566240156114885
+    },
+    {
+      "category": "套装",
+      "style": "通勤",
+      "count": 1,
+      "sales_volume": 930,
+      "gmv": 240870,
+      "share": 0.05569222801281844
+    },
+    {
+      "category": "上衣",
+      "style": "民族风",
+      "count": 1,
+      "sales_volume": 1500,
+      "gmv": 223500,
+      "share": 0.05167606161358791
+    }
+  ]
+}
