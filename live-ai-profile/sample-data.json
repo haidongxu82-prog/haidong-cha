@@ -1,0 +1,13 @@
+{
+  "live_id": "live_20260615_001",
+  "behavior": [
+    { "user_id": "u001", "click": 12, "cart": 7, "buy": 4, "watch_seconds": 820, "comment": 3 },
+    { "user_id": "u002", "click": 9, "cart": 5, "buy": 1, "watch_seconds": 610, "comment": 1 },
+    { "user_id": "u003", "click": 18, "cart": 3, "buy": 0, "watch_seconds": 420, "comment": 0 },
+    { "user_id": "u004", "click": 5, "cart": 4, "buy": 0, "watch_seconds": 760, "comment": 4 },
+    { "user_id": "u005", "click": 3, "cart": 0, "buy": 0, "watch_seconds": 120, "comment": 0 },
+    { "user_id": "u006", "click": 15, "cart": 9, "buy": 5, "watch_seconds": 980, "comment": 2 },
+    { "user_id": "u007", "click": 7, "cart": 3, "buy": 0, "watch_seconds": 540, "comment": 1 },
+    { "user_id": "u008", "click": 11, "cart": 6, "buy": 2, "watch_seconds": 690, "comment": 5 }
+  ]
+}

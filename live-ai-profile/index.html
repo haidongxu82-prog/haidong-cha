@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>直播用户画像系统 · 海东 AI</title>
+    <meta
+      name="description"
+      content="直播间用户行为聚合、分群标签和运营画像报告 MVP。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#input">数据</a>
+        <a href="#profile">画像</a>
+        <a href="#pipeline">流程</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">LIVE AI PROFILE · MVP</p>
+        <h1>把直播间用户，看成可运营的人群。</h1>
+        <p class="summary">
+          输入用户点击、加购、购买和停留数据，系统自动清洗聚合、分群打标签，并输出可直接用于运营的用户画像报告。
+        </p>
+      </section>
+
+      <section id="input" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>USER EVENTS</p>
+              <h2>用户行为 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="profileButton" type="button">生成用户画像</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 使用浏览器本地计算：fetch → clean → feature → segment → label → report。</p>
+        </section>
+
+        <section id="profile" class="result-panel" aria-live="polite">
+          <div class="metric-strip">
+            <article>
+              <span>用户数</span>
+              <strong id="userCount">0</strong>
+            </article>
+            <article>
+              <span>高价值</span>
+              <strong id="highValueCount">0</strong>
+            </article>
+            <article>
+              <span>高意向</span>
+              <strong id="intentCount">0</strong>
+            </article>
+          </div>
+
+          <section class="report-card">
+            <div class="notice-head">
+              <span>AI 画像报告</span>
+              <button id="copyReport" type="button">复制报告</button>
+            </div>
+            <pre id="reportOutput">等待生成。</pre>
+          </section>
+
+          <div class="profile-table">
+            <div class="table-head">
+              <span>用户</span>
+              <span>点击</span>
+              <span>加购率</span>
+              <span>购买</span>
+              <span>分群 / 标签</span>
+            </div>
+            <div id="profileRows" class="table-body"></div>
+          </div>
+
+          <details class="json-panel">
+            <summary>查看 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="pipeline" class="pipeline-panel">
+        <div class="panel-head">
+          <div>
+            <p>PIPELINE</p>
+            <h2>唯一主链路</h2>
+          </div>
+        </div>
+        <div class="pipeline-grid">
+          <article><span>01</span><p>fetch 拉取行为和订单</p></article>
+          <article><span>02</span><p>clean 去重与补缺失</p></article>
+          <article><span>03</span><p>feature 聚合用户指标</p></article>
+          <article><span>04</span><p>segment 高价值 / 犹豫 / 普通</p></article>
+          <article><span>05</span><p>label 已购 / 高意向</p></article>
+          <article><span>06</span><p>report 输出运营建议</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
