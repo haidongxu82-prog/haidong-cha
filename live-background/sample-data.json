@@ -1,0 +1,16 @@
+{
+  "industry": "中老年民族服饰直播",
+  "goal": "conversion",
+  "live_data": {
+    "impressions": 86000,
+    "click_rate": 0.021,
+    "avg_watch_time": 34,
+    "conversion_rate": 0.012,
+    "drop_off_time": 8
+  },
+  "background_images": [
+    "https://example.com/live-bg-product-price-cta-warm.jpg",
+    "https://example.com/live-bg-busy-text-red-sale.jpg",
+    "https://example.com/live-bg-clean-host-product-soft.jpg"
+  ]
+}

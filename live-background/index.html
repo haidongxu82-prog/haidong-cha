@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI直播背景优化分析 · 海东 AI</title>
+    <meta
+      name="description"
+      content="结合直播背景图和直播数据，输出视觉优化、商业转化和A/B测试建议。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#input">输入</a>
+        <a href="#analysis">分析</a>
+        <a href="#rules">规则</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">LIVE BACKGROUND ANALYZER · MVP</p>
+        <h1>直播间背景，不只看好不好看。</h1>
+        <p class="summary">
+          输入背景图 URL、行业和直播数据，系统输出点击、停留、转化三类问题诊断，以及可执行的视觉优化和 A/B 测试方案。
+        </p>
+      </section>
+
+      <section id="input" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>BACKGROUND + DATA</p>
+              <h2>分析输入 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="analyzeButton" type="button">生成优化分析</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 用规则模拟视觉诊断；真实生产版可接 GPT-4o / Gemini Vision 做图像理解。</p>
+        </section>
+
+        <section id="analysis" class="result-panel" aria-live="polite">
+          <div class="metric-strip">
+            <article>
+              <span>目标</span>
+              <strong id="goalLabel">-</strong>
+            </article>
+            <article>
+              <span>风险</span>
+              <strong id="riskLabel">-</strong>
+            </article>
+            <article>
+              <span>图片数</span>
+              <strong id="imageCount">0</strong>
+            </article>
+          </div>
+
+          <section class="summary-card">
+            <div class="notice-head">
+              <span>结论摘要</span>
+              <button id="copyJson" type="button">复制 JSON</button>
+            </div>
+            <p id="summaryText">等待分析。</p>
+          </section>
+
+          <div class="image-grid" id="imageCards"></div>
+
+          <section class="diagnosis-grid">
+            <article>
+              <span>CTR 问题</span>
+              <ul id="ctrProblems"></ul>
+            </article>
+            <article>
+              <span>停留问题</span>
+              <ul id="retentionProblems"></ul>
+            </article>
+            <article>
+              <span>转化问题</span>
+              <ul id="conversionProblems"></ul>
+            </article>
+          </section>
+
+          <section class="recommend-card">
+            <div class="notice-head">
+              <span>优化建议</span>
+            </div>
+            <div id="recommendRows" class="recommend-list"></div>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看完整 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="rules" class="rules-panel">
+        <div class="panel-head">
+          <div>
+            <p>ENGINE</p>
+            <h2>当前分析链路</h2>
+          </div>
+        </div>
+        <div class="rule-grid">
+          <article><span>01</span><p>图像线索分析：主体、颜色、信息密度、CTA。</p></article>
+          <article><span>02</span><p>多图对比：风格统一度、噪音图、低点击潜力图。</p></article>
+          <article><span>03</span><p>数据关联：CTR、停留、转化与视觉特征对应。</p></article>
+          <article><span>04</span><p>输出建议：视觉、商业、A/B测试和风险。</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
