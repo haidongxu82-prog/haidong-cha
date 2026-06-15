@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>同款爆款素材检索 · 海东 AI</title>
+    <meta
+      name="description"
+      content="输入商品图片，生成商品标签、检索关键词、爆款素材评分和素材库结果。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#input">输入</a>
+        <a href="#result">素材库</a>
+        <a href="#workflow">流程</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">HOT MATERIAL SEARCH · MVP</p>
+        <h1>找同款爆款素材，先把方向跑出来。</h1>
+        <p class="summary">
+          输入商品主图或白底图 URL，系统生成商品结构化标签和搜索关键词，模拟多平台素材采集，并按热度评分排序。
+        </p>
+      </section>
+
+      <section id="input" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>PRODUCT IMAGES</p>
+              <h2>图片输入 JSON</h2>
+            </div>
+            <button class="sample-button" type="button">填入模拟数据</button>
+          </div>
+          <textarea id="dataInput" rows="14" spellcheck="false"></textarea>
+          <div class="actions">
+            <button class="primary" id="analyzeButton" type="button">检索爆款素材</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+          <p class="hint">MVP 使用关键词和模拟平台数据；生产版可替换为 CLIP/SigLIP + RPA/API 采集。</p>
+        </section>
+
+        <section id="result" class="result-panel" aria-live="polite">
+          <div class="metric-strip">
+            <article>
+              <span>类目</span>
+              <strong id="categoryLabel">-</strong>
+            </article>
+            <article>
+              <span>关键词</span>
+              <strong id="keywordCount">0</strong>
+            </article>
+            <article>
+              <span>素材数</span>
+              <strong id="materialCount">0</strong>
+            </article>
+          </div>
+
+          <section class="profile-card">
+            <div class="notice-head">
+              <span>商品识别</span>
+              <button id="copyJson" type="button">复制 JSON</button>
+            </div>
+            <div id="profileOutput" class="profile-output">等待检索。</div>
+          </section>
+
+          <div class="material-table">
+            <div class="table-head">
+              <span>平台</span>
+              <span>标题</span>
+              <span>数据</span>
+              <span>评分</span>
+              <span>原因标签</span>
+            </div>
+            <div id="materialRows" class="table-body"></div>
+          </div>
+
+          <section class="keyword-card">
+            <div class="notice-head">
+              <span>检索关键词</span>
+            </div>
+            <div id="keywordRows" class="keyword-list"></div>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看完整 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="workflow" class="workflow-panel">
+        <div class="panel-head">
+          <div>
+            <p>WORKFLOW</p>
+            <h2>MVP链路</h2>
+          </div>
+        </div>
+        <div class="workflow-grid">
+          <article><span>01</span><p>商品图片输入</p></article>
+          <article><span>02</span><p>生成结构化标签</p></article>
+          <article><span>03</span><p>生成检索关键词</p></article>
+          <article><span>04</span><p>模拟平台采集</p></article>
+          <article><span>05</span><p>爆款评分排序</p></article>
+          <article><span>06</span><p>输出素材库</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
