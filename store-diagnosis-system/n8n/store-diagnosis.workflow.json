@@ -1,0 +1,72 @@
+{
+  "name": "电商店铺诊断系统 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-trigger",
+      "name": "每日店铺诊断",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd /path/to/store-diagnosis-system && python pipeline/run_store_diagnosis.py"
+      },
+      "id": "run-diagnosis",
+      "name": "运行诊断脚本",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"电商店铺诊断报告已生成，请查看 output 目录。\" } }"
+      },
+      "id": "notify",
+      "name": "飞书提醒",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0]
+    }
+  ],
+  "connections": {
+    "每日店铺诊断": {
+      "main": [
+        [
+          {
+            "node": "运行诊断脚本",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "运行诊断脚本": {
+      "main": [
+        [
+          {
+            "node": "飞书提醒",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

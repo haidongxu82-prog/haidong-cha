@@ -1,0 +1,19 @@
+{
+  "benchmarks": {
+    "industry_ctr": 0.035,
+    "industry_conversion_rate": 0.055
+  },
+  "product": {
+    "top_percentile": 0.8
+  },
+  "ads": {
+    "low_roi": 1.0,
+    "healthy_roi": 2.0
+  },
+  "pricing": {
+    "high_price_ratio": 1.2,
+    "cost_risk_ratio": 1.1,
+    "suggest_low_ratio": 0.95,
+    "suggest_high_ratio": 1.08
+  }
+}
