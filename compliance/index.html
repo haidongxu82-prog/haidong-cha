@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>抖音电商话术合规审核 · 海东 AI</title>
+    <meta
+      name="description"
+      content="面向中老年民族服饰电商直播和短视频的话术合规预检工具。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="返回海东 AI">
+        <span class="brand-mark">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>海东 AI</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#review">审核</a>
+        <a href="#result">结果</a>
+        <a href="#rules">规则</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="kicker">DOUYIN COMPLIANCE · MVP</p>
+        <h1>电商话术发布前，先过一遍合规风控。</h1>
+        <p class="summary">
+          面向中老年民族服饰直播、短视频和商品文案。先用硬规则命中风险，再做语义级判断，并给出可直接替换的安全表达。
+        </p>
+      </section>
+
+      <section id="review" class="workspace">
+        <section class="input-panel">
+          <div class="panel-head">
+            <div>
+              <p>INPUT</p>
+              <h2>待审核话术</h2>
+            </div>
+            <button class="sample-button" type="button">填入示例</button>
+          </div>
+          <textarea
+            id="scriptText"
+            rows="9"
+            placeholder="输入直播话术、短视频脚本、商品详情页文案..."
+          ></textarea>
+          <div class="actions">
+            <button class="primary" id="reviewButton" type="button">开始审核</button>
+            <button class="ghost" id="clearButton" type="button">清空</button>
+          </div>
+        </section>
+
+        <section id="result" class="result-panel" aria-live="polite">
+          <div class="risk-card low" id="riskCard">
+            <span>风险等级</span>
+            <strong id="riskLevel">等待审核</strong>
+            <em id="decision">输入话术后开始检测</em>
+          </div>
+
+          <div class="result-grid">
+            <article class="result-block">
+              <span>命中规则</span>
+              <div id="hitWords" class="chips">
+                <em>暂无</em>
+              </div>
+            </article>
+            <article class="result-block">
+              <span>风险原因</span>
+              <p id="reason">暂无审核结果。</p>
+            </article>
+          </div>
+
+          <section class="rewrite-panel">
+            <div class="rewrite-card">
+              <span>安全版本</span>
+              <p id="rewriteSafe">审核后生成。</p>
+              <button type="button" data-copy="rewriteSafe">复制</button>
+            </div>
+            <div class="rewrite-card">
+              <span>转化版本</span>
+              <p id="rewriteConversion">审核后生成。</p>
+              <button type="button" data-copy="rewriteConversion">复制</button>
+            </div>
+            <div class="rewrite-card">
+              <span>严格版本</span>
+              <p id="rewriteStrict">审核后生成。</p>
+              <button type="button" data-copy="rewriteStrict">复制</button>
+            </div>
+          </section>
+
+          <details class="json-panel">
+            <summary>查看 JSON 输出</summary>
+            <pre id="jsonOutput">{}</pre>
+          </details>
+        </section>
+      </section>
+
+      <section id="rules" class="rules-panel">
+        <div class="panel-head">
+          <div>
+            <p>RULE ENGINE</p>
+            <h2>内置规则库</h2>
+          </div>
+        </div>
+        <div class="rule-grid">
+          <article>
+            <span>极限词</span>
+            <p>最、第一、全网最低、100%、绝对、顶级、唯一</p>
+          </article>
+          <article>
+            <span>中老年敏感表达</span>
+            <p>治疗、强身、延寿、改善气血、不买后悔、孝顺必买</p>
+          </article>
+          <article>
+            <span>民族文化风险</span>
+            <p>正宗血统、唯一传承、国家级认证、最正统民族</p>
+          </article>
+          <article>
+            <span>语义风险</span>
+            <p>功效暗示、情绪绑架、绝对化承诺、文化夸大</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

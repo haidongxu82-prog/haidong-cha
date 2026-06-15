@@ -281,11 +281,6 @@ a {
   border-bottom: 0;
 }
 
-.tool-card:nth-child(4):nth-last-child(2),
-.tool-card:nth-child(5):last-child {
-  border-bottom: 0;
-}
-
 .tool-card:hover {
   border-color: rgba(185, 255, 220, 0.22);
   background: rgba(159, 255, 195, 0.06);
