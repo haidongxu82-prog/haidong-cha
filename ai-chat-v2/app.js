@@ -38,6 +38,7 @@ let abortController = null;
 let tokenTotals = { prompt: 0, completion: 0, total: 0, estimated: false };
 const TOKEN_LOG_KEY = "haidong_ai_token_log";
 const GUEST_MODE_KEY = "haidong_ai_guest_mode";
+const THEME_KEY = "haidong_ai_theme";
 let tokenLog = readTokenLog();
 let guestMode = localStorage.getItem(GUEST_MODE_KEY) === "1";
 
@@ -63,6 +64,9 @@ const tokenMeter = document.querySelector(".token-meter");
 const guestTitle = document.querySelector("[data-guest-title]");
 const guestCopy = document.querySelector("[data-guest-copy]");
 const guestToggle = document.querySelector(".guest-toggle");
+
+const savedTheme = localStorage.getItem(THEME_KEY);
+root.dataset.theme = savedTheme === "light" ? "light" : "dark";
 
 function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -518,6 +522,7 @@ newChatButton.addEventListener("click", resetChat);
 
 themeButton.addEventListener("click", () => {
   root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, root.dataset.theme);
 });
 
 composer.addEventListener("submit", (event) => {
