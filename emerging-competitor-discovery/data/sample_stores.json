@@ -1,0 +1,67 @@
+[
+  {
+    "store_id": "S001",
+    "store_name": "云栖民族风",
+    "platform": "douyin",
+    "category": "民族服饰",
+    "product_count": 42,
+    "sales_index": 82,
+    "ad_index": 76,
+    "social_index": 88,
+    "first_seen_date": "2026-06-10",
+    "ad_index_3d_ago": 42,
+    "social_index_3d_ago": 36
+  },
+  {
+    "store_id": "S002",
+    "store_name": "杭派妈妈装",
+    "platform": "taobao",
+    "category": "中老年女装",
+    "product_count": 128,
+    "sales_index": 66,
+    "ad_index": 48,
+    "social_index": 54,
+    "first_seen_date": "2026-05-18",
+    "ad_index_3d_ago": 40,
+    "social_index_3d_ago": 45
+  },
+  {
+    "store_id": "S003",
+    "store_name": "银发新中式实验室",
+    "platform": "douyin",
+    "category": "民族服饰",
+    "product_count": 24,
+    "sales_index": 74,
+    "ad_index": 91,
+    "social_index": 93,
+    "first_seen_date": "2026-06-13",
+    "ad_index_3d_ago": 38,
+    "social_index_3d_ago": 30
+  },
+  {
+    "store_id": "S004",
+    "store_name": "基础女装仓",
+    "platform": "shopify",
+    "category": "女装",
+    "product_count": 310,
+    "sales_index": 35,
+    "ad_index": 18,
+    "social_index": 22,
+    "first_seen_date": "2026-03-01",
+    "ad_index_3d_ago": 16,
+    "social_index_3d_ago": 20
+  },
+  {
+    "store_id": "S005",
+    "store_name": "她山通勤",
+    "platform": "taobao",
+    "category": "女装",
+    "product_count": 86,
+    "sales_index": 58,
+    "ad_index": 62,
+    "social_index": 49,
+    "first_seen_date": "2026-06-01",
+    "ad_index_3d_ago": 59,
+    "social_index_3d_ago": 44
+  }
+]

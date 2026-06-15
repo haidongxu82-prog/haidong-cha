@@ -1,0 +1,234 @@
+{
+  "summary": {
+    "store_count": 5,
+    "competitor_count": 4,
+    "new_brand_count": 2,
+    "alert_count": 8
+  },
+  "results": [
+    {
+      "record": {
+        "store_id": "S001",
+        "store_name": "云栖民族风",
+        "store_name_normalized": "云栖民族风",
+        "platform": "douyin",
+        "category": "民族服饰",
+        "product_count": 42,
+        "first_seen_date": "2026-06-10",
+        "first_seen_days": 5,
+        "metrics": {
+          "sales_index": 82.0,
+          "ad_index": 76.0,
+          "social_index": 88.0,
+          "ad_index_3d_ago": 42.0,
+          "social_index_3d_ago": 36.0
+        }
+      },
+      "analysis": {
+        "is_new_brand": true,
+        "is_competitor": true,
+        "competitor_level": "S",
+        "growth_score": 97.0,
+        "alert": true,
+        "reason": "7天内出现的新品牌，广告投放强，社媒热度高，销量指数高，综合增长评分97.0，竞品等级S"
+      },
+      "alerts": [
+        {
+          "store_id": "S001",
+          "alert_type": "growth_spike",
+          "message": "云栖民族风 Growth Score 97.0，需要重点跟踪。"
+        },
+        {
+          "store_id": "S001",
+          "alert_type": "ad_spike",
+          "message": "云栖民族风 3日广告指数增长超过50%。"
+        },
+        {
+          "store_id": "S001",
+          "alert_type": "social_spike",
+          "message": "云栖民族风 社媒热度出现翻倍增长。"
+        },
+        {
+          "store_id": "S001",
+          "alert_type": "new_brand",
+          "message": "云栖民族风 是7天内出现的新兴品牌。"
+        }
+      ]
+    },
+    {
+      "record": {
+        "store_id": "S002",
+        "store_name": "杭派妈妈装",
+        "store_name_normalized": "杭派妈妈装",
+        "platform": "taobao",
+        "category": "中老年女装",
+        "product_count": 128,
+        "first_seen_date": "2026-05-18",
+        "first_seen_days": 28,
+        "metrics": {
+          "sales_index": 66.0,
+          "ad_index": 48.0,
+          "social_index": 54.0,
+          "ad_index_3d_ago": 40.0,
+          "social_index_3d_ago": 45.0
+        }
+      },
+      "analysis": {
+        "is_new_brand": false,
+        "is_competitor": true,
+        "competitor_level": "B",
+        "growth_score": 62.0,
+        "alert": false,
+        "reason": "综合增长评分62.0，竞品等级B"
+      },
+      "alerts": []
+    },
+    {
+      "record": {
+        "store_id": "S003",
+        "store_name": "银发新中式实验室",
+        "store_name_normalized": "银发新中式实验室",
+        "platform": "douyin",
+        "category": "民族服饰",
+        "product_count": 24,
+        "first_seen_date": "2026-06-13",
+        "first_seen_days": 2,
+        "metrics": {
+          "sales_index": 74.0,
+          "ad_index": 91.0,
+          "social_index": 93.0,
+          "ad_index_3d_ago": 38.0,
+          "social_index_3d_ago": 30.0
+        }
+      },
+      "analysis": {
+        "is_new_brand": true,
+        "is_competitor": true,
+        "competitor_level": "S",
+        "growth_score": 99.8,
+        "alert": true,
+        "reason": "7天内出现的新品牌，广告投放强，社媒热度高，销量指数高，综合增长评分99.8，竞品等级S"
+      },
+      "alerts": [
+        {
+          "store_id": "S003",
+          "alert_type": "growth_spike",
+          "message": "银发新中式实验室 Growth Score 99.8，需要重点跟踪。"
+        },
+        {
+          "store_id": "S003",
+          "alert_type": "ad_spike",
+          "message": "银发新中式实验室 3日广告指数增长超过50%。"
+        },
+        {
+          "store_id": "S003",
+          "alert_type": "social_spike",
+          "message": "银发新中式实验室 社媒热度出现翻倍增长。"
+        },
+        {
+          "store_id": "S003",
+          "alert_type": "new_brand",
+          "message": "银发新中式实验室 是7天内出现的新兴品牌。"
+        }
+      ]
+    },
+    {
+      "record": {
+        "store_id": "S004",
+        "store_name": "基础女装仓",
+        "store_name_normalized": "基础女装仓",
+        "platform": "shopify",
+        "category": "女装",
+        "product_count": 310,
+        "first_seen_date": "2026-03-01",
+        "first_seen_days": 106,
+        "metrics": {
+          "sales_index": 35.0,
+          "ad_index": 18.0,
+          "social_index": 22.0,
+          "ad_index_3d_ago": 16.0,
+          "social_index_3d_ago": 20.0
+        }
+      },
+      "analysis": {
+        "is_new_brand": false,
+        "is_competitor": false,
+        "competitor_level": "C",
+        "growth_score": 26.0,
+        "alert": false,
+        "reason": "综合增长评分26.0，竞品等级C"
+      },
+      "alerts": []
+    },
+    {
+      "record": {
+        "store_id": "S005",
+        "store_name": "她山通勤",
+        "store_name_normalized": "她山通勤",
+        "platform": "taobao",
+        "category": "女装",
+        "product_count": 86,
+        "first_seen_date": "2026-06-01",
+        "first_seen_days": 14,
+        "metrics": {
+          "sales_index": 58.0,
+          "ad_index": 62.0,
+          "social_index": 49.0,
+          "ad_index_3d_ago": 59.0,
+          "social_index_3d_ago": 44.0
+        }
+      },
+      "analysis": {
+        "is_new_brand": false,
+        "is_competitor": true,
+        "competitor_level": "B",
+        "growth_score": 61.5,
+        "alert": false,
+        "reason": "综合增长评分61.5，竞品等级B"
+      },
+      "alerts": []
+    }
+  ],
+  "alerts": [
+    {
+      "store_id": "S001",
+      "alert_type": "growth_spike",
+      "message": "云栖民族风 Growth Score 97.0，需要重点跟踪。"
+    },
+    {
+      "store_id": "S001",
+      "alert_type": "ad_spike",
+      "message": "云栖民族风 3日广告指数增长超过50%。"
+    },
+    {
+      "store_id": "S001",
+      "alert_type": "social_spike",
+      "message": "云栖民族风 社媒热度出现翻倍增长。"
+    },
+    {
+      "store_id": "S001",
+      "alert_type": "new_brand",
+      "message": "云栖民族风 是7天内出现的新兴品牌。"
+    },
+    {
+      "store_id": "S003",
+      "alert_type": "growth_spike",
+      "message": "银发新中式实验室 Growth Score 99.8，需要重点跟踪。"
+    },
+    {
+      "store_id": "S003",
+      "alert_type": "ad_spike",
+      "message": "银发新中式实验室 3日广告指数增长超过50%。"
+    },
+    {
+      "store_id": "S003",
+      "alert_type": "social_spike",
+      "message": "银发新中式实验室 社媒热度出现翻倍增长。"
+    },
+    {
+      "store_id": "S003",
+      "alert_type": "new_brand",
+      "message": "银发新中式实验室 是7天内出现的新兴品牌。"
+    }
+  ]
+}

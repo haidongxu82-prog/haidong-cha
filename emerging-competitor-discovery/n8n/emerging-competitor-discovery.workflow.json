@@ -1,0 +1,72 @@
+{
+  "name": "竞品与新兴店铺自动发现系统 V1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron",
+      "name": "每日触发",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd /path/to/emerging-competitor-discovery && python pipeline/run_discovery.py"
+      },
+      "id": "run",
+      "name": "运行发现任务",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_WEBHOOK",
+        "method": "POST",
+        "sendBody": true,
+        "jsonBody": "{ \"msg_type\": \"text\", \"content\": { \"text\": \"新兴竞品发现任务已完成，请查看预警。\" } }"
+      },
+      "id": "notify",
+      "name": "飞书预警",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0]
+    }
+  ],
+  "connections": {
+    "每日触发": {
+      "main": [
+        [
+          {
+            "node": "运行发现任务",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "运行发现任务": {
+      "main": [
+        [
+          {
+            "node": "飞书预警",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
