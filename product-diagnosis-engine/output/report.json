@@ -1,0 +1,89 @@
+{
+  "product_score": 71,
+  "profit_estimation": {
+    "low": 45.2,
+    "mid": 32.3,
+    "high": 19.4
+  },
+  "competitor_summary": [
+    {
+      "name": "妈妈装中老年民族风刺绣衬衫竞品1",
+      "price": 110.94,
+      "sales_level": "high",
+      "rating": 4.8,
+      "url": "https://example.com/douyin/competitor-1"
+    },
+    {
+      "name": "民族风中老年民族风刺绣衬衫竞品2",
+      "price": 121.26,
+      "sales_level": "medium",
+      "rating": 4.6,
+      "url": "https://example.com/douyin/competitor-2"
+    },
+    {
+      "name": "刺绣中老年民族风刺绣衬衫竞品3",
+      "price": 131.58,
+      "sales_level": "high",
+      "rating": 4.7,
+      "url": "https://example.com/douyin/competitor-3"
+    },
+    {
+      "name": "妈妈装中老年民族风刺绣衬衫竞品4",
+      "price": 144.48,
+      "sales_level": "medium",
+      "rating": 4.4,
+      "url": "https://example.com/douyin/competitor-4"
+    },
+    {
+      "name": "民族风中老年民族风刺绣衬衫竞品5",
+      "price": 159.96,
+      "sales_level": "low",
+      "rating": 4.2,
+      "url": "https://example.com/douyin/competitor-5"
+    }
+  ],
+  "market_analysis": {
+    "competition_level": "high",
+    "price_band": "中",
+    "demand_signal": "medium",
+    "market_price": {
+      "min": 110.94,
+      "max": 159.96,
+      "avg": 133.64
+    },
+    "review_pain_points": [
+      "用户关注民族元素是否精致"
+    ],
+    "main_selling_points": [
+      "刺绣工艺",
+      "中老年适配",
+      "民族风设计"
+    ]
+  },
+  "recommendation": {
+    "decision": "try",
+    "reason": "具备测试价值，但需要控制库存和投放预算。",
+    "risk_factors": [
+      "竞品竞争强度高"
+    ]
+  },
+  "optimization_suggestions": [
+    "当前售价接近竞品均价，可作为主推测试价。",
+    "主图突出核心卖点，避免只展示款式不展示穿着效果。",
+    "投放关键词优先围绕类目词、场景词和人群词做小预算测试。",
+    "民族文化表达要避免唯一、正宗、官方认证等绝对化话术。"
+  ],
+  "input": {
+    "product_name": "中老年民族风刺绣衬衫",
+    "category": "民族服饰",
+    "cost_price": 58.0,
+    "selling_price": 129.0,
+    "platform": "douyin",
+    "target_market": "国内",
+    "optional_keywords": [
+      "妈妈装",
+      "民族风",
+      "刺绣"
+    ]
+  }
+}

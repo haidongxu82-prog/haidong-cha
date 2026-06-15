@@ -1,0 +1,47 @@
+{
+  "name": "电商商品诊断系统 MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "product-diagnosis",
+        "httpMethod": "POST",
+        "responseMode": "lastNode"
+      },
+      "id": "webhook",
+      "name": "商品输入 Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/api/product-diagnosis/run",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.body}}"
+      },
+      "id": "api-call",
+      "name": "调用商品诊断API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 0]
+    }
+  ],
+  "connections": {
+    "商品输入 Webhook": {
+      "main": [
+        [
+          {
+            "node": "调用商品诊断API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
