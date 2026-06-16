@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260616-course-announcement" />
+    <link rel="stylesheet" href="home.css?v=20260616-course-announcement-top" />
   </head>
   <body>
     <div class="ambient" aria-hidden="true"></div>
@@ -38,6 +38,23 @@
     </header>
 
     <main class="shell">
+      <section
+        class="announcement"
+        data-expire-at="2026-07-10T00:00:00+08:00"
+        aria-labelledby="announcement-title"
+      >
+        <div>
+          <p class="kicker">COURSE NOTICE</p>
+          <h2 id="announcement-title">武汉开课</h2>
+        </div>
+        <div class="announcement-body">
+          <span class="announcement-date">2026.07.09</span>
+          <p>
+            我的 AI 课第 1 期《AI 赋能电商产品开发》将在武汉开课。
+          </p>
+        </div>
+      </section>
+
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
           <p class="kicker">HAIDONG · AI WORKFLOW INDEX</p>
@@ -69,19 +86,6 @@
             <p>hot_material_search: online</p>
             <p>engineering_systems: indexed</p>
           </div>
-        </div>
-      </section>
-
-      <section class="announcement" aria-labelledby="announcement-title">
-        <div>
-          <p class="kicker">COURSE NOTICE</p>
-          <h2 id="announcement-title">武汉开课</h2>
-        </div>
-        <div class="announcement-body">
-          <span class="announcement-date">2026.07.09</span>
-          <p>
-            我的 AI 课第 1 期《AI 赋能电商产品开发》将在武汉开课。
-          </p>
         </div>
       </section>
 
@@ -235,5 +239,18 @@
       <span>© 2026 Haidong</span>
       <span>Quiet systems. Working tools.</span>
     </footer>
+    <script>
+      (() => {
+        const announcement = document.querySelector(".announcement");
+        const shell = document.querySelector(".shell");
+        if (!announcement || !shell) return;
+
+        const expireAt = new Date(announcement.dataset.expireAt);
+        if (Number.isNaN(expireAt.getTime()) || new Date() < expireAt) return;
+
+        announcement.classList.add("announcement-expired");
+        shell.appendChild(announcement);
+      })();
+    </script>
   </body>
 </html>
