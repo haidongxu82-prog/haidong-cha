@@ -612,6 +612,11 @@ h2 {
   padding-left: 1.25em;
 }
 
+.article-body ol {
+  margin: 0 0 1.2em;
+  padding-left: 1.35em;
+}
+
 .article-body li {
   margin-bottom: 0.55em;
 }
@@ -624,6 +629,34 @@ h2 {
   font-size: clamp(20px, 2.5vw, 28px);
   font-weight: 820;
   line-height: 1.55;
+}
+
+.article-table-wrap {
+  width: 100%;
+  margin: 1.5em 0;
+  overflow-x: auto;
+}
+
+.article-body table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid rgba(24, 25, 23, 0.16);
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body th {
+  background: rgba(24, 25, 23, 0.06);
+  color: #181917;
+  font-weight: 820;
 }
 
 .back-link {

@@ -607,6 +607,19 @@ a {
   border-right: 0;
 }
 
+.share-card[href] {
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.share-card[href]:hover {
+  border-color: rgba(185, 255, 220, 0.22);
+  background: rgba(159, 255, 195, 0.055);
+  transform: translateY(-2px);
+}
+
 .share-card.muted {
   background: rgba(255, 255, 255, 0.018);
 }
