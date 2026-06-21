@@ -42,10 +42,12 @@ fi
   .gitignore \
   index.html \
   styles.css \
+  home.css \
   CNAME \
   assets \
   posts \
   ai-chat \
+  chat-screenshot-helper \
   deploy \
   scripts \
   ':(exclude)__pycache__' \

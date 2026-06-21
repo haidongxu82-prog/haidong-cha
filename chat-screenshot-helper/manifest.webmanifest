@@ -1,0 +1,17 @@
+{
+  "name": "聊天截图助手",
+  "short_name": "截图助手",
+  "description": "本地处理聊天截图，拼接长图、添加隐私打码并导出 PNG 或 PDF。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#17202a",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
