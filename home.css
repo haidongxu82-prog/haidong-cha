@@ -601,20 +601,10 @@ a {
   gap: 22px;
   padding: 22px;
   border-right: 1px solid rgba(185, 255, 220, 0.1);
-  transition:
-    background-color 180ms ease,
-    transform 180ms ease,
-    border-color 180ms ease;
 }
 
 .share-card:last-child {
   border-right: 0;
-}
-
-.share-card:hover {
-  border-color: rgba(185, 255, 220, 0.22);
-  background: rgba(159, 255, 195, 0.055);
-  transform: translateY(-2px);
 }
 
 .share-card.muted {
