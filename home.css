@@ -594,17 +594,31 @@ a {
   background: rgba(0, 0, 0, 0.12);
 }
 
-.share-slots article {
+.share-card {
   min-height: 210px;
   display: grid;
   align-content: space-between;
   gap: 22px;
   padding: 22px;
   border-right: 1px solid rgba(185, 255, 220, 0.1);
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
 }
 
-.share-slots article:last-child {
+.share-card:last-child {
   border-right: 0;
+}
+
+.share-card:hover {
+  border-color: rgba(185, 255, 220, 0.22);
+  background: rgba(159, 255, 195, 0.055);
+  transform: translateY(-2px);
+}
+
+.share-card.muted {
+  background: rgba(255, 255, 255, 0.018);
 }
 
 .share-slots span {
@@ -698,14 +712,14 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .share-slots article,
-  .share-slots article:last-child {
+  .share-card,
+  .share-card:last-child {
     min-height: 150px;
     border-right: 0;
     border-bottom: 1px solid rgba(185, 255, 220, 0.1);
   }
 
-  .share-slots article:last-child {
+  .share-card:last-child {
     border-bottom: 0;
   }
 }

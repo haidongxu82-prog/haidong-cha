@@ -600,6 +600,32 @@ h2 {
   margin-bottom: 1.1em;
 }
 
+.article-body h2 {
+  margin: 2.1em 0 0.75em;
+  color: #181917;
+  font-size: clamp(25px, 3vw, 34px);
+  line-height: 1.28;
+}
+
+.article-body ul {
+  margin: 0 0 1.2em;
+  padding-left: 1.25em;
+}
+
+.article-body li {
+  margin-bottom: 0.55em;
+}
+
+.article-body blockquote {
+  margin: 1.6em 0;
+  border-left: 4px solid var(--green);
+  padding: 0.2em 0 0.2em 1em;
+  color: #181917;
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 820;
+  line-height: 1.55;
+}
+
 .back-link {
   display: inline-flex;
   margin-top: 34px;

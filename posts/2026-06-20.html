@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>从口语输入到稳定智能体：我的电商详情图调教实操 - 海东 AI</title>
+    <meta name="description" content="一次真实的电商详情图智能体调教复盘：从口语输入，到 ChatGPT 捕捉意图，再到创建、测试和反复调教智能体。" />
+    <meta property="og:title" content="从口语输入到稳定智能体：我的电商详情图调教实操" />
+    <meta property="og:description" content="智能体不是一次创建就完事，而是在真实操作中不断测试、修正和稳定。" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://haidong.chat/posts/2026-06-20.html" />
+    <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
+    <link rel="icon" type="image/svg+xml" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="inner-page">
+    <header class="site-header inner-header">
+      <a class="brand" href="../index.html" aria-label="回到首页">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+        </span>
+        <span>haidong.chat</span>
+      </a>
+      <nav class="nav" aria-label="主导航">
+        <a href="../index.html">首页</a>
+        <a href="../index.html#share">分享文章</a>
+        <a href="../posts/">全部文章</a>
+      </nav>
+    </header>
+    <main class="article-shell">
+      <article class="article-page">
+        <p class="section-kicker">智能体实操复盘</p>
+        <h1>从口语输入到稳定智能体：我的电商详情图调教实操</h1>
+        <time datetime="2026-06-20">2026.06.20</time>
+        <div class="article-body">
+          <p>昨晚我调教了一个电商详情图智能体。整个过程，我认为对电商卖家很有参考价值，所以把真实操作记录下来，做一次复盘。</p>
+
+          <h2>一、先用口语输入法记录想法</h2>
+          <p>我先用输入法软件直接口述想法，让它把语音转成文字。因为是自然口语，所以一开始的表达很凌乱：想法跳跃，语序不完整，有停顿、重复和零散碎片。</p>
+          <p>但这一步反而很重要。很多人不是没有想法，而是卡在第一步需求表达上。打字不知道从哪里开始，手跟不上脑子；口语表达会轻松很多，可以先把想法不管三七二十一说出来。</p>
+          <p>好的语音输入工具会把这些口语整理、润色、排版，让 ChatGPT 能准确理解你到底要做什么。</p>
+
+          <h2>二、把口语文本交给 ChatGPT 捕捉意图</h2>
+          <p>我把整理后的文字放进 ChatGPT，它帮我完成了几件事。</p>
+          <ul>
+            <li>提炼核心需求：智能体要生成电商详情图，并能拆解每张图的卖点和职责。</li>
+            <li>明确流程要求：流程要稳定、可控，防止风格漂移或比例变形。</li>
+            <li>补充异常处理：中途出现网络或生成失败时，要能继续提示下一步。</li>
+            <li>整理成结构化文本：名称、描述、开场白、指令、流程、规则都被拆清楚。</li>
+          </ul>
+          <p>这个阶段的关键，是把口语输入转化为可以直接执行的智能体指令。</p>
+
+          <h2>三、创建电商详情图智能体</h2>
+          <p>根据 ChatGPT 输出的结构化文本，我在 GPTs 平台创建了智能体：填入名称、描述、开场白和指令。</p>
+          <p>指令里明确了流程：先生成产品识别报告，再生成 10 张详情图方案，最后逐张生成图片。</p>
+          <p>每张图都有独立方案，保证比例、风格和专属元素能够被控制。这个阶段我没有修改 AI 的理解，它直接根据口语内容捕捉到了核心意图。</p>
+
+          <h2>四、开始测试智能体</h2>
+          <p>我按照流程逐步测试：</p>
+          <ul>
+            <li>上传产品白底图，生成产品识别报告。</li>
+            <li>确认识别报告无误，生成 10 张详情图方案。</li>
+            <li>逐张输入“生成第 X 张”，让 AI 生成对应图片。</li>
+          </ul>
+          <p>实际测试中，我遇到了几个真实问题：某张图因为网络原因失败，刷新后下一步提示消失；第 3 张或第 5 张图有时比例、风格出现轻微偏差；某些操作下指令逻辑没有完全遵循。</p>
+          <p>这些问题都不是假想的，是在真实测试中出现的。</p>
+
+          <h2>五、回到指令窗口继续调教</h2>
+          <p>遇到问题后，我回到原始指令窗口，对指令进行微调和补充。</p>
+          <ul>
+            <li>强化风格统一。</li>
+            <li>强化比例严格。</li>
+            <li>强调专属元素独立。</li>
+            <li>增加异常处理逻辑，让生成失败或刷新后继续提示下一步。</li>
+            <li>保持每张图方案独立，不继承其他页面元素。</li>
+          </ul>
+          <p>这一步非常关键。智能体不是一次创建就完事，它需要在真实操作中不断修正。</p>
+
+          <h2>六、反复迭代，直到流程稳定</h2>
+          <p>我进行了多轮“测试 - 发现 bug - 回指令窗口调教 - 再测试”的循环。</p>
+          <p>每次发现小问题，就马上调整指令；测试确认流程正常后，再进入下一张图的生成。最后流程逐渐稳定，生成的 10 张图符合预期：风格统一，产品比例和材质保持一致，每张图职责明确，异常情况也能提示下一步操作。</p>
+
+          <h2>七、我的真实经验总结</h2>
+          <p>这次实操让我更确定一件事：智能体不是一个“写好就能永远自动跑”的工具，而是一个需要在真实业务中反复调教的执行系统。</p>
+          <p>口语输入负责捕捉完整想法，ChatGPT 负责把凌乱文本结构化，智能体平台负责承载流程，测试负责暴露问题，指令窗口负责修正逻辑。</p>
+          <blockquote>我刻意把它调教成手动确认版，因为我更追求稳定性。全自动当然可以，但更容易出现漂移。</blockquote>
+          <p>对电商卖家来说，真正值得做的不是追求一次性自动化，而是把重复动作沉淀成稳定流程，让 AI 按照你的业务规则持续执行。</p>
+        </div>
+        <a class="back-link" href="../index.html#share">返回分享文章</a>
+      </article>
+    </main>
+  </body>
+</html>
