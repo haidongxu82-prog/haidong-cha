@@ -571,13 +571,15 @@ h2 {
   padding: clamp(28px, 6vw, 64px);
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(251, 250, 245, 0.94);
+  color: #181917;
+  background: #fffdf8;
   box-shadow: var(--shadow);
 }
 
 .article-page h1,
 .archive-page h1 {
   margin: 0 0 18px;
+  color: #11130f;
   font-size: clamp(36px, 6vw, 70px);
   line-height: 1.08;
   letter-spacing: 0;
@@ -585,31 +587,32 @@ h2 {
 
 .article-page time,
 .archive-row time {
-  color: var(--red);
+  color: #7b3f38;
   font-weight: 800;
 }
 
 .article-body {
   margin-top: 48px;
-  color: #252722;
+  color: #20231f;
   font-size: clamp(18px, 2.2vw, 21px);
   line-height: 1.95;
 }
 
 .article-body p {
+  color: #20231f;
   margin-bottom: 1.1em;
 }
 
 .article-body h2 {
   margin: 2.1em 0 0.75em;
-  color: #181917;
+  color: #10120f;
   font-size: clamp(25px, 3vw, 34px);
   line-height: 1.28;
 }
 
 .article-body h3 {
   margin: 1.45em 0 0.45em;
-  color: #252722;
+  color: #151713;
   font-size: clamp(20px, 2.2vw, 25px);
   line-height: 1.35;
 }
@@ -625,6 +628,7 @@ h2 {
 }
 
 .article-body li {
+  color: #20231f;
   margin-bottom: 0.55em;
 }
 
@@ -632,7 +636,7 @@ h2 {
   margin: 1.6em 0;
   border-left: 4px solid var(--green);
   padding: 0.2em 0 0.2em 1em;
-  color: #181917;
+  color: #10120f;
   font-size: clamp(20px, 2.5vw, 28px);
   font-weight: 820;
   line-height: 1.55;
@@ -656,6 +660,7 @@ h2 {
 .article-body td {
   border: 1px solid rgba(24, 25, 23, 0.16);
   padding: 12px 14px;
+  color: #20231f;
   text-align: left;
   vertical-align: top;
 }
@@ -669,7 +674,7 @@ h2 {
 .back-link {
   display: inline-flex;
   margin-top: 34px;
-  color: var(--green);
+  color: #284538;
   font-weight: 800;
 }
 
