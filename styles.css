@@ -607,6 +607,13 @@ h2 {
   line-height: 1.28;
 }
 
+.article-body h3 {
+  margin: 1.45em 0 0.45em;
+  color: #252722;
+  font-size: clamp(20px, 2.2vw, 25px);
+  line-height: 1.35;
+}
+
 .article-body ul {
   margin: 0 0 1.2em;
   padding-left: 1.25em;
