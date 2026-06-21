@@ -1,5 +1,13 @@
 [
   {
+    "title": "我的 AI 大管家：一个能帮我管服务器、搭工作流、指挥其他 AI 干活的助手（扣子）",
+    "date": "2026-06-21",
+    "displayDate": "2026.06.21",
+    "file": "2026-06-21-coze-ai-manager.html",
+    "url": "posts/2026-06-21-coze-ai-manager.html",
+    "summary": "一个跑在扣子上的 AI 大管家，负责日程、服务器、n8n 工作流、网络环境和其他 AI 协作。"
+  },
+  {
     "title": "多一步心法：用 AI 总是差点意思？你和好效果之间只差一步",
     "date": "2026-06-21",
     "displayDate": "2026.06.21",
