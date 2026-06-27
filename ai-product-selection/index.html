@@ -1,0 +1,1593 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>海东 AI 选品工具</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --line: #d8dde6;
+      --line-strong: #b9c2d0;
+      --text: #1d2433;
+      --muted: #687385;
+      --green: #138a5b;
+      --green-soft: #e7f5ef;
+      --blue: #2866c7;
+      --blue-soft: #e8f0ff;
+      --amber: #a86500;
+      --amber-soft: #fff4de;
+      --red: #b83636;
+      --red-soft: #fdecec;
+      --ink: #28313f;
+      --shadow: 0 10px 30px rgba(20, 34, 54, 0.07);
+      font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-width: 320px;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    }
+
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 20px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    main {
+      min-width: 0;
+      padding: 20px;
+      overflow: auto;
+      max-height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .brand small {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .section {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .section:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .field label span:last-child {
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .range-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 86px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 8px 9px;
+      min-height: 36px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      font-size: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 12px;
+      tab-size: 2;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .actions.single {
+      grid-template-columns: 1fr;
+    }
+
+    .btn {
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 38px;
+      padding: 8px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #1d57b1;
+      color: #fff;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      min-height: 18px;
+      margin-top: 10px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      min-width: 260px;
+    }
+
+    .tab {
+      border: 0;
+      min-height: 38px;
+      background: #fff;
+      color: var(--muted);
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .right-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      width: min(300px, 100%);
+    }
+
+    .result-stage {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.35fr);
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      background: #172231;
+      color: #fff;
+      border: 1px solid #29384b;
+      box-shadow: 0 18px 48px rgba(23, 34, 49, 0.22);
+      overflow: hidden;
+    }
+
+    .stage-main {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      align-content: space-between;
+      min-height: 236px;
+    }
+
+    .stage-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 24px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #dce7f7;
+      font-size: 12px;
+    }
+
+    .stage-main h2 {
+      margin: 10px 0 8px;
+      font-size: 32px;
+      line-height: 1.12;
+      letter-spacing: 0;
+      max-width: 12em;
+      overflow-wrap: anywhere;
+    }
+
+    .stage-main p {
+      margin: 0;
+      color: #c1ccda;
+      line-height: 1.55;
+      font-size: 13px;
+      max-width: 46em;
+    }
+
+    .stage-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stage-stat {
+      min-height: 72px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .stage-stat label {
+      display: block;
+      color: #aebbd0;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .stage-stat strong {
+      display: block;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .stage-board {
+      background: #fbfcff;
+      color: var(--text);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .stage-board-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stage-board-head h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .stage-board-head span {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .top-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .top-card {
+      position: relative;
+      min-height: 172px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .top-card:first-child {
+      border-color: #9ad7bd;
+      box-shadow: inset 0 0 0 1px #9ad7bd;
+    }
+
+    .rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .top-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-card h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.25;
+      letter-spacing: 0;
+      min-height: 40px;
+      overflow-wrap: anywhere;
+    }
+
+    .top-card dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .top-card dt {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+
+    .top-card dd {
+      margin: 0;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .top-card-action {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      border-top: 1px solid var(--line);
+      padding-top: 9px;
+    }
+
+    .big-grade {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 34px;
+      border-radius: 7px;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 82px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .metric strong {
+      font-size: 24px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .panel-head span {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: calc(100vh - 220px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 920px;
+    }
+
+    th,
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f9fafc;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    tr:hover td {
+      background: #fbfcff;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .keyword {
+      font-weight: 650;
+      color: var(--ink);
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .grade {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      height: 24px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .grade-s {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .grade-a {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .grade-b {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .grade-c {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .chart {
+      padding: 14px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 44px;
+      gap: 8px;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #eef1f5;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      min-width: 2px;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+
+    .insights {
+      padding: 2px 14px 14px;
+      margin: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .insights li {
+      border-left: 3px solid var(--line-strong);
+      padding-left: 9px;
+    }
+
+    .empty {
+      padding: 34px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f0f2f5;
+    }
+
+    .badge.pass {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .badge.fail {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside,
+      main {
+        max-height: none;
+      }
+
+      aside {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .result-stage {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-main {
+        min-height: auto;
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      aside,
+      main {
+        padding: 14px;
+      }
+
+      .toolbar,
+      .right-actions {
+        align-items: stretch;
+      }
+
+      .tabs,
+      .search,
+      .right-actions,
+      .right-actions .btn {
+        width: 100%;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-main h2 {
+        font-size: 24px;
+      }
+
+      .stage-stats,
+      .top-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <h1>海东 AI 选品工具</h1>
+      </div>
+
+      <section class="section">
+        <h2>数据导入</h2>
+        <div class="field">
+          <label for="fileInput">CSV / TSV 文件</label>
+          <input id="fileInput" type="file" accept=".csv,.tsv,.txt">
+        </div>
+        <div class="field">
+          <label for="dataInput">关键词数据</label>
+          <textarea id="dataInput" spellcheck="false"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="runBtn" type="button">运行筛选</button>
+          <button class="btn" id="sampleBtn" type="button">载入样例</button>
+        </div>
+        <div class="status" id="statusText"></div>
+      </section>
+
+      <section class="section">
+        <h2>减法筛选</h2>
+        <div class="field">
+          <label for="minSearch">搜索量下限 <span id="minSearchValue"></span></label>
+          <div class="range-line">
+            <input id="minSearch" type="range" min="0" max="50000" step="500" value="3000">
+            <input id="minSearchNumber" type="number" min="0" step="100" value="3000">
+          </div>
+        </div>
+        <div class="field">
+          <label for="minGrowth7">近 7 天增长下限 <span id="minGrowth7Value"></span></label>
+          <div class="range-line">
+            <input id="minGrowth7" type="range" min="-50" max="200" step="1" value="5">
+            <input id="minGrowth7Number" type="number" step="1" value="5">
+          </div>
+        </div>
+        <div class="field">
+          <label for="minGrowth4">近 4 周增长下限 <span id="minGrowth4Value"></span></label>
+          <div class="range-line">
+            <input id="minGrowth4" type="range" min="-50" max="200" step="1" value="0">
+            <input id="minGrowth4Number" type="number" step="1" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label for="maxListings">在售商品数上限 <span id="maxListingsValue"></span></label>
+          <div class="range-line">
+            <input id="maxListings" type="range" min="100" max="200000" step="100" value="60000">
+            <input id="maxListingsNumber" type="number" min="0" step="100" value="60000">
+          </div>
+        </div>
+        <div class="field">
+          <label for="minRatio">供需比下限 <span id="minRatioValue"></span></label>
+          <div class="range-line">
+            <input id="minRatio" type="range" min="0" max="20" step="0.1" value="0.2">
+            <input id="minRatioNumber" type="number" min="0" step="0.1" value="0.2">
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>评分权重</h2>
+        <div class="field">
+          <label for="wRatio">供需比 <span id="wRatioValue"></span></label>
+          <input id="wRatio" type="range" min="0" max="60" step="1" value="30">
+        </div>
+        <div class="field">
+          <label for="wGrowth">增长趋势 <span id="wGrowthValue"></span></label>
+          <input id="wGrowth" type="range" min="0" max="50" step="1" value="20">
+        </div>
+        <div class="field">
+          <label for="wHeat">搜索热度 <span id="wHeatValue"></span></label>
+          <input id="wHeat" type="range" min="0" max="40" step="1" value="15">
+        </div>
+        <div class="field">
+          <label for="wConversion">转化率 <span id="wConversionValue"></span></label>
+          <input id="wConversion" type="range" min="0" max="40" step="1" value="15">
+        </div>
+        <div class="field">
+          <label for="wCompetition">竞争强度 <span id="wCompetitionValue"></span></label>
+          <input id="wCompetition" type="range" min="0" max="30" step="1" value="10">
+        </div>
+        <div class="field">
+          <label for="wMarket">市场体量 <span id="wMarketValue"></span></label>
+          <input id="wMarket" type="range" min="0" max="30" step="1" value="10">
+        </div>
+      </section>
+    </aside>
+
+    <main>
+      <div class="toolbar">
+        <div class="tabs" aria-label="分析视角">
+          <button class="tab active" id="keywordTab" type="button" data-view="keyword">关键词逻辑</button>
+          <button class="tab" id="productTab" type="button" data-view="product">产品逻辑</button>
+        </div>
+        <div class="right-actions">
+          <input class="search" id="searchInput" type="text" placeholder="搜索关键词 / 平台 / 价格带">
+          <button class="btn" id="exportBtn" type="button">导出 CSV</button>
+        </div>
+      </div>
+
+      <section class="result-stage" aria-label="最终结果">
+        <div class="stage-main">
+          <div>
+            <span class="stage-label">最终推荐</span>
+            <h2 id="headlineKeyword">等待数据</h2>
+            <p id="headlineReason">导入关键词数据后，系统会把最高价值机会放在这里。</p>
+          </div>
+          <div class="stage-stats">
+            <div class="stage-stat">
+              <label>机会等级</label>
+              <strong id="headlineGrade">-</strong>
+            </div>
+            <div class="stage-stat">
+              <label>综合分</label>
+              <strong id="headlineScore">0</strong>
+            </div>
+            <div class="stage-stat">
+              <label>推荐动作</label>
+              <strong id="headlineAction">待计算</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-board">
+          <div class="stage-board-head">
+            <h2>TOP 3 机会榜</h2>
+            <span id="topListMeta">按综合分排序</span>
+          </div>
+          <div class="top-cards" id="topCards"></div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="筛选结果">
+        <div class="metric">
+          <label>原始词数</label>
+          <strong id="metricTotal">0</strong>
+        </div>
+        <div class="metric">
+          <label>通过筛选</label>
+          <strong id="metricPassed">0</strong>
+        </div>
+        <div class="metric">
+          <label>S/A 机会</label>
+          <strong id="metricTop">0</strong>
+        </div>
+        <div class="metric">
+          <label>平均供需比</label>
+          <strong id="metricRatio">0</strong>
+        </div>
+        <div class="metric">
+          <label>平均综合分</label>
+          <strong id="metricScore">0</strong>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-head">
+            <h2 id="tableTitle">机会清单</h2>
+            <span id="tableMeta">0 条</span>
+          </div>
+          <div class="table-wrap" id="tableWrap"></div>
+        </section>
+
+        <aside class="side-panel" aria-label="分析摘要">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>等级分布</h2>
+              <span id="gradeMeta">S/A/B/C</span>
+            </div>
+            <div class="chart" id="gradeChart"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>机会判断</h2>
+              <span id="insightMeta">实时</span>
+            </div>
+            <ul class="insights" id="insights"></ul>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const sampleData = `关键词,搜索量,在售商品数,近7天增长,近4周增长,转化率,价格带,平台来源,竞争强度,市场体量
+露营折叠椅,28600,9400,38,72,5.8,100-199,抖音电商,42,780
+宠物烘干箱,18300,5200,26,41,4.9,300-599,天猫,36,920
+儿童防晒衣,43200,88000,18,22,3.4,50-99,拼多多,78,1160
+厨房沥水架,39100,126000,4,9,2.1,20-49,淘宝,86,880
+户外移动电源,26800,33000,11,19,3.9,600-999,京东,64,1580
+宠物自动喂食器,22400,18400,8,16,4.4,100-299,天猫,58,1060
+便携榨汁杯,14600,76000,-6,-12,2.7,50-99,拼多多,82,620
+骑行防风眼镜,16800,6200,44,68,5.1,50-199,抖音电商,39,540
+婴儿恒温水壶,12600,9800,10,14,4.6,100-299,京东,46,690
+家用除湿机,30500,28500,16,31,3.8,300-799,天猫,57,1420
+猫砂除臭珠,9200,2400,52,84,6.3,20-49,抖音电商,31,360
+可折叠收纳箱,22100,113000,2,5,2.5,20-79,拼多多,88,740
+办公室午睡枕,7800,4900,17,29,4.2,30-99,淘宝,44,310
+筋膜枪迷你款,15100,42000,-3,4,3.1,100-299,京东,75,650
+露营收纳推车,11800,3600,47,76,5.6,200-499,抖音电商,34,590
+旅行压缩袋,17600,54000,7,8,2.9,20-59,淘宝,73,510
+车载冰箱,13800,8900,21,35,4.1,500-1299,京东,51,880
+儿童学习灯,19400,68000,9,13,3.0,100-399,天猫,71,990`;
+
+    const state = {
+      rows: [],
+      scored: [],
+      view: "keyword",
+      sortKey: "score",
+      sortDir: "desc",
+      query: ""
+    };
+
+    const columnAliases = {
+      keyword: ["关键词", "keyword", "词", "搜索词"],
+      search: ["搜索量", "搜索人数", "搜索热度", "search", "searchVolume", "volume"],
+      listings: ["在售商品数", "在售数", "商品数", "供给", "listings", "products"],
+      growth7: ["近7天增长", "近7天趋势", "7天增长", "growth7d", "growth7"],
+      growth4: ["近4周增长", "近4周趋势", "4周增长", "growth4w", "growth4"],
+      conversion: ["转化率", "conversion", "conversionRate", "cvr"],
+      price: ["价格带", "priceBand", "price", "价格"],
+      platform: ["平台来源", "平台", "source", "platform"],
+      competition: ["竞争强度", "头部集中度", "competition", "竞争"],
+      market: ["市场体量", "marketSize", "market", "体量"]
+    };
+
+    const els = {
+      fileInput: document.getElementById("fileInput"),
+      dataInput: document.getElementById("dataInput"),
+      runBtn: document.getElementById("runBtn"),
+      sampleBtn: document.getElementById("sampleBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      statusText: document.getElementById("statusText"),
+      searchInput: document.getElementById("searchInput"),
+      tableWrap: document.getElementById("tableWrap"),
+      tableTitle: document.getElementById("tableTitle"),
+      tableMeta: document.getElementById("tableMeta"),
+      gradeChart: document.getElementById("gradeChart"),
+      insights: document.getElementById("insights"),
+      headlineKeyword: document.getElementById("headlineKeyword"),
+      headlineReason: document.getElementById("headlineReason"),
+      headlineGrade: document.getElementById("headlineGrade"),
+      headlineScore: document.getElementById("headlineScore"),
+      headlineAction: document.getElementById("headlineAction"),
+      topCards: document.getElementById("topCards"),
+      topListMeta: document.getElementById("topListMeta"),
+      metricTotal: document.getElementById("metricTotal"),
+      metricPassed: document.getElementById("metricPassed"),
+      metricTop: document.getElementById("metricTop"),
+      metricRatio: document.getElementById("metricRatio"),
+      metricScore: document.getElementById("metricScore")
+    };
+
+    const inputPairs = [
+      ["minSearch", "minSearchNumber", "minSearchValue", "", 0],
+      ["minGrowth7", "minGrowth7Number", "minGrowth7Value", "%", 1],
+      ["minGrowth4", "minGrowth4Number", "minGrowth4Value", "%", 1],
+      ["maxListings", "maxListingsNumber", "maxListingsValue", "", 0],
+      ["minRatio", "minRatioNumber", "minRatioValue", "", 1]
+    ];
+
+    const weightInputs = ["wRatio", "wGrowth", "wHeat", "wConversion", "wCompetition", "wMarket"];
+
+    function syncControls() {
+      inputPairs.forEach(([rangeId, numberId, valueId, suffix, digits]) => {
+        const range = document.getElementById(rangeId);
+        const number = document.getElementById(numberId);
+        const value = document.getElementById(valueId);
+        const update = source => {
+          const val = Number(source.value || 0);
+          range.value = val;
+          number.value = val;
+          value.textContent = `${formatNumber(val, digits)}${suffix}`;
+          runCurrent();
+        };
+        range.addEventListener("input", () => update(range));
+        number.addEventListener("input", () => update(number));
+        update(range);
+      });
+
+      weightInputs.forEach(id => {
+        const input = document.getElementById(id);
+        const value = document.getElementById(`${id}Value`);
+        const update = () => {
+          value.textContent = `${Number(input.value)}%`;
+          runCurrent();
+        };
+        input.addEventListener("input", update);
+        update();
+      });
+    }
+
+    function parseDelimited(text) {
+      const clean = text.replace(/^\uFEFF/, "").trim();
+      if (!clean) return [];
+      const delimiter = clean.includes("\t") && clean.split("\n")[0].includes("\t") ? "\t" : ",";
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+      for (let i = 0; i < clean.length; i += 1) {
+        const char = clean[i];
+        const next = clean[i + 1];
+        if (char === '"' && quoted && next === '"') {
+          cell += '"';
+          i += 1;
+        } else if (char === '"') {
+          quoted = !quoted;
+        } else if (char === delimiter && !quoted) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+          if (char === "\r" && next === "\n") i += 1;
+          row.push(cell);
+          if (row.some(value => value.trim() !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+      row.push(cell);
+      if (row.some(value => value.trim() !== "")) rows.push(row);
+      if (rows.length < 2) return [];
+      const headers = rows[0].map(value => value.trim());
+      return rows.slice(1).map((values, index) => {
+        const item = { rawIndex: index + 1 };
+        headers.forEach((header, headerIndex) => {
+          item[header] = (values[headerIndex] || "").trim();
+        });
+        return normalizeRow(item, headers);
+      }).filter(row => row.keyword);
+    }
+
+    function findValue(row, headers, key) {
+      const aliases = columnAliases[key];
+      const match = headers.find(header => aliases.includes(header));
+      return match ? row[match] : "";
+    }
+
+    function normalizeRow(row, headers) {
+      const search = toNumber(findValue(row, headers, "search"));
+      const listings = toNumber(findValue(row, headers, "listings"));
+      const competitionValue = findValue(row, headers, "competition");
+      const marketValue = findValue(row, headers, "market");
+      return {
+        keyword: findValue(row, headers, "keyword"),
+        search,
+        listings,
+        growth7: toNumber(findValue(row, headers, "growth7")),
+        growth4: toNumber(findValue(row, headers, "growth4")),
+        conversion: toNumber(findValue(row, headers, "conversion")),
+        price: findValue(row, headers, "price") || "未标注",
+        platform: findValue(row, headers, "platform") || "未标注",
+        competition: competitionValue === "" ? Math.min(100, Math.sqrt(Math.max(listings, 0)) / 4) : toNumber(competitionValue),
+        market: marketValue === "" ? search : toNumber(marketValue),
+        rawIndex: row.rawIndex
+      };
+    }
+
+    function toNumber(value) {
+      const normalized = String(value ?? "")
+        .replace(/,/g, "")
+        .replace(/%/g, "")
+        .trim();
+      const num = Number(normalized);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function getSettings() {
+      return {
+        minSearch: Number(document.getElementById("minSearch").value),
+        minGrowth7: Number(document.getElementById("minGrowth7").value),
+        minGrowth4: Number(document.getElementById("minGrowth4").value),
+        maxListings: Number(document.getElementById("maxListings").value),
+        minRatio: Number(document.getElementById("minRatio").value),
+        weights: {
+          ratio: Number(document.getElementById("wRatio").value),
+          growth: Number(document.getElementById("wGrowth").value),
+          heat: Number(document.getElementById("wHeat").value),
+          conversion: Number(document.getElementById("wConversion").value),
+          competition: Number(document.getElementById("wCompetition").value),
+          market: Number(document.getElementById("wMarket").value)
+        }
+      };
+    }
+
+    function runCurrent() {
+      if (!state.rows.length) {
+        render();
+        return;
+      }
+      const settings = getSettings();
+      const enriched = state.rows.map(row => {
+        const ratio = row.listings > 0 ? row.search / row.listings : row.search;
+        const pass = row.search >= settings.minSearch &&
+          row.growth7 >= settings.minGrowth7 &&
+          row.growth4 >= settings.minGrowth4 &&
+          row.listings <= settings.maxListings &&
+          ratio >= settings.minRatio;
+        return { ...row, ratio, pass };
+      });
+
+      const passed = enriched.filter(row => row.pass);
+      const pools = {
+        ratio: passed.map(row => row.ratio),
+        growth: passed.map(row => (row.growth7 * 0.6) + (row.growth4 * 0.4)),
+        heat: passed.map(row => row.search),
+        conversion: passed.map(row => row.conversion),
+        competition: passed.map(row => row.competition),
+        market: passed.map(row => row.market)
+      };
+
+      const weights = normalizeWeights(settings.weights);
+      const scoredPassed = passed.map(row => {
+        const growthMetric = (row.growth7 * 0.6) + (row.growth4 * 0.4);
+        const score =
+          normalize(row.ratio, pools.ratio) * weights.ratio +
+          normalize(growthMetric, pools.growth) * weights.growth +
+          normalize(row.search, pools.heat) * weights.heat +
+          normalize(row.conversion, pools.conversion) * weights.conversion +
+          (100 - normalize(row.competition, pools.competition)) * weights.competition +
+          normalize(row.market, pools.market) * weights.market;
+        return { ...row, growthMetric, score: round(score, 1) };
+      });
+
+      const cutoffs = getQuantileCutoffs(scoredPassed.map(row => row.score));
+      const scored = enriched.map(row => {
+        if (!row.pass) return { ...row, growthMetric: (row.growth7 * 0.6) + (row.growth4 * 0.4), score: 0, grade: "C" };
+        const scoredRow = scoredPassed.find(item => item.rawIndex === row.rawIndex);
+        return { ...scoredRow, grade: gradeFor(scoredRow.score, cutoffs) };
+      });
+
+      state.scored = scored;
+      render();
+    }
+
+    function normalizeWeights(weights) {
+      const total = Object.values(weights).reduce((sum, value) => sum + value, 0) || 1;
+      return Object.fromEntries(Object.entries(weights).map(([key, value]) => [key, value / total]));
+    }
+
+    function normalize(value, values) {
+      if (!values.length) return 0;
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      if (max === min) return 70;
+      return ((value - min) / (max - min)) * 100;
+    }
+
+    function getQuantileCutoffs(scores) {
+      if (!scores.length) return { s: 80, a: 65, b: 50 };
+      const sorted = [...scores].sort((a, b) => b - a);
+      return {
+        s: sorted[Math.max(0, Math.ceil(sorted.length * 0.05) - 1)] ?? 80,
+        a: sorted[Math.max(0, Math.ceil(sorted.length * 0.20) - 1)] ?? 65,
+        b: sorted[Math.max(0, Math.ceil(sorted.length * 0.50) - 1)] ?? 50
+      };
+    }
+
+    function gradeFor(score, cutoffs) {
+      if (score >= cutoffs.s) return "S";
+      if (score >= cutoffs.a) return "A";
+      if (score >= cutoffs.b) return "B";
+      return "C";
+    }
+
+    function render() {
+      const visibleRows = getVisibleRows();
+      const passed = state.scored.filter(row => row.pass);
+      const top = passed.filter(row => row.grade === "S" || row.grade === "A");
+      els.metricTotal.textContent = formatNumber(state.rows.length, 0);
+      els.metricPassed.textContent = formatNumber(passed.length, 0);
+      els.metricTop.textContent = formatNumber(top.length, 0);
+      els.metricRatio.textContent = formatNumber(avg(passed.map(row => row.ratio)), 1);
+      els.metricScore.textContent = formatNumber(avg(passed.map(row => row.score)), 1);
+      els.tableMeta.textContent = `${visibleRows.length} 条`;
+      els.tableTitle.textContent = state.view === "keyword" ? "机会清单" : "价格带聚合";
+      renderResultStage(passed);
+      renderTable(visibleRows);
+      renderGradeChart(passed);
+      renderInsights(passed);
+    }
+
+    function renderResultStage(rows) {
+      const sorted = [...rows].sort((a, b) => b.score - a.score);
+      const best = sorted[0];
+      const topThree = sorted.slice(0, 3);
+      const topCount = rows.filter(row => row.grade === "S" || row.grade === "A").length;
+
+      els.topListMeta.textContent = rows.length ? `${topCount} 个 S/A 机会` : "按综合分排序";
+
+      if (!best) {
+        els.headlineKeyword.textContent = state.rows.length ? "暂无通过筛选的机会" : "等待数据";
+        els.headlineReason.textContent = state.rows.length
+          ? "当前阈值下没有关键词通过筛选，可以放宽搜索量、增长或供需比条件重新查看。"
+          : "导入关键词数据后，系统会把最高价值机会放在这里。";
+        els.headlineGrade.innerHTML = "-";
+        els.headlineScore.textContent = "0";
+        els.headlineAction.textContent = "待计算";
+        els.topCards.innerHTML = `<div class="empty">暂无机会榜</div>`;
+        return;
+      }
+
+      els.headlineKeyword.textContent = best.keyword;
+      els.headlineReason.textContent = `供需比 ${formatNumber(best.ratio, 2)}，近 7 天增长 ${formatNumber(best.growth7, 1)}%，转化率 ${formatNumber(best.conversion, 1)}%。${actionForGrade(best.grade)}`;
+      els.headlineGrade.innerHTML = `<span class="big-grade grade-${best.grade.toLowerCase()}">${best.grade}</span>`;
+      els.headlineScore.textContent = formatNumber(best.score, 1);
+      els.headlineAction.textContent = shortActionForGrade(best.grade);
+
+      els.topCards.innerHTML = topThree.map((row, index) => `
+        <article class="top-card">
+          <div class="top-card-head">
+            <span class="rank">#${index + 1}</span>
+            ${gradeBadge(row.grade)}
+          </div>
+          <h3>${escapeHtml(row.keyword)}</h3>
+          <dl>
+            <div>
+              <dt>综合分</dt>
+              <dd>${formatNumber(row.score, 1)}</dd>
+            </div>
+            <div>
+              <dt>供需比</dt>
+              <dd>${formatNumber(row.ratio, 2)}</dd>
+            </div>
+            <div>
+              <dt>搜索量</dt>
+              <dd>${formatNumber(row.search, 0)}</dd>
+            </div>
+            <div>
+              <dt>7天增长</dt>
+              <dd>${formatNumber(row.growth7, 1)}%</dd>
+            </div>
+          </dl>
+          <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
+        </article>
+      `).join("");
+    }
+
+    function getVisibleRows() {
+      const query = state.query.trim().toLowerCase();
+      if (state.view === "product") return getProductRows(query);
+      const rows = state.scored
+        .filter(row => row.pass)
+        .filter(row => !query || [row.keyword, row.price, row.platform, row.grade].join(" ").toLowerCase().includes(query));
+      return sortRows(rows, state.sortKey, state.sortDir);
+    }
+
+    function getProductRows(query) {
+      const groups = new Map();
+      state.scored.filter(row => row.pass).forEach(row => {
+        const key = row.price || "未标注";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+      });
+      const rows = [...groups.entries()].map(([price, items]) => {
+        const sorted = [...items].sort((a, b) => b.score - a.score);
+        return {
+          price,
+          count: items.length,
+          avgScore: round(avg(items.map(item => item.score)), 1),
+          avgRatio: round(avg(items.map(item => item.ratio)), 2),
+          avgConversion: round(avg(items.map(item => item.conversion)), 1),
+          topKeyword: sorted[0]?.keyword || "",
+          topGrade: sorted[0]?.grade || "C",
+          platforms: [...new Set(items.map(item => item.platform))].slice(0, 3).join(" / ")
+        };
+      }).filter(row => !query || [row.price, row.topKeyword, row.platforms, row.topGrade].join(" ").toLowerCase().includes(query));
+      const sortKey = state.sortKey === "score" ? "avgScore" : state.sortKey;
+      return sortRows(rows, sortKey, state.sortDir);
+    }
+
+    function sortRows(rows, key, dir) {
+      return [...rows].sort((a, b) => {
+        const av = a[key];
+        const bv = b[key];
+        const direction = dir === "asc" ? 1 : -1;
+        if (typeof av === "number" && typeof bv === "number") return (av - bv) * direction;
+        return String(av ?? "").localeCompare(String(bv ?? ""), "zh-Hans-CN") * direction;
+      });
+    }
+
+    function renderTable(rows) {
+      if (!state.rows.length) {
+        els.tableWrap.innerHTML = `<div class="empty">等待数据</div>`;
+        return;
+      }
+      if (!rows.length) {
+        els.tableWrap.innerHTML = `<div class="empty">无匹配结果</div>`;
+        return;
+      }
+      if (state.view === "product") {
+        els.tableWrap.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                ${th("price", "价格带")}
+                ${th("count", "词数", "num")}
+                ${th("avgScore", "均分", "num")}
+                ${th("avgRatio", "均供需比", "num")}
+                ${th("avgConversion", "均转化率", "num")}
+                ${th("topKeyword", "代表关键词")}
+                ${th("topGrade", "最高等级")}
+                ${th("platforms", "平台")}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(row => `
+                <tr>
+                  <td class="keyword">${escapeHtml(row.price)}</td>
+                  <td class="num">${formatNumber(row.count, 0)}</td>
+                  <td class="num">${formatNumber(row.avgScore, 1)}</td>
+                  <td class="num">${formatNumber(row.avgRatio, 2)}</td>
+                  <td class="num">${formatNumber(row.avgConversion, 1)}%</td>
+                  <td>${escapeHtml(row.topKeyword)}</td>
+                  <td>${gradeBadge(row.topGrade)}</td>
+                  <td>${escapeHtml(row.platforms)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>`;
+        bindSortHeaders();
+        return;
+      }
+
+      els.tableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              ${th("grade", "等级")}
+              ${th("keyword", "关键词")}
+              ${th("score", "综合分", "num")}
+              ${th("ratio", "供需比", "num")}
+              ${th("search", "搜索量", "num")}
+              ${th("listings", "在售数", "num")}
+              ${th("growth7", "7天增长", "num")}
+              ${th("growth4", "4周增长", "num")}
+              ${th("conversion", "转化率", "num")}
+              ${th("price", "价格带")}
+              ${th("platform", "平台")}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td>${gradeBadge(row.grade)}</td>
+                <td class="keyword" title="${escapeHtml(row.keyword)}">${escapeHtml(row.keyword)}</td>
+                <td class="num">${formatNumber(row.score, 1)}</td>
+                <td class="num">${formatNumber(row.ratio, 2)}</td>
+                <td class="num">${formatNumber(row.search, 0)}</td>
+                <td class="num">${formatNumber(row.listings, 0)}</td>
+                <td class="num">${formatNumber(row.growth7, 1)}%</td>
+                <td class="num">${formatNumber(row.growth4, 1)}%</td>
+                <td class="num">${formatNumber(row.conversion, 1)}%</td>
+                <td>${escapeHtml(row.price)}</td>
+                <td>${escapeHtml(row.platform)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>`;
+      bindSortHeaders();
+    }
+
+    function th(key, label, className = "") {
+      const arrow = state.sortKey === key ? (state.sortDir === "asc" ? " ↑" : " ↓") : "";
+      return `<th class="${className}" data-sort="${key}">${label}${arrow}</th>`;
+    }
+
+    function bindSortHeaders() {
+      els.tableWrap.querySelectorAll("th[data-sort]").forEach(header => {
+        header.addEventListener("click", () => {
+          const key = header.dataset.sort;
+          if (state.sortKey === key) {
+            state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+          } else {
+            state.sortKey = key;
+            state.sortDir = key === "keyword" || key === "price" ? "asc" : "desc";
+          }
+          render();
+        });
+      });
+    }
+
+    function renderGradeChart(rows) {
+      const counts = { S: 0, A: 0, B: 0, C: 0 };
+      rows.forEach(row => { counts[row.grade] += 1; });
+      const max = Math.max(1, ...Object.values(counts));
+      els.gradeChart.innerHTML = ["S", "A", "B", "C"].map(grade => `
+        <div class="chart-row">
+          <span>${grade}</span>
+          <div class="bar-track"><div class="bar" style="width: ${(counts[grade] / max) * 100}%"></div></div>
+          <strong class="num">${counts[grade]}</strong>
+        </div>
+      `).join("");
+    }
+
+    function renderInsights(rows) {
+      const sRows = rows.filter(row => row.grade === "S");
+      const aRows = rows.filter(row => row.grade === "A");
+      const best = [...rows].sort((a, b) => b.score - a.score)[0];
+      const bestRatio = [...rows].sort((a, b) => b.ratio - a.ratio)[0];
+      const bestGrowth = [...rows].sort((a, b) => b.growthMetric - a.growthMetric)[0];
+      const items = [];
+      if (best) items.push(`综合分最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}。`);
+      if (bestRatio) items.push(`供需比最高：${bestRatio.keyword}，供需比 ${formatNumber(bestRatio.ratio, 2)}。`);
+      if (bestGrowth) items.push(`趋势最强：${bestGrowth.keyword}，综合增长 ${formatNumber(bestGrowth.growthMetric, 1)}%。`);
+      items.push(`当前 S 级 ${sRows.length} 个，A 级 ${aRows.length} 个，通过率 ${formatNumber(percent(rows.length, state.rows.length), 1)}%。`);
+      els.insights.innerHTML = items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function gradeBadge(grade) {
+      return `<span class="grade grade-${String(grade).toLowerCase()}">${grade}</span>`;
+    }
+
+    function shortActionForGrade(grade) {
+      if (grade === "S") return "立即评估";
+      if (grade === "A") return "重点观察";
+      if (grade === "B") return "继续验证";
+      return "暂不投入";
+    }
+
+    function actionForGrade(grade) {
+      if (grade === "S") return "建议进入运营和采购评估。";
+      if (grade === "A") return "建议重点观察，并寻找差异化切入点。";
+      if (grade === "B") return "建议补充竞品、利润和供应链验证。";
+      return "建议暂不投入资源。";
+    }
+
+    function exportCsv() {
+      const rows = state.view === "product" ? getProductRows(state.query.trim().toLowerCase()) : getVisibleRows();
+      if (!rows.length) {
+        els.statusText.textContent = "没有可导出的结果。";
+        return;
+      }
+      const headers = state.view === "product"
+        ? ["价格带", "词数", "平均综合分", "平均供需比", "平均转化率", "代表关键词", "最高等级", "平台"]
+        : ["等级", "关键词", "综合分", "供需比", "搜索量", "在售商品数", "近7天增长", "近4周增长", "转化率", "价格带", "平台"];
+      const body = rows.map(row => state.view === "product"
+        ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, row.topKeyword, row.topGrade, row.platforms]
+        : [row.grade, row.keyword, row.score, row.ratio, row.search, row.listings, row.growth7, row.growth4, row.conversion, row.price, row.platform]
+      );
+      const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = state.view === "product" ? "产品逻辑聚合.csv" : "AI选品机会清单.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+      els.statusText.textContent = `已导出 ${rows.length} 条结果。`;
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+      if (/[",\n\r]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+      return text;
+    }
+
+    function loadText(text) {
+      els.dataInput.value = text;
+      state.rows = parseDelimited(text);
+      state.sortKey = "score";
+      state.sortDir = "desc";
+      els.statusText.textContent = state.rows.length ? `已读取 ${state.rows.length} 条关键词。` : "没有识别到有效数据。";
+      runCurrent();
+    }
+
+    function avg(values) {
+      const nums = values.filter(Number.isFinite);
+      if (!nums.length) return 0;
+      return nums.reduce((sum, value) => sum + value, 0) / nums.length;
+    }
+
+    function percent(part, total) {
+      return total ? (part / total) * 100 : 0;
+    }
+
+    function round(value, digits) {
+      const factor = 10 ** digits;
+      return Math.round((Number(value) || 0) * factor) / factor;
+    }
+
+    function formatNumber(value, digits) {
+      return Number(value || 0).toLocaleString("zh-CN", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        state.view = tab.dataset.view;
+        state.sortKey = state.view === "product" ? "avgScore" : "score";
+        state.sortDir = "desc";
+        render();
+      });
+    });
+
+    els.fileInput.addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => loadText(String(reader.result || ""));
+      reader.readAsText(file);
+    });
+
+    els.runBtn.addEventListener("click", () => loadText(els.dataInput.value));
+    els.sampleBtn.addEventListener("click", () => loadText(sampleData));
+    els.exportBtn.addEventListener("click", exportCsv);
+    els.searchInput.addEventListener("input", () => {
+      state.query = els.searchInput.value;
+      render();
+    });
+
+    syncControls();
+    loadText(sampleData);
+  </script>
+</body>
+</html>

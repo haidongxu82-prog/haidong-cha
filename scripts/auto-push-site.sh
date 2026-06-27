@@ -46,6 +46,7 @@ fi
   CNAME \
   assets \
   posts \
+  ai-product-selection \
   ai-chat \
   chat-screenshot-helper \
   deploy \
