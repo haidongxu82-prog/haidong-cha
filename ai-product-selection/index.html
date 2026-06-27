@@ -178,6 +178,13 @@
       grid-template-columns: 1fr;
     }
 
+    .preset-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
     .btn {
       border: 1px solid var(--line-strong);
       background: #fff;
@@ -191,6 +198,7 @@
       justify-content: center;
       gap: 7px;
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .btn:hover {
@@ -207,6 +215,24 @@
     .btn.primary:hover {
       background: #1d57b1;
       color: #fff;
+    }
+
+    .preset {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+
+    .preset.active,
+    .preset:hover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
     }
 
     .status {
@@ -452,6 +478,19 @@
       padding-top: 9px;
     }
 
+    .top-card-risk {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.45;
+      background: #f6f8fb;
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .top-cards .empty {
+      grid-column: 1 / -1;
+    }
+
     .big-grade {
       display: inline-flex;
       align-items: center;
@@ -657,6 +696,59 @@
       padding-left: 9px;
     }
 
+    .reason-list,
+    .checklist {
+      padding: 2px 14px 14px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .reason-row {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr) 42px;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .reason-track {
+      height: 9px;
+      border-radius: 999px;
+      background: #eef1f5;
+      overflow: hidden;
+    }
+
+    .reason-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    .checklist {
+      margin: 0;
+      list-style: none;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .checklist li {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+    }
+
+    .check-dot {
+      width: 15px;
+      height: 15px;
+      margin-top: 2px;
+      border-radius: 4px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+    }
+
     .empty {
       padding: 34px;
       color: var(--muted);
@@ -751,6 +843,10 @@
       .actions {
         grid-template-columns: 1fr;
       }
+
+      .preset-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -775,11 +871,19 @@
           <button class="btn primary" id="runBtn" type="button">运行筛选</button>
           <button class="btn" id="sampleBtn" type="button">载入样例</button>
         </div>
+        <div class="actions single">
+          <a class="btn" href="sample-data.csv" download>下载 300 条测试数据</a>
+        </div>
         <div class="status" id="statusText"></div>
       </section>
 
       <section class="section">
         <h2>减法筛选</h2>
+        <div class="preset-row" aria-label="筛选强度">
+          <button class="preset" type="button" data-preset="loose">宽松探索</button>
+          <button class="preset active" type="button" data-preset="balanced">均衡推荐</button>
+          <button class="preset" type="button" data-preset="strict">严格机会</button>
+        </div>
         <div class="field">
           <label for="minSearch">搜索量下限 <span id="minSearchValue"></span></label>
           <div class="range-line">
@@ -854,6 +958,7 @@
         </div>
         <div class="right-actions">
           <input class="search" id="searchInput" type="text" placeholder="搜索关键词 / 平台 / 价格带">
+          <button class="btn" id="copySummaryBtn" type="button">复制摘要</button>
           <button class="btn" id="exportBtn" type="button">导出 CSV</button>
         </div>
       </div>
@@ -933,10 +1038,26 @@
 
           <section class="panel">
             <div class="panel-head">
+              <h2>淘汰原因</h2>
+              <span id="rejectMeta">实时</span>
+            </div>
+            <div class="reason-list" id="rejectReasons"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
               <h2>机会判断</h2>
               <span id="insightMeta">实时</span>
             </div>
             <ul class="insights" id="insights"></ul>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>验证清单</h2>
+              <span id="nextStepMeta">下一步</span>
+            </div>
+            <ul class="checklist" id="nextSteps"></ul>
           </section>
         </aside>
       </div>
@@ -992,6 +1113,7 @@
       runBtn: document.getElementById("runBtn"),
       sampleBtn: document.getElementById("sampleBtn"),
       exportBtn: document.getElementById("exportBtn"),
+      copySummaryBtn: document.getElementById("copySummaryBtn"),
       statusText: document.getElementById("statusText"),
       searchInput: document.getElementById("searchInput"),
       tableWrap: document.getElementById("tableWrap"),
@@ -999,6 +1121,9 @@
       tableMeta: document.getElementById("tableMeta"),
       gradeChart: document.getElementById("gradeChart"),
       insights: document.getElementById("insights"),
+      rejectReasons: document.getElementById("rejectReasons"),
+      rejectMeta: document.getElementById("rejectMeta"),
+      nextSteps: document.getElementById("nextSteps"),
       headlineKeyword: document.getElementById("headlineKeyword"),
       headlineReason: document.getElementById("headlineReason"),
       headlineGrade: document.getElementById("headlineGrade"),
@@ -1013,6 +1138,29 @@
       metricScore: document.getElementById("metricScore")
     };
 
+    const presets = {
+      loose: {
+        label: "宽松探索",
+        settings: { minSearch: 1000, minGrowth7: -5, minGrowth4: -10, maxListings: 120000, minRatio: 0.05 }
+      },
+      balanced: {
+        label: "均衡推荐",
+        settings: { minSearch: 3000, minGrowth7: 5, minGrowth4: 0, maxListings: 60000, minRatio: 0.2 }
+      },
+      strict: {
+        label: "严格机会",
+        settings: { minSearch: 8000, minGrowth7: 15, minGrowth4: 20, maxListings: 30000, minRatio: 0.6 }
+      }
+    };
+
+    const controlMap = {
+      minSearch: "minSearch",
+      minGrowth7: "minGrowth7",
+      minGrowth4: "minGrowth4",
+      maxListings: "maxListings",
+      minRatio: "minRatio"
+    };
+
     const inputPairs = [
       ["minSearch", "minSearchNumber", "minSearchValue", "", 0],
       ["minGrowth7", "minGrowth7Number", "minGrowth7Value", "%", 1],
@@ -1023,21 +1171,31 @@
 
     const weightInputs = ["wRatio", "wGrowth", "wHeat", "wConversion", "wCompetition", "wMarket"];
 
+    function setPairedControlValue(rangeId, val) {
+      const pair = inputPairs.find(item => item[0] === rangeId);
+      if (!pair) return;
+      const [, numberId, valueId, suffix, digits] = pair;
+      const range = document.getElementById(rangeId);
+      const number = document.getElementById(numberId);
+      const value = document.getElementById(valueId);
+      const safeValue = Number(val || 0);
+      range.value = safeValue;
+      number.value = safeValue;
+      value.textContent = `${formatNumber(safeValue, digits)}${suffix}`;
+    }
+
     function syncControls() {
       inputPairs.forEach(([rangeId, numberId, valueId, suffix, digits]) => {
         const range = document.getElementById(rangeId);
         const number = document.getElementById(numberId);
-        const value = document.getElementById(valueId);
         const update = source => {
-          const val = Number(source.value || 0);
-          range.value = val;
-          number.value = val;
-          value.textContent = `${formatNumber(val, digits)}${suffix}`;
+          setPairedControlValue(rangeId, Number(source.value || 0));
+          updatePresetButtons("");
           runCurrent();
         };
         range.addEventListener("input", () => update(range));
         number.addEventListener("input", () => update(number));
-        update(range);
+        setPairedControlValue(rangeId, Number(range.value || 0));
       });
 
       weightInputs.forEach(id => {
@@ -1049,6 +1207,23 @@
         };
         input.addEventListener("input", update);
         update();
+      });
+    }
+
+    function applyPreset(key) {
+      const preset = presets[key];
+      if (!preset) return;
+      Object.entries(preset.settings).forEach(([setting, val]) => {
+        setPairedControlValue(controlMap[setting], val);
+      });
+      updatePresetButtons(key);
+      els.statusText.textContent = `已切换到${preset.label}。`;
+      runCurrent();
+    }
+
+    function updatePresetButtons(activeKey) {
+      document.querySelectorAll("[data-preset]").forEach(button => {
+        button.classList.toggle("active", button.dataset.preset === activeKey);
       });
     }
 
@@ -1155,12 +1330,9 @@
       const settings = getSettings();
       const enriched = state.rows.map(row => {
         const ratio = row.listings > 0 ? row.search / row.listings : row.search;
-        const pass = row.search >= settings.minSearch &&
-          row.growth7 >= settings.minGrowth7 &&
-          row.growth4 >= settings.minGrowth4 &&
-          row.listings <= settings.maxListings &&
-          ratio >= settings.minRatio;
-        return { ...row, ratio, pass };
+        const rejectReasons = getRejectReasons(row, ratio, settings);
+        const pass = rejectReasons.length === 0;
+        return { ...row, ratio, pass, rejectReasons, rejectReason: rejectReasons[0] || "通过" };
       });
 
       const passed = enriched.filter(row => row.pass);
@@ -1241,7 +1413,18 @@
       renderResultStage(passed);
       renderTable(visibleRows);
       renderGradeChart(passed);
+      renderRejectReasons(state.scored);
       renderInsights(passed);
+      renderNextSteps(passed);
+    }
+
+    function getRejectReasons(row, ratio, settings) {
+      const reasons = [];
+      if (row.search < settings.minSearch) reasons.push("搜索量低");
+      if (row.growth7 < settings.minGrowth7 || row.growth4 < settings.minGrowth4) reasons.push("趋势不足");
+      if (row.listings > settings.maxListings) reasons.push("在售过多");
+      if (ratio < settings.minRatio) reasons.push("供需比低");
+      return reasons;
     }
 
     function renderResultStage(rows) {
@@ -1296,6 +1479,7 @@
             </div>
           </dl>
           <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
+          <div class="top-card-risk">${escapeHtml(validationTips(row)[0])}</div>
         </article>
       `).join("");
     }
@@ -1457,6 +1641,34 @@
       `).join("");
     }
 
+    function renderRejectReasons(rows) {
+      const failed = rows.filter(row => !row.pass);
+      els.rejectMeta.textContent = `${failed.length} 个淘汰`;
+      if (!state.rows.length) {
+        els.rejectReasons.innerHTML = `<div class="empty">等待数据</div>`;
+        return;
+      }
+      if (!failed.length) {
+        els.rejectReasons.innerHTML = `<div class="empty">当前阈值下没有淘汰项</div>`;
+        return;
+      }
+      const counts = failed.reduce((acc, row) => {
+        const reason = row.rejectReason || "其他";
+        acc[reason] = (acc[reason] || 0) + 1;
+        return acc;
+      }, {});
+      const max = Math.max(1, ...Object.values(counts));
+      els.rejectReasons.innerHTML = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([reason, count]) => `
+          <div class="reason-row">
+            <span>${escapeHtml(reason)}</span>
+            <div class="reason-track"><div class="reason-bar" style="width: ${(count / max) * 100}%"></div></div>
+            <strong class="num">${count}</strong>
+          </div>
+        `).join("");
+    }
+
     function renderInsights(rows) {
       const sRows = rows.filter(row => row.grade === "S");
       const aRows = rows.filter(row => row.grade === "A");
@@ -1469,6 +1681,28 @@
       if (bestGrowth) items.push(`趋势最强：${bestGrowth.keyword}，综合增长 ${formatNumber(bestGrowth.growthMetric, 1)}%。`);
       items.push(`当前 S 级 ${sRows.length} 个，A 级 ${aRows.length} 个，通过率 ${formatNumber(percent(rows.length, state.rows.length), 1)}%。`);
       els.insights.innerHTML = items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function renderNextSteps(rows) {
+      const best = [...rows].sort((a, b) => b.score - a.score)[0];
+      const tips = best ? validationTips(best) : ["先导入词表或放宽筛选阈值，拿到至少 20 个通过词后再判断。"];
+      els.nextSteps.innerHTML = tips.map(tip => `
+        <li><span class="check-dot" aria-hidden="true"></span><span>${escapeHtml(tip)}</span></li>
+      `).join("");
+    }
+
+    function validationTips(row) {
+      if (!row) return [];
+      const tips = [
+        `确认 ${row.keyword} 的头部 20 个竞品价格、评价数和主卖点。`,
+        `测算 ${row.price} 价格带下的毛利、起订量和物流成本。`,
+        "用 3 张主图方向做小样测试，先验证点击和收藏。"
+      ];
+      if (row.ratio >= 3) tips.unshift("供需比很高，先核验数据源，排除季节性或异常搜索。");
+      if (row.growth7 >= 40) tips.unshift("短期增长很快，优先确认趋势是否持续超过 2 周。");
+      if (row.competition >= 60) tips.unshift("竞争强度偏高，需要找材质、功能或场景差异化。");
+      if (row.conversion < 3.5) tips.unshift("转化率偏低，先检查用户是否只是在搜信息而非准备购买。");
+      return [...new Set(tips)].slice(0, 4);
     }
 
     function gradeBadge(grade) {
@@ -1489,6 +1723,56 @@
       return "建议暂不投入资源。";
     }
 
+    function buildSummary() {
+      const rows = [...state.scored].filter(row => row.pass).sort((a, b) => b.score - a.score);
+      if (!rows.length) return "AI 选品工具摘要：当前阈值下暂无通过筛选的机会。";
+      const best = rows[0];
+      const counts = rows.reduce((acc, row) => {
+        acc[row.grade] = (acc[row.grade] || 0) + 1;
+        return acc;
+      }, {});
+      const topText = rows.slice(0, 3).map((row, index) =>
+        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，供需比 ${formatNumber(row.ratio, 2)}，7天增长 ${formatNumber(row.growth7, 1)}%`
+      ).join("\n");
+      return [
+        "AI 选品机会摘要",
+        `主推机会：${best.keyword}`,
+        `推荐动作：${shortActionForGrade(best.grade)}，${actionForGrade(best.grade)}`,
+        `机会分布：S ${counts.S || 0} 个，A ${counts.A || 0} 个，B ${counts.B || 0} 个，C ${counts.C || 0} 个。`,
+        "TOP 3：",
+        topText,
+        "下一步验证：",
+        validationTips(best).map((tip, index) => `${index + 1}. ${tip}`).join("\n")
+      ].join("\n");
+    }
+
+    async function copySummary() {
+      const text = buildSummary();
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          fallbackCopy(text);
+        }
+        els.statusText.textContent = "已复制机会摘要。";
+      } catch {
+        fallbackCopy(text);
+        els.statusText.textContent = "已复制机会摘要。";
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
     function exportCsv() {
       const rows = state.view === "product" ? getProductRows(state.query.trim().toLowerCase()) : getVisibleRows();
       if (!rows.length) {
@@ -1496,11 +1780,11 @@
         return;
       }
       const headers = state.view === "product"
-        ? ["价格带", "词数", "平均综合分", "平均供需比", "平均转化率", "代表关键词", "最高等级", "平台"]
-        : ["等级", "关键词", "综合分", "供需比", "搜索量", "在售商品数", "近7天增长", "近4周增长", "转化率", "价格带", "平台"];
+        ? ["价格带", "词数", "平均综合分", "平均供需比", "平均转化率", "代表关键词", "最高等级", "平台", "建议动作"]
+        : ["等级", "关键词", "综合分", "供需比", "搜索量", "在售商品数", "近7天增长", "近4周增长", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
       const body = rows.map(row => state.view === "product"
-        ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, row.topKeyword, row.topGrade, row.platforms]
-        : [row.grade, row.keyword, row.score, row.ratio, row.search, row.listings, row.growth7, row.growth4, row.conversion, row.price, row.platform]
+        ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
+        : [row.grade, row.keyword, row.score, row.ratio, row.search, row.listings, row.growth7, row.growth4, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
       );
       const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
@@ -1570,6 +1854,10 @@
       });
     });
 
+    document.querySelectorAll("[data-preset]").forEach(button => {
+      button.addEventListener("click", () => applyPreset(button.dataset.preset));
+    });
+
     els.fileInput.addEventListener("change", event => {
       const file = event.target.files[0];
       if (!file) return;
@@ -1581,6 +1869,7 @@
     els.runBtn.addEventListener("click", () => loadText(els.dataInput.value));
     els.sampleBtn.addEventListener("click", () => loadText(sampleData));
     els.exportBtn.addEventListener("click", exportCsv);
+    els.copySummaryBtn.addEventListener("click", copySummary);
     els.searchInput.addEventListener("input", () => {
       state.query = els.searchInput.value;
       render();
