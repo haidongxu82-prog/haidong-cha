@@ -468,20 +468,23 @@ a {
   display: none;
 }
 
-.share-panel {
+.share-panel,
+.message-panel {
   display: grid;
   grid-template-columns: 154px minmax(0, 1fr);
   gap: clamp(18px, 4vw, 54px);
   padding: 24px 0 0;
 }
 
-.share-copy {
+.share-copy,
+.message-copy {
   display: grid;
   align-content: start;
   gap: 10px;
 }
 
-.share-copy h2 {
+.share-copy h2,
+.message-copy h2 {
   margin: 0;
   color: var(--ink);
   font-size: clamp(18px, 2vw, 24px);
@@ -489,7 +492,8 @@ a {
   line-height: 1.12;
 }
 
-.share-copy p:not(.kicker) {
+.share-copy p:not(.kicker),
+.message-copy p:not(.kicker) {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
@@ -531,6 +535,97 @@ a {
   line-height: 1.6;
 }
 
+.message-form {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--ink);
+  padding-top: 10px;
+}
+
+.message-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.message-form label span,
+.mosaic-preview span {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.message-form input,
+.message-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 10px 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+}
+
+.message-form input {
+  min-height: 40px;
+}
+
+.message-form textarea {
+  min-height: 124px;
+  resize: vertical;
+}
+
+.message-form input:focus,
+.message-form textarea:focus {
+  border-color: var(--ink);
+}
+
+.message-form input::placeholder,
+.message-form textarea::placeholder {
+  color: var(--faint);
+}
+
+.mosaic-preview {
+  display: grid;
+  gap: 7px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.mosaic-preview p {
+  min-height: 45px;
+  margin: 0;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  word-break: break-all;
+}
+
+.message-form button {
+  justify-self: start;
+  min-height: 34px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0 14px;
+  background: var(--ink);
+  color: var(--paper);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.message-form button:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
 .footer {
   width: min(var(--max), calc(100% - 44px));
   display: flex;
@@ -563,7 +658,8 @@ a {
   .announcement,
   .hero,
   .tool-panel,
-  .share-panel {
+  .share-panel,
+  .message-panel {
     grid-template-columns: 1fr;
     gap: 16px;
   }

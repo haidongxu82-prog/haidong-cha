@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260628-compact-headings" />
+    <link rel="stylesheet" href="home.css?v=20260628-message-panel" />
   </head>
   <body class="magazine-index">
     <div class="ambient" aria-hidden="true"></div>
@@ -34,6 +34,7 @@
         <a href="https://ai.haidong.chat/">AI 对话</a>
         <a href="https://trend.haidong.chat/">趋势大盘</a>
         <a href="#share">分享文章</a>
+        <a href="#message">留言</a>
       </nav>
     </header>
 
@@ -187,6 +188,52 @@
           </a>
         </div>
       </section>
+
+      <section class="message-panel" id="message" aria-labelledby="message-title">
+        <div class="message-copy">
+          <p class="kicker">MESSAGE</p>
+          <h2 id="message-title">留言给海东</h2>
+          <p>
+            留言会直接发送到邮箱，不在页面公开展示。右侧会生成一份马赛克预览，适合在公共屏幕上输入时降低暴露。
+          </p>
+        </div>
+        <form
+          class="message-form"
+          action="https://formsubmit.co/hello@haidong.chat"
+          method="POST"
+          data-message-form
+        >
+          <input type="hidden" name="_subject" value="haidong.chat 新留言" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" value="https://haidong.chat/?message=sent#message" />
+          <input type="hidden" name="masked_message" data-masked-field />
+
+          <label>
+            <span>称呼</span>
+            <input name="name" type="text" autocomplete="name" placeholder="你的名字或称呼" />
+          </label>
+          <label>
+            <span>邮箱 / 微信</span>
+            <input name="contact" type="text" autocomplete="email" placeholder="方便我回复你的方式" />
+          </label>
+          <label class="message-field">
+            <span>留言内容</span>
+            <textarea
+              name="message"
+              rows="5"
+              required
+              placeholder="写下你想交流的问题、合作想法或工具反馈..."
+              data-message-input
+            ></textarea>
+          </label>
+          <div class="mosaic-preview" aria-live="polite">
+            <span>马赛克预览</span>
+            <p data-mosaic-preview>留言内容会在这里被马赛克化显示。</p>
+          </div>
+          <button type="submit">发送留言</button>
+        </form>
+      </section>
     </main>
 
     <footer class="footer">
@@ -204,6 +251,30 @@
 
         announcement.classList.add("announcement-expired");
         shell.appendChild(announcement);
+      })();
+
+      (() => {
+        const form = document.querySelector("[data-message-form]");
+        const input = document.querySelector("[data-message-input]");
+        const preview = document.querySelector("[data-mosaic-preview]");
+        const hidden = document.querySelector("[data-masked-field]");
+        if (!form || !input || !preview || !hidden) return;
+
+        const mask = (value) => {
+          const text = value.trim();
+          if (!text) return "留言内容会在这里被马赛克化显示。";
+          return text.replace(/[\p{L}\p{N}]/gu, "▓");
+        };
+
+        const sync = () => {
+          const masked = mask(input.value);
+          preview.textContent = masked;
+          hidden.value = masked;
+        };
+
+        input.addEventListener("input", sync);
+        form.addEventListener("submit", sync);
+        sync();
       })();
     </script>
   </body>
