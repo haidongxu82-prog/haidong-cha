@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260628-inline-message" />
+    <link rel="stylesheet" href="home.css?v=20260628-index-refine" />
   </head>
   <body class="magazine-index">
     <div class="ambient" aria-hidden="true"></div>
@@ -33,6 +33,7 @@
       <nav class="nav" aria-label="主导航">
         <a href="https://ai.haidong.chat/">AI 对话</a>
         <a href="https://trend.haidong.chat/">趋势大盘</a>
+        <a href="#tools-title">工具</a>
         <a href="#share">分享文章</a>
         <a href="#message">留言</a>
       </nav>
@@ -74,25 +75,8 @@
           <p class="kicker">HAIDONG · AI WORKFLOW INDEX</p>
           <h1 id="page-title">把跑通的 AI 能力，放在一个安静入口。</h1>
           <p class="summary">
-            不做热闹的展示页。这里只保留能打开、能使用、能继续迭代的工具。
+            工具、课程、文章和留言。少解释，直接进入。
           </p>
-        </div>
-
-        <div class="console" aria-label="状态面板">
-          <div class="console-head">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <div class="console-body">
-            <p><span>$</span> tools.status</p>
-            <p>ai_chat: online</p>
-            <p>product_selection: online</p>
-            <p>trend_dashboard: online</p>
-            <p>wash_workshop: online</p>
-            <p>detail_workshop: online</p>
-            <p>screenshot_helper: online</p>
-          </div>
         </div>
       </section>
 
@@ -106,58 +90,72 @@
           <a class="tool-card primary" href="https://ai.haidong.chat/">
             <span class="index">01</span>
             <strong>AI 对话</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card primary" href="./ai-product-selection/">
             <span class="index">02</span>
             <strong>AI 选品工具</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="https://trend.haidong.chat/">
             <span class="index">03</span>
             <strong>趋势大盘</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="https://wash.haidong.chat/">
             <span class="index">04</span>
             <strong>洗图工坊</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="https://detail.haidong.chat/">
             <span class="index">05</span>
             <strong>详情页工坊</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="https://design.haidong.chat/">
             <span class="index">06</span>
             <strong>AI 设计工坊</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./compliance/">
             <span class="index">07</span>
             <strong>话术合规审核</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./budget/">
             <span class="index">08</span>
             <strong>预算动态分配</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./live-control/">
             <span class="index">09</span>
             <strong>直播 AI 控场</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./live-schedule/">
             <span class="index">10</span>
             <strong>直播智能排班</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./live-ai-profile/">
             <span class="index">11</span>
             <strong>直播用户画像</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./ai-video-sales/">
             <span class="index">12</span>
             <strong>AI 短视频销售</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./live-background/">
             <span class="index">13</span>
             <strong>直播背景优化</strong>
+            <em>可用</em>
           </a>
           <a class="tool-card" href="./hot-material-search/">
             <span class="index">14</span>
             <strong>同款爆款素材</strong>
+            <em>可用</em>
           </a>
         </div>
       </section>
@@ -167,7 +165,7 @@
           <p class="kicker">FIELD NOTES</p>
           <h2 id="share-title">分享文章</h2>
           <p>
-            这里会放我的 AI 电商产品开发、工具搭建、设计价值拆解和自动化工作流文章。你给我正文后，我会把它整理成适合网页阅读的版本：标题、摘要、段落层级、重点句和文章页都会一起排好。
+            最新方法和工具实践。首页只放入口，详细内容进文章页。
           </p>
         </div>
         <div class="share-slots" aria-label="文章方向">
@@ -194,7 +192,7 @@
           <p class="kicker">MESSAGE</p>
           <h2 id="message-title">留言给海东</h2>
           <p>
-            留言会直接发送到邮箱，不在页面公开展示。右侧会生成一份马赛克预览，适合在公共屏幕上输入时降低暴露。
+            留言会发送到邮箱；提交后只有你当前浏览器能看到原文，其他访客看不到。
           </p>
         </div>
         <form
@@ -233,7 +231,7 @@
           </div>
           <div class="message-status" aria-live="polite" data-message-status></div>
           <div class="message-trace" data-message-trace hidden>
-            <span>已留言痕迹</span>
+            <span>你的留言，仅当前浏览器可见</span>
             <p data-message-trace-text></p>
           </div>
           <button type="submit">发送留言</button>
@@ -277,11 +275,11 @@
           return text.replace(/[\p{L}\p{N}]/gu, "▓");
         };
 
-        const showTrace = (masked) => {
+        const showTrace = (message, masked) => {
           trace.hidden = false;
-          traceText.textContent = masked;
+          traceText.textContent = message;
           try {
-            localStorage.setItem(traceKey, masked);
+            localStorage.setItem(traceKey, JSON.stringify({ message, masked }));
           } catch (error) {}
         };
 
@@ -292,8 +290,8 @@
         };
 
         try {
-          const savedTrace = localStorage.getItem(traceKey);
-          if (savedTrace) showTrace(savedTrace);
+          const savedTrace = JSON.parse(localStorage.getItem(traceKey) || "null");
+          if (savedTrace?.message) showTrace(savedTrace.message, savedTrace.masked || mask(savedTrace.message));
         } catch (error) {}
 
         input.addEventListener("input", sync);
@@ -308,7 +306,7 @@
           }
 
           const masked = hidden.value;
-          showTrace(masked);
+          showTrace(message, masked);
           status.textContent = "正在发送...";
           submitButton.disabled = true;
 
@@ -321,7 +319,7 @@
 
             if (!response.ok) throw new Error("submit failed");
 
-            status.textContent = "已留言，内容已发送到邮箱。";
+            status.textContent = "已留言。原文只在你当前浏览器可见，其他访客看不到。";
             form.reset();
             input.value = "";
             preview.textContent = "留言内容会在这里被马赛克化显示。";

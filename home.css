@@ -349,11 +349,8 @@ a {
 }
 
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 250px;
-  gap: clamp(18px, 4vw, 56px);
-  align-items: end;
-  padding: 0 0 26px;
+  display: block;
+  padding: 0 0 18px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -369,7 +366,7 @@ a {
 
 .summary {
   max-width: 560px;
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 14px;
   line-height: 1.76;
@@ -433,7 +430,7 @@ a {
 
 .tool-card {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-columns: 34px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
   min-height: 39px;
@@ -465,7 +462,23 @@ a {
 }
 
 .tool-card em {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 21px;
+  border: 1px solid var(--line);
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 620;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tool-card:hover em {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  color: var(--accent);
 }
 
 .share-panel,
@@ -610,6 +623,10 @@ a {
   word-break: break-all;
 }
 
+.message-trace p {
+  color: var(--ink);
+}
+
 .message-status {
   min-height: 20px;
   color: var(--accent);
@@ -671,7 +688,6 @@ a {
   }
 
   .announcement,
-  .hero,
   .tool-panel,
   .share-panel,
   .message-panel {
@@ -682,15 +698,6 @@ a {
   .announcement > div:first-child {
     position: static;
   }
-
-  .hero {
-    padding-bottom: 22px;
-  }
-
-  .console {
-    display: none;
-  }
-
   .tool-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
