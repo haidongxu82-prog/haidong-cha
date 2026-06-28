@@ -17,42 +17,9 @@
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260627-forum-index" />
-    <style>
-      .tool-panel .tool-grid {
-        display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-      }
-
-      .tool-panel .tool-card,
-      .tool-panel .tool-card:nth-child(2n),
-      .tool-panel .tool-card:nth-child(3n),
-      .tool-panel .tool-card:nth-last-child(-n + 2),
-      .tool-panel .tool-card:nth-last-child(-n + 3) {
-        min-height: 0 !important;
-        display: grid !important;
-        grid-template-columns: 34px minmax(0, 1fr) !important;
-        align-items: center !important;
-        align-content: center !important;
-        gap: 8px !important;
-        padding: 11px 14px !important;
-        transform: none !important;
-      }
-
-      .tool-panel .tool-card strong {
-        overflow: hidden !important;
-        font-size: 15px !important;
-        line-height: 1.2 !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-      }
-
-      .tool-panel .tool-card em {
-        display: none !important;
-      }
-    </style>
+    <link rel="stylesheet" href="home.css?v=20260628-plain-forum" />
   </head>
-  <body>
+  <body class="plain-blog">
     <div class="ambient" aria-hidden="true"></div>
     <div class="signal-grid" aria-hidden="true"></div>
 
@@ -206,7 +173,7 @@
       <section class="tool-panel" aria-labelledby="tools-title">
         <div class="panel-title">
           <p>FORUM INDEX</p>
-          <h2 id="tools-title">工具目录 · 精简版</h2>
+          <h2 id="tools-title">工具目录</h2>
         </div>
 
         <div class="tool-grid">
