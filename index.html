@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://haidong.chat/" />
     <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260628-message-panel" />
+    <link rel="stylesheet" href="home.css?v=20260628-inline-message" />
   </head>
   <body class="magazine-index">
     <div class="ambient" aria-hidden="true"></div>
@@ -206,7 +206,7 @@
           <input type="hidden" name="_subject" value="haidong.chat 新留言" />
           <input type="hidden" name="_template" value="table" />
           <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_next" value="https://haidong.chat/?message=sent#message" />
+          <input type="hidden" name="_next" value="https://haidong.chat/#message" />
           <input type="hidden" name="masked_message" data-masked-field />
 
           <label>
@@ -230,6 +230,11 @@
           <div class="mosaic-preview" aria-live="polite">
             <span>马赛克预览</span>
             <p data-mosaic-preview>留言内容会在这里被马赛克化显示。</p>
+          </div>
+          <div class="message-status" aria-live="polite" data-message-status></div>
+          <div class="message-trace" data-message-trace hidden>
+            <span>已留言痕迹</span>
+            <p data-message-trace-text></p>
           </div>
           <button type="submit">发送留言</button>
         </form>
@@ -258,12 +263,26 @@
         const input = document.querySelector("[data-message-input]");
         const preview = document.querySelector("[data-mosaic-preview]");
         const hidden = document.querySelector("[data-masked-field]");
-        if (!form || !input || !preview || !hidden) return;
+        const status = document.querySelector("[data-message-status]");
+        const trace = document.querySelector("[data-message-trace]");
+        const traceText = document.querySelector("[data-message-trace-text]");
+        const submitButton = form?.querySelector("button[type='submit']");
+        if (!form || !input || !preview || !hidden || !status || !trace || !traceText || !submitButton) return;
+
+        const traceKey = "haidong.message.trace";
 
         const mask = (value) => {
           const text = value.trim();
           if (!text) return "留言内容会在这里被马赛克化显示。";
           return text.replace(/[\p{L}\p{N}]/gu, "▓");
+        };
+
+        const showTrace = (masked) => {
+          trace.hidden = false;
+          traceText.textContent = masked;
+          try {
+            localStorage.setItem(traceKey, masked);
+          } catch (error) {}
         };
 
         const sync = () => {
@@ -272,8 +291,48 @@
           hidden.value = masked;
         };
 
+        try {
+          const savedTrace = localStorage.getItem(traceKey);
+          if (savedTrace) showTrace(savedTrace);
+        } catch (error) {}
+
         input.addEventListener("input", sync);
-        form.addEventListener("submit", sync);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          sync();
+
+          const message = input.value.trim();
+          if (!message) {
+            status.textContent = "请先填写留言内容。";
+            return;
+          }
+
+          const masked = hidden.value;
+          showTrace(masked);
+          status.textContent = "正在发送...";
+          submitButton.disabled = true;
+
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              body: new FormData(form),
+              headers: { Accept: "application/json" },
+            });
+
+            if (!response.ok) throw new Error("submit failed");
+
+            status.textContent = "已留言，内容已发送到邮箱。";
+            form.reset();
+            input.value = "";
+            preview.textContent = "留言内容会在这里被马赛克化显示。";
+            hidden.value = masked;
+            window.history.replaceState(null, "", `${window.location.pathname}#message`);
+          } catch (error) {
+            status.textContent = "提交未确认成功。已保留马赛克痕迹，你可以稍后再试。";
+          } finally {
+            submitButton.disabled = false;
+          }
+        });
         sync();
       })();
     </script>

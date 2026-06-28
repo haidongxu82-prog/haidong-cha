@@ -548,7 +548,8 @@ a {
 }
 
 .message-form label span,
-.mosaic-preview span {
+.mosaic-preview span,
+.message-trace span {
   color: var(--accent);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 10px;
@@ -590,14 +591,16 @@ a {
   color: var(--faint);
 }
 
-.mosaic-preview {
+.mosaic-preview,
+.message-trace {
   display: grid;
   gap: 7px;
   border-top: 1px solid var(--line);
   padding-top: 10px;
 }
 
-.mosaic-preview p {
+.mosaic-preview p,
+.message-trace p {
   min-height: 45px;
   margin: 0;
   color: var(--muted);
@@ -605,6 +608,13 @@ a {
   font-size: 12px;
   line-height: 1.7;
   word-break: break-all;
+}
+
+.message-status {
+  min-height: 20px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .message-form button {
@@ -624,6 +634,11 @@ a {
 .message-form button:hover {
   border-color: var(--accent);
   background: var(--accent);
+}
+
+.message-form button:disabled {
+  cursor: wait;
+  opacity: 0.58;
 }
 
 .footer {
