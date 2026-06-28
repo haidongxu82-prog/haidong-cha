@@ -158,9 +158,9 @@ a {
 .announcement h2 {
   margin: 11px 0 0;
   color: var(--ink);
-  font-size: clamp(22px, 2.6vw, 36px);
-  font-weight: 760;
-  line-height: 1.02;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 740;
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -235,9 +235,9 @@ a {
   max-width: 720px;
   margin: 4px 0 0;
   color: var(--ink);
-  font-size: clamp(26px, 4.8vw, 58px);
-  font-weight: 760;
-  line-height: 0.98;
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 750;
+  line-height: 1.18;
   letter-spacing: 0;
 }
 
@@ -361,9 +361,9 @@ a {
   max-width: 740px;
   margin: 10px 0 0;
   color: var(--ink);
-  font-size: clamp(32px, 5.8vw, 66px);
-  font-weight: 760;
-  line-height: 0.98;
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 750;
+  line-height: 1.18;
   letter-spacing: 0;
 }
 
@@ -420,9 +420,9 @@ a {
 .panel-title h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(22px, 2.6vw, 36px);
-  font-weight: 760;
-  line-height: 1.02;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 740;
+  line-height: 1.12;
 }
 
 .tool-grid {
@@ -484,9 +484,9 @@ a {
 .share-copy h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(22px, 2.6vw, 36px);
-  font-weight: 760;
-  line-height: 1.02;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 740;
+  line-height: 1.12;
 }
 
 .share-copy p:not(.kicker) {
@@ -604,11 +604,11 @@ a {
   }
 
   .announcement-title {
-    font-size: 31px;
+    font-size: 24px;
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: 25px;
   }
 
   .tool-grid {
