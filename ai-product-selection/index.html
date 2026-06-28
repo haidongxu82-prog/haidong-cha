@@ -882,10 +882,110 @@
       padding: 6px 8px;
     }
 
+    .feedback-fab {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      border: 1px solid #174f9f;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 16px 40px rgba(40, 102, 199, 0.24);
+      min-width: 138px;
+      min-height: 54px;
+      padding: 9px 14px;
+      display: grid;
+      gap: 2px;
+      align-content: center;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .feedback-fab strong {
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    .feedback-fab span {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 12px;
+    }
+
+    .feedback-fab:hover {
+      background: #1d57b1;
+    }
+
+    .feedback-drawer {
+      position: fixed;
+      right: 20px;
+      bottom: 88px;
+      z-index: 21;
+      width: min(380px, calc(100vw - 40px));
+      max-height: min(680px, calc(100vh - 116px));
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 22px 60px rgba(20, 34, 54, 0.24);
+      padding: 14px;
+      display: none;
+      gap: 12px;
+    }
+
+    body.feedback-open .feedback-drawer {
+      display: grid;
+    }
+
+    .feedback-drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .feedback-drawer-head h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .feedback-drawer-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
     .feedback-form {
       padding: 2px 14px 14px;
       display: grid;
       gap: 8px;
+    }
+
+    .feedback-drawer .feedback-form,
+    .feedback-drawer .feedback-list {
+      padding: 0;
     }
 
     .feedback-form textarea {
@@ -1024,6 +1124,18 @@
       .preset-row {
         grid-template-columns: 1fr;
       }
+
+      .feedback-fab {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .feedback-drawer {
+        right: 14px;
+        bottom: 78px;
+        width: calc(100vw - 28px);
+        max-height: calc(100vh - 98px);
+      }
     }
   </style>
 </head>
@@ -1108,18 +1220,6 @@
         </div>
       </section>
 
-      <section class="section">
-        <h2>使用反馈</h2>
-        <form class="feedback-form" id="feedbackForm">
-          <input id="feedbackName" name="name" type="text" autocomplete="name" placeholder="称呼，可不填">
-          <input id="feedbackEmail" name="email" type="email" autocomplete="email" placeholder="邮箱，可不填">
-          <textarea id="feedbackMessage" name="message" maxlength="1200" required placeholder="写下问题、建议或想增加的功能"></textarea>
-          <input class="feedback-honey" id="feedbackHoney" name="_honey" type="text" tabindex="-1" autocomplete="off">
-          <button class="btn primary" id="feedbackSubmitBtn" type="submit">提交留言</button>
-          <div class="feedback-status" id="feedbackStatus"></div>
-        </form>
-        <div class="feedback-list" id="feedbackList"></div>
-      </section>
     </aside>
 
     <main>
@@ -1245,6 +1345,30 @@
     </main>
   </div>
 
+  <button class="feedback-fab" id="feedbackOpenBtn" type="button" aria-controls="feedbackDrawer" aria-expanded="false">
+    <strong>使用反馈</strong>
+    <span>留言给海东</span>
+  </button>
+
+  <section class="feedback-drawer" id="feedbackDrawer" aria-label="使用反馈" aria-hidden="true">
+    <div class="feedback-drawer-head">
+      <div>
+        <h2>使用反馈</h2>
+        <p>留言内容会发送到邮箱，公开区只显示马赛克记录。</p>
+      </div>
+      <button class="icon-btn" id="feedbackCloseBtn" type="button" aria-label="关闭反馈面板">×</button>
+    </div>
+    <form class="feedback-form" id="feedbackForm">
+      <input id="feedbackName" name="name" type="text" autocomplete="name" placeholder="称呼，可不填">
+      <input id="feedbackEmail" name="email" type="email" autocomplete="email" placeholder="邮箱，可不填">
+      <textarea id="feedbackMessage" name="message" maxlength="1200" required placeholder="写下问题、建议或想增加的功能"></textarea>
+      <input class="feedback-honey" id="feedbackHoney" name="_honey" type="text" tabindex="-1" autocomplete="off">
+      <button class="btn primary" id="feedbackSubmitBtn" type="submit">提交留言</button>
+      <div class="feedback-status" id="feedbackStatus"></div>
+    </form>
+    <div class="feedback-list" id="feedbackList"></div>
+  </section>
+
   <script src="xlsx.full.min.js"></script>
   <script>
     const state = {
@@ -1309,7 +1433,10 @@
       feedbackHoney: document.getElementById("feedbackHoney"),
       feedbackSubmitBtn: document.getElementById("feedbackSubmitBtn"),
       feedbackStatus: document.getElementById("feedbackStatus"),
-      feedbackList: document.getElementById("feedbackList")
+      feedbackList: document.getElementById("feedbackList"),
+      feedbackOpenBtn: document.getElementById("feedbackOpenBtn"),
+      feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
+      feedbackDrawer: document.getElementById("feedbackDrawer")
     };
 
     let pasteTimer = 0;
@@ -2323,6 +2450,13 @@
       });
     }
 
+    function setFeedbackOpen(open) {
+      document.body.classList.toggle("feedback-open", open);
+      els.feedbackDrawer.setAttribute("aria-hidden", open ? "false" : "true");
+      els.feedbackOpenBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) setTimeout(() => els.feedbackMessage.focus(), 0);
+    }
+
     async function submitFeedback(event) {
       event.preventDefault();
       if (els.feedbackHoney.value.trim()) return;
@@ -2402,10 +2536,15 @@
     });
     els.exportBtn.addEventListener("click", exportCsv);
     els.copySummaryBtn.addEventListener("click", copySummary);
+    els.feedbackOpenBtn.addEventListener("click", () => setFeedbackOpen(true));
+    els.feedbackCloseBtn.addEventListener("click", () => setFeedbackOpen(false));
     els.feedbackForm.addEventListener("submit", submitFeedback);
     els.searchInput.addEventListener("input", () => {
       state.query = els.searchInput.value;
       render();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setFeedbackOpen(false);
     });
 
     syncControls();
