@@ -973,7 +973,7 @@
           <textarea id="dataInput" spellcheck="false"></textarea>
         </div>
         <div class="actions single">
-          <a class="btn" href="sample-data.csv" download>下载 300 条测试数据</a>
+          <a class="btn" href="sample-data.csv" download>下载 100,000 条测试数据</a>
         </div>
         <div class="status" id="statusText"></div>
       </section>
@@ -1260,6 +1260,7 @@
     const shrinkSearchK = 5000;
     const lowConfidenceCutoff = 0.45;
     const riskThreshold = 75;
+    const tableRenderLimit = 1000;
 
     function setPairedControlValue(rangeId, val) {
       const pair = inputPairs.find(item => item[0] === rangeId);
@@ -1457,20 +1458,28 @@
         margin: passed.map(row => row.marginSpace),
         saturationFit: passed.map(row => 1 - row.saturation)
       };
+      const percentiles = {
+        ratio: makePercentile(pools.ratio),
+        trend: makePercentile(pools.trend),
+        trueHeat: makePercentile(pools.trueHeat),
+        conversion: makePercentile(pools.conversion),
+        margin: makePercentile(pools.margin),
+        saturationFit: makePercentile(pools.saturationFit)
+      };
 
       const scoredPassed = passed.map(row => {
         const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
         const adjustedRatio = Math.exp(adjustedLogRatio);
-        const ratioScore = percentileScore(adjustedLogRatio, pools.ratio);
-        const trendScore = percentileScore(row.trendMetric, pools.trend);
-        const heatScore = percentileScore(row.trueHeat, pools.trueHeat);
-        const conversionScore = percentileScore(row.conversion, pools.conversion);
+        const ratioScore = percentiles.ratio(adjustedLogRatio);
+        const trendScore = percentiles.trend(row.trendMetric);
+        const heatScore = percentiles.trueHeat(row.trueHeat);
+        const conversionScore = percentiles.conversion(row.conversion);
         const opportunityStrength =
           (ratioScore * scoreWeights.ratio) +
           (trendScore * scoreWeights.trend) +
           (heatScore * scoreWeights.heat) +
           (conversionScore * scoreWeights.conversion);
-        const feasibility = feasibilityCoefficient(row, pools);
+        const feasibility = feasibilityCoefficient(row, percentiles);
         const confidence = confidenceFor(row);
         const riskScore = riskScoreFor(row);
         const riskGate = riskGateFor(riskScore);
@@ -1493,6 +1502,7 @@
       });
 
       const cutoffs = getQuantileCutoffs(scoredPassed.map(row => row.score).filter(score => score > 0));
+      const scoredByIndex = new Map(scoredPassed.map(row => [row.rawIndex, row]));
       const scored = enriched.map(row => {
         if (!row.pass) {
           const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
@@ -1509,7 +1519,7 @@
             grade: "C"
           };
         }
-        const scoredRow = scoredPassed.find(item => item.rawIndex === row.rawIndex);
+        const scoredRow = scoredByIndex.get(row.rawIndex);
         const grade = gradeFor(scoredRow.score, cutoffs);
         return { ...scoredRow, grade: grade === "S" && scoredRow.confidence < lowConfidenceCutoff ? "A" : grade };
       });
@@ -1525,15 +1535,43 @@
 
     function percentileScore(value, values) {
       const nums = values.filter(Number.isFinite).sort((a, b) => a - b);
+      return percentileFromSorted(value, nums);
+    }
+
+    function makePercentile(values) {
+      const nums = values.filter(Number.isFinite).sort((a, b) => a - b);
+      return value => percentileFromSorted(value, nums);
+    }
+
+    function percentileFromSorted(value, nums) {
       if (!nums.length) return 0;
-      let less = 0;
-      let equal = 0;
-      nums.forEach(num => {
-        if (num < value) less += 1;
-        if (num === value) equal += 1;
-      });
-      const averageRank = ((less + 1) + (less + Math.max(equal, 1))) / 2;
+      if (!Number.isFinite(value)) return 0;
+      const less = lowerBound(nums, value);
+      const upper = upperBound(nums, value);
+      const averageRank = ((less + 1) + Math.max(less + 1, upper)) / 2;
       return (averageRank / nums.length) * 100;
+    }
+
+    function lowerBound(nums, value) {
+      let low = 0;
+      let high = nums.length;
+      while (low < high) {
+        const mid = Math.floor((low + high) / 2);
+        if (nums[mid] < value) low = mid + 1;
+        else high = mid;
+      }
+      return low;
+    }
+
+    function upperBound(nums, value) {
+      let low = 0;
+      let high = nums.length;
+      while (low < high) {
+        const mid = Math.floor((low + high) / 2);
+        if (nums[mid] <= value) low = mid + 1;
+        else high = mid;
+      }
+      return low;
     }
 
     function saturationFor(supplyGrowth, demandGrowth) {
@@ -1543,9 +1581,9 @@
       return clamp(supplyGrowth / demandGrowth, -2, 4);
     }
 
-    function feasibilityCoefficient(row, pools) {
-      const marginFit = percentileScore(row.marginSpace, pools.margin) / 100;
-      const saturationFit = percentileScore(1 - row.saturation, pools.saturationFit) / 100;
+    function feasibilityCoefficient(row, percentiles) {
+      const marginFit = percentiles.margin(row.marginSpace) / 100;
+      const saturationFit = percentiles.saturationFit(1 - row.saturation) / 100;
       return round(clamp(marginFit * saturationFit, 0, 1), 2);
     }
 
@@ -1608,7 +1646,9 @@
       els.metricTop.textContent = formatNumber(top.length, 0);
       els.metricRatio.textContent = formatNumber(avg(passed.map(row => row.adjustedRatio)), 1);
       els.metricScore.textContent = formatNumber(avg(passed.map(row => row.score)), 1);
-      els.tableMeta.textContent = `${visibleRows.length} 条`;
+      els.tableMeta.textContent = visibleRows.length > tableRenderLimit
+        ? `${formatNumber(visibleRows.length, 0)} 条，显示前 ${formatNumber(tableRenderLimit, 0)} 条`
+        : `${formatNumber(visibleRows.length, 0)} 条`;
       els.tableTitle.textContent = state.view === "keyword" ? "机会清单" : "价格带聚合";
       renderResultStage(passed);
       renderTable(visibleRows);
@@ -1738,6 +1778,7 @@
         els.tableWrap.innerHTML = `<div class="empty">无匹配结果</div>`;
         return;
       }
+      const tableRows = rows.length > tableRenderLimit ? rows.slice(0, tableRenderLimit) : rows;
       if (state.view === "product") {
         els.tableWrap.innerHTML = `
           <table>
@@ -1755,7 +1796,7 @@
               </tr>
             </thead>
             <tbody>
-              ${rows.map(row => `
+              ${tableRows.map(row => `
                 <tr>
                   <td class="keyword">${escapeHtml(row.price)}</td>
                   <td class="num">${formatNumber(row.count, 0)}</td>
@@ -1798,7 +1839,7 @@
             </tr>
           </thead>
           <tbody>
-            ${rows.map(row => `
+            ${tableRows.map(row => `
               <tr class="${row.confidence < lowConfidenceCutoff ? "low-confidence" : ""}">
                 <td>${gradeBadge(row.grade)} ${confidenceBadge(row)}</td>
                 <td class="keyword" title="${escapeHtml(row.keyword)}">${escapeHtml(row.keyword)}</td>
@@ -2031,12 +2072,16 @@
       return text;
     }
 
-    function loadText(text) {
-      els.dataInput.value = text;
+    function loadText(text, options = {}) {
+      const shouldEchoInput = options.echoInput !== false || text.length < 250000;
+      els.dataInput.value = shouldEchoInput ? text : "";
+      els.dataInput.placeholder = shouldEchoInput ? "" : "已读取大文件，未在文本框中展开，以保持页面流畅。";
       state.rows = parseDelimited(text);
       state.sortKey = "score";
       state.sortDir = "desc";
-      els.statusText.textContent = state.rows.length ? `已读取 ${state.rows.length} 条关键词。` : "没有识别到有效数据。";
+      els.statusText.textContent = state.rows.length
+        ? `已读取 ${formatNumber(state.rows.length, 0)} 条关键词。${shouldEchoInput ? "" : "大文件已进入分析，文本框不展开原文。"}`
+        : "没有识别到有效数据。";
       runCurrent();
     }
 
@@ -2090,7 +2135,7 @@
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = () => loadText(String(reader.result || ""));
+      reader.onload = () => loadText(String(reader.result || ""), { echoInput: false });
       reader.readAsText(file);
     });
 
