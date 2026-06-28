@@ -965,8 +965,8 @@
       <section class="section">
         <h2>数据导入</h2>
         <div class="field">
-          <label for="fileInput">CSV / TSV 文件</label>
-          <input id="fileInput" type="file" accept=".csv,.tsv,.txt">
+          <label for="fileInput">Excel / CSV / TSV 文件</label>
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt">
         </div>
         <div class="field">
           <label for="dataInput">关键词数据</label>
@@ -1159,6 +1159,7 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     const state = {
       rows: [],
@@ -2072,6 +2073,54 @@
       return text;
     }
 
+    function isExcelFile(file) {
+      const name = file?.name?.toLowerCase() || "";
+      return name.endsWith(".xlsx") || name.endsWith(".xls");
+    }
+
+    function rowsToDelimited(rows) {
+      return rows
+        .filter(row => row.some(cell => String(cell ?? "").trim() !== ""))
+        .map(row => row.map(csvEscape).join(","))
+        .join("\n");
+    }
+
+    function loadExcelFile(file) {
+      if (!window.XLSX) {
+        els.statusText.textContent = "Excel 解析器没有加载成功，请刷新页面后再上传。";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const workbook = XLSX.read(reader.result, { type: "array" });
+          const sheetName = workbook.SheetNames[0];
+          if (!sheetName) {
+            els.statusText.textContent = "这个 Excel 文件里没有可读取的工作表。";
+            return;
+          }
+          const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+            header: 1,
+            raw: false,
+            defval: "",
+            blankrows: false
+          });
+          const text = rowsToDelimited(rows);
+          if (!text.trim()) {
+            els.statusText.textContent = "这个 Excel 工作表没有识别到有效数据。";
+            return;
+          }
+          loadText(text, { echoInput: false });
+        } catch {
+          els.statusText.textContent = "Excel 文件解析失败，请确认第一张工作表是标准表格。";
+        }
+      };
+      reader.onerror = () => {
+        els.statusText.textContent = "Excel 文件读取失败，请重新选择文件。";
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
     function loadText(text, options = {}) {
       const shouldEchoInput = options.echoInput !== false || text.length < 250000;
       els.dataInput.value = shouldEchoInput ? text : "";
@@ -2134,6 +2183,10 @@
     els.fileInput.addEventListener("change", event => {
       const file = event.target.files[0];
       if (!file) return;
+      if (isExcelFile(file)) {
+        loadExcelFile(file);
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => loadText(String(reader.result || ""), { echoInput: false });
       reader.readAsText(file);
