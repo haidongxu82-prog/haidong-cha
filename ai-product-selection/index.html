@@ -882,6 +882,78 @@
       padding: 6px 8px;
     }
 
+    .feedback-form {
+      padding: 2px 14px 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .feedback-form textarea {
+      min-height: 96px;
+      font-size: 12px;
+    }
+
+    .feedback-form .btn {
+      width: 100%;
+    }
+
+    .feedback-honey {
+      display: none;
+    }
+
+    .feedback-status {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      min-height: 18px;
+    }
+
+    .feedback-list {
+      padding: 0 14px 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .section .feedback-form,
+    .section .feedback-list {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .feedback-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .feedback-item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mosaic-lines {
+      display: grid;
+      gap: 5px;
+    }
+
+    .mosaic-line {
+      height: 10px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(
+        90deg,
+        #ccd3df 0,
+        #ccd3df 8px,
+        #eef1f5 8px,
+        #eef1f5 13px
+      );
+    }
+
     @media (max-width: 1100px) {
       .app {
         grid-template-columns: 1fr;
@@ -1035,6 +1107,19 @@
           <span>可行性由毛利空间和饱和度计算，低置信结果会灰显且不能进入 S 级。</span>
         </div>
       </section>
+
+      <section class="section">
+        <h2>使用反馈</h2>
+        <form class="feedback-form" id="feedbackForm">
+          <input id="feedbackName" name="name" type="text" autocomplete="name" placeholder="称呼，可不填">
+          <input id="feedbackEmail" name="email" type="email" autocomplete="email" placeholder="邮箱，可不填">
+          <textarea id="feedbackMessage" name="message" maxlength="1200" required placeholder="写下问题、建议或想增加的功能"></textarea>
+          <input class="feedback-honey" id="feedbackHoney" name="_honey" type="text" tabindex="-1" autocomplete="off">
+          <button class="btn primary" id="feedbackSubmitBtn" type="submit">提交留言</button>
+          <div class="feedback-status" id="feedbackStatus"></div>
+        </form>
+        <div class="feedback-list" id="feedbackList"></div>
+      </section>
     </aside>
 
     <main>
@@ -1154,6 +1239,7 @@
             </div>
             <ul class="checklist" id="nextSteps"></ul>
           </section>
+
         </aside>
       </div>
     </main>
@@ -1215,7 +1301,15 @@
       metricPassed: document.getElementById("metricPassed"),
       metricTop: document.getElementById("metricTop"),
       metricRatio: document.getElementById("metricRatio"),
-      metricScore: document.getElementById("metricScore")
+      metricScore: document.getElementById("metricScore"),
+      feedbackForm: document.getElementById("feedbackForm"),
+      feedbackName: document.getElementById("feedbackName"),
+      feedbackEmail: document.getElementById("feedbackEmail"),
+      feedbackMessage: document.getElementById("feedbackMessage"),
+      feedbackHoney: document.getElementById("feedbackHoney"),
+      feedbackSubmitBtn: document.getElementById("feedbackSubmitBtn"),
+      feedbackStatus: document.getElementById("feedbackStatus"),
+      feedbackList: document.getElementById("feedbackList")
     };
 
     let pasteTimer = 0;
@@ -1262,6 +1356,8 @@
     const lowConfidenceCutoff = 0.45;
     const riskThreshold = 75;
     const tableRenderLimit = 1000;
+    const feedbackEndpoint = "https://formsubmit.co/ajax/xu-haidong@qq.com";
+    const feedbackStorageKey = "haidong-ai-product-selection-feedback-v1";
 
     function setPairedControlValue(rangeId, val) {
       const pair = inputPairs.find(item => item[0] === rangeId);
@@ -2165,6 +2261,114 @@
         .replace(/'/g, "&#039;");
     }
 
+    function getFeedbackEntries() {
+      try {
+        const entries = JSON.parse(localStorage.getItem(feedbackStorageKey) || "[]");
+        return Array.isArray(entries) ? entries : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFeedbackEntries(entries) {
+      localStorage.setItem(feedbackStorageKey, JSON.stringify(entries.slice(0, 8)));
+    }
+
+    function addMaskedFeedback(message) {
+      const entries = getFeedbackEntries();
+      const entry = {
+        id: Date.now(),
+        createdAt: new Date().toISOString(),
+        length: String(message || "").trim().length
+      };
+      saveFeedbackEntries([entry, ...entries]);
+      renderFeedbackList();
+    }
+
+    function renderFeedbackList() {
+      const entries = getFeedbackEntries();
+      if (!entries.length) {
+        els.feedbackList.innerHTML = `<div class="empty">暂无公开留言记录</div>`;
+        return;
+      }
+      els.feedbackList.innerHTML = entries.map((entry, index) => `
+        <article class="feedback-item">
+          <div class="feedback-item-head">
+            <span>访客留言 #${entries.length - index}</span>
+            <time>${escapeHtml(formatFeedbackTime(entry.createdAt))}</time>
+          </div>
+          <div class="mosaic-lines" aria-label="留言内容已隐藏">
+            ${mosaicLines(entry.length)}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function mosaicLines(length) {
+      const lineCount = Math.min(4, Math.max(2, Math.ceil((Number(length) || 20) / 38)));
+      return Array.from({ length: lineCount }, (_, index) => {
+        const width = Math.max(42, Math.min(100, 92 - (index * 13) + ((Number(length) || 0) % 9)));
+        return `<span class="mosaic-line" style="width: ${width}%"></span>`;
+      }).join("");
+    }
+
+    function formatFeedbackTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "刚刚";
+      return date.toLocaleString("zh-CN", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    async function submitFeedback(event) {
+      event.preventDefault();
+      if (els.feedbackHoney.value.trim()) return;
+      const message = els.feedbackMessage.value.trim();
+      if (!message) {
+        els.feedbackStatus.textContent = "请先填写留言内容。";
+        return;
+      }
+      const name = els.feedbackName.value.trim() || "匿名访客";
+      const email = els.feedbackEmail.value.trim();
+      const payload = {
+        _subject: "AI选品工具使用反馈",
+        _template: "table",
+        _captcha: "false",
+        _honey: "",
+        工具: "海东 AI 选品工具",
+        页面: location.href,
+        称呼: name,
+        联系邮箱: email || "未填写",
+        留言内容: message,
+        提交时间: new Date().toLocaleString("zh-CN")
+      };
+      els.feedbackSubmitBtn.disabled = true;
+      els.feedbackSubmitBtn.textContent = "发送中";
+      els.feedbackStatus.textContent = "正在发送留言...";
+      try {
+        const response = await fetch(feedbackEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error("feedback submit failed");
+        addMaskedFeedback(message);
+        els.feedbackForm.reset();
+        els.feedbackStatus.textContent = "已提交。正文会发送到邮箱，公开区只显示马赛克记录。";
+      } catch {
+        els.feedbackStatus.textContent = "发送失败，请稍后重试，或直接发到 xu-haidong@qq.com。";
+      } finally {
+        els.feedbackSubmitBtn.disabled = false;
+        els.feedbackSubmitBtn.textContent = "提交留言";
+      }
+    }
+
     document.querySelectorAll(".tab").forEach(tab => {
       tab.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
@@ -2198,12 +2402,14 @@
     });
     els.exportBtn.addEventListener("click", exportCsv);
     els.copySummaryBtn.addEventListener("click", copySummary);
+    els.feedbackForm.addEventListener("submit", submitFeedback);
     els.searchInput.addEventListener("input", () => {
       state.query = els.searchInput.value;
       render();
     });
 
     syncControls();
+    renderFeedbackList();
     render();
   </script>
 </body>
