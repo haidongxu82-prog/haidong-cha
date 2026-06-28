@@ -343,15 +343,13 @@
       background: #f5f9ff;
       box-shadow: 0 14px 36px rgba(40, 102, 199, 0.12);
       padding: 16px;
-      margin-bottom: 14px;
+      margin: 20px auto 0;
+      text-align: left;
+      width: min(520px, 100%);
     }
 
     body.is-processing .processing-panel {
       display: grid;
-    }
-
-    body.is-processing .start-empty {
-      display: none;
     }
 
     .processing-head {
@@ -1283,18 +1281,17 @@
           <span>等待数据</span>
           <h2>上传词表后生成机会榜</h2>
           <p>页面初始不展示样例结果。上传 Excel / CSV / TSV，或粘贴关键词数据后，系统会自动生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
+          <section class="processing-panel" id="processingPanel" aria-live="polite" aria-hidden="true">
+            <div class="processing-head">
+              <span id="processingTitle">正在处理数据</span>
+              <strong id="processingPercent">0%</strong>
+            </div>
+            <div class="progress-track" id="processingTrack" role="progressbar" aria-label="数据分析进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress-bar" id="processingBar"></div>
+            </div>
+            <div class="processing-detail" id="processingDetail">文件已接收，正在准备分析。</div>
+          </section>
         </div>
-      </section>
-
-      <section class="processing-panel" id="processingPanel" aria-live="polite" aria-hidden="true">
-        <div class="processing-head">
-          <span id="processingTitle">正在处理数据</span>
-          <strong id="processingPercent">0%</strong>
-        </div>
-        <div class="progress-track" id="processingTrack" role="progressbar" aria-label="数据分析进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="progress-bar" id="processingBar"></div>
-        </div>
-        <div class="processing-detail" id="processingDetail">文件已接收，正在准备分析。</div>
       </section>
 
       <div class="toolbar">
