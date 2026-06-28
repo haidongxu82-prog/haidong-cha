@@ -1669,14 +1669,14 @@
       <section class="section">
         <h2>评分模型</h2>
         <div class="model-card">
-          <strong>固定机会强度权重</strong>
+          <strong>BOI 混合权重模型</strong>
           <div class="model-grid">
-            <div class="model-pill"><span>供需</span><b>35%</b></div>
-            <div class="model-pill"><span>趋势</span><b>25%</b></div>
-            <div class="model-pill"><span>真实热度</span><b>20%</b></div>
-            <div class="model-pill"><span>转化</span><b>20%</b></div>
+            <div class="model-pill"><span>熵权</span><b>50%</b></div>
+            <div class="model-pill"><span>经验</span><b>50%</b></div>
+            <div class="model-pill"><span>排序</span><b>TOPSIS</b></div>
+            <div class="model-pill"><span>短板</span><b>障碍度</b></div>
           </div>
-          <span>可行性由毛利空间和饱和度计算，低置信结果会灰显且不能进入 S 级。</span>
+          <span>BOI 是方向雷达，S 级代表优先深挖，不代表直接采购。</span>
         </div>
       </section>
 
@@ -1714,7 +1714,7 @@
               <strong id="headlineGrade">-</strong>
             </div>
             <div class="stage-stat">
-              <label>综合分</label>
+              <label>BOI 分</label>
               <strong id="headlineScore">0</strong>
             </div>
             <div class="stage-stat">
@@ -1732,7 +1732,7 @@
         <div class="stage-board">
           <div class="stage-board-head">
             <h2>TOP 3 机会榜</h2>
-            <span id="topListMeta">按综合分排序</span>
+            <span id="topListMeta">按 BOI 分排序</span>
           </div>
           <div class="top-cards" id="topCards"></div>
         </div>
@@ -1756,7 +1756,7 @@
           <strong id="metricRatio">0</strong>
         </div>
         <div class="metric">
-          <label>平均综合分</label>
+          <label>平均 BOI</label>
           <strong id="metricScore">0</strong>
         </div>
       </section>
@@ -1937,7 +1937,9 @@
       risk: ["风险", "风险分", "风险评分", "risk", "riskScore"],
       sellerCount: ["卖家数", "商家数", "sellerCount", "sellers"],
       topSellerShare: ["头部卖家份额", "最大卖家份额", "topSellerShare", "topSeller"],
-      cr3: ["CR3", "前三卖家份额", "头部3卖家份额", "cr3"]
+      cr3: ["CR3", "前三卖家份额", "头部3卖家份额", "cr3"],
+      category: ["类目", "品类", "category", "niche"],
+      simulationType: ["模拟类型", "样例类型", "simulationType"]
     };
 
     const fieldLabels = {
@@ -1961,11 +1963,13 @@
       concentration: "供给集中度",
       sellerCount: "卖家数",
       topSellerShare: "头部卖家份额",
-      cr3: "CR3"
+      cr3: "CR3",
+      category: "类目",
+      simulationType: "模拟类型"
     };
 
     const requiredFieldKeys = ["keyword", "search", "listings", "growth7", "growth4", "conversion"];
-    const optionalFieldKeys = ["price", "platform", "competition", "market", "seasonBaseline", "demandGrowth", "supplyGrowth", "estimatedPrice", "cost", "risk", "sellerCount", "topSellerShare", "cr3"];
+    const optionalFieldKeys = ["price", "platform", "competition", "market", "seasonBaseline", "demandGrowth", "supplyGrowth", "estimatedPrice", "cost", "risk", "sellerCount", "topSellerShare", "cr3", "category", "simulationType"];
     const templateHeaders = requiredFieldKeys.concat(optionalFieldKeys).map(key => fieldLabels[key]);
 
     const els = {
@@ -2053,10 +2057,9 @@
           settings: { minSearch: 8000, minGrowth7: 15, minGrowth4: 20, maxListings: 30000, minRatio: 0.6 }
         }
       },
-      opportunityWeights: { ratio: 0.35, trend: 0.25, heat: 0.2, conversion: 0.2 },
       trend: {
-        growth7Weight: 0.4,
-        growth4Weight: 0.6,
+        growth7Weight: 0.35,
+        growth4Weight: 0.65,
         growth7WinsorPercentile: 0.95
       },
       shrink: { searchK: 5000 },
@@ -2071,21 +2074,12 @@
         requiredWeight: 0.7,
         optionalWeight: 0.3
       },
-      feasibility: {
-        marginExponent: 0.65,
-        saturationExponent: 0.65,
-        concentrationExponent: 0.45,
-        scoreAlpha: 1,
-        scoreBeta: 0.75
-      },
       risk: {
         gateMode: "soft",
         hardThreshold: 60,
         softThreshold: 60,
         softSteepness: 0.16,
-        reviewThreshold: 48,
-        competitionWeight: 0.7,
-        competitionMax: 70
+        reviewThreshold: 48
       },
       niche: {
         minSearchFloor: 500,
@@ -2095,8 +2089,22 @@
         absoluteRatio: 1,
         absoluteTrendPercentile: 70
       },
-      gradeThresholds: { s: 72, a: 55, b: 35 },
-      referenceDistribution: [0, 8, 15, 22, 30, 35, 45, 55, 63, 72, 82, 100],
+      boi: {
+        entropyLambda: 0.5,
+        benchmarkConversionFallback: 5,
+        epsilon: 0.01,
+        gradeThresholds: { s: 75, a: 60, b: 45 },
+        referenceDistribution: [0, 15, 25, 35, 45, 55, 60, 68, 75, 82, 90, 100],
+        criteria: [
+          { key: "trueDemand", label: "真实需求", group: "需求", subjectiveWeight: 0.17, good: 200000, bad: 0, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "unmetDemand", label: "未满足度", group: "需求", subjectiveWeight: 0.16, good: 1, bad: 0, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "trueHeat", label: "真实热度", group: "需求", subjectiveWeight: 0.11, good: 2, bad: 0, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "trend", label: "趋势", group: "需求", subjectiveWeight: 0.12, good: 60, bad: -20, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "concentration", label: "集中度机会", group: "竞争", subjectiveWeight: 0.12, good: 1, bad: 0, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "supplyDemand", label: "供需增速", group: "竞争", subjectiveWeight: 0.14, good: 1, bad: 0, positiveAnchor: 1, negativeAnchor: 0 },
+          { key: "margin", label: "毛利空间", group: "可行", subjectiveWeight: 0.18, good: 0.5, bad: 0, positiveAnchor: 1, negativeAnchor: 0 }
+        ]
+      },
       ui: { tableRenderLimit: 1000 },
       notes: "经验默认值，后续可用真实成交/投放结果回测标定。"
     };
@@ -2350,6 +2358,8 @@
       const sellerCountValue = findValue(row, headers, "sellerCount");
       const topSellerShareValue = findValue(row, headers, "topSellerShare");
       const cr3Value = findValue(row, headers, "cr3");
+      const categoryValue = findValue(row, headers, "category");
+      const simulationTypeValue = findValue(row, headers, "simulationType");
       const search = toNumber(searchValue);
       const listings = toNumber(listingsValue);
       const growth4 = toNumber(growth4Value);
@@ -2358,7 +2368,7 @@
       const estimatedPrice = toNumber(estimatedPriceValue);
       const cost = toNumber(costValue);
       const requiredValues = [keywordValue, searchValue, listingsValue, growth7Value, growth4Value, conversionValue];
-      const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue, sellerCountValue, topSellerShareValue, cr3Value];
+      const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue, sellerCountValue, topSellerShareValue, cr3Value, categoryValue, simulationTypeValue];
       const requiredCompleteness = requiredValues.filter(hasValue).length / requiredValues.length;
       const optionalCompleteness = optionalValues.filter(hasValue).length / optionalValues.length;
       const hasSeasonBaseline = hasValue(seasonBaselineValue) && toNumber(seasonBaselineValue) > 0;
@@ -2381,6 +2391,8 @@
         conversion: toNumber(conversionValue),
         price: priceValue || "未标注",
         platform: platformValue || "未标注",
+        category: categoryValue || "全品类",
+        simulationType: simulationTypeValue || "",
         competition: competitionValue === "" ? Math.min(100, Math.sqrt(Math.max(listings, 0)) / 4) : toNumber(competitionValue),
         market: marketValue === "" ? search : toNumber(marketValue),
         seasonBaseline: hasSeasonBaseline ? Math.max(1, toNumber(seasonBaselineValue)) : Math.max(1, search),
@@ -2465,16 +2477,52 @@
       }
       const settings = getSettings();
       const growth7Cap = quantile(state.rows.map(row => row.growth7), modelConfig.trend.growth7WinsorPercentile);
+      const categoryBenchmarks = buildCategoryBenchmarks(state.rows);
+      const searchGood = Math.max(1, quantile(state.rows.map(row => row.search), 0.95));
       const baseRows = state.rows.map(row => {
         const ratio = row.listings > 0 ? row.search / row.listings : row.search;
         const logRatio = Math.log((row.search + 1) / (row.listings + 1));
         const cappedGrowth7 = Number.isFinite(growth7Cap) ? Math.min(row.growth7, growth7Cap) : row.growth7;
         const trueHeat = row.fieldFlags?.seasonBaselineInferred ? 1 : row.search / row.seasonBaseline;
         const trendMetric = (modelConfig.trend.growth7Weight * cappedGrowth7) + (modelConfig.trend.growth4Weight * row.growth4);
+        const trendType = trendTypeFor(row.growth7, cappedGrowth7, row.growth4, growth7Cap, trendMetric);
         const saturation = saturationFor(row.supplyGrowth, row.demandGrowth);
+        const supplyDemand = supplyDemandOpportunityFor(row.supplyGrowth, row.demandGrowth);
         const marginSpace = clamp(row.marginSpace, -1, 1);
         const concentrationFit = concentrationFitFor(row);
-        return { ...row, ratio, logRatio, growth7Cap, cappedGrowth7, trueHeat, trendMetric, saturation, marginSpace, concentrationFit };
+        const benchmarkConversion = categoryBenchmarks.get(row.category) || categoryBenchmarks.get("全品类") || modelConfig.boi.benchmarkConversionFallback;
+        const searchNorm = positiveScale(row.search, searchGood, 0);
+        const unmetDemand = searchNorm * clamp((benchmarkConversion - row.conversion) / Math.max(benchmarkConversion, modelConfig.boi.epsilon), 0, 1);
+        const trueDemand = row.search * Math.max(0, row.conversion);
+        const boiRawInputs = {
+          trueDemand,
+          unmetDemand,
+          trueHeat,
+          trend: trendMetric,
+          concentration: concentrationFit,
+          supplyDemand: supplyDemand.opportunity,
+          margin: marginSpace
+        };
+        return {
+          ...row,
+          ratio,
+          logRatio,
+          growth7Cap,
+          cappedGrowth7,
+          trueHeat,
+          trendMetric,
+          trendType,
+          saturation,
+          supplyDemandOpportunity: supplyDemand.opportunity,
+          supplyDemandRatioSignal: supplyDemand.signal,
+          supplyDemandFlag: supplyDemand.flag,
+          marginSpace,
+          concentrationFit,
+          benchmarkConversion,
+          unmetDemand,
+          trueDemand,
+          boiRawInputs
+        };
       });
 
       const globalLogRatio = median(baseRows.map(row => row.logRatio));
@@ -2504,60 +2552,26 @@
       });
 
       const passed = enriched.filter(row => row.pass);
-      const pools = {
-        ratio: passed.map(row => row.adjustedLogRatio),
-        trend: passed.map(row => row.trendMetric),
-        trueHeat: passed.map(row => row.trueHeat),
-        conversion: passed.map(row => row.conversion),
-        margin: passed.map(row => row.marginSpace),
-        saturationFit: passed.map(row => 1 - row.saturation)
-      };
-      const percentiles = {
-        ratio: makePercentile(pools.ratio),
-        trend: makePercentile(pools.trend),
-        trueHeat: makePercentile(pools.trueHeat),
-        conversion: makePercentile(pools.conversion),
-        margin: makePercentile(pools.margin),
-        saturationFit: makePercentile(pools.saturationFit)
-      };
-
+      const boiModel = buildBoiModel(passed);
       const scoredPassed = passed.map(row => {
-        const ratioScore = percentiles.ratio(row.adjustedLogRatio);
-        const trendScore = percentiles.trend(row.trendMetric);
-        const heatScore = percentiles.trueHeat(row.trueHeat);
-        const conversionScore = percentiles.conversion(row.conversion);
-        const opportunityContrib = {
-          ratio: ratioScore * modelConfig.opportunityWeights.ratio,
-          trend: trendScore * modelConfig.opportunityWeights.trend,
-          heat: heatScore * modelConfig.opportunityWeights.heat,
-          conversion: conversionScore * modelConfig.opportunityWeights.conversion
-        };
-        const opportunityStrength =
-          opportunityContrib.ratio +
-          opportunityContrib.trend +
-          opportunityContrib.heat +
-          opportunityContrib.conversion;
-        const feasibilityParts = feasibilityCoefficient(row, percentiles);
+        const boi = boiModel.byIndex.get(row.rawIndex) || emptyBoiBreakdown();
         const confidence = confidenceFor(row);
         const risk = riskAssessmentFor(row);
         const riskGate = riskGateFor(risk.score);
-        const score = compositeScore(opportunityStrength, feasibilityParts.value, riskGate);
+        const score = boi.boiRaw * riskGate;
         return {
           ...row,
-          ratioScore: round(ratioScore, 1),
-          trendScore: round(trendScore, 1),
-          heatScore: round(heatScore, 1),
-          conversionScore: round(conversionScore, 1),
-          opportunityContrib: roundObject(opportunityContrib, 1),
-          opportunityStrength: round(opportunityStrength, 1),
-          feasibility: feasibilityParts.value,
-          feasibilityParts,
+          ...boi,
+          criterionContrib: boi.criterionContrib,
+          feasibility: round((boi.groupScores?.feasibility || 0) / 100, 2),
           riskScore: risk.score,
           riskReasons: risk.reasons,
           riskReview: risk.review,
           riskDataFlags: risk.dataFlags,
           riskGate,
           confidence,
+          boiRaw: round(boi.boiRaw, 1),
+          boiWeights: boiModel.weights,
           score: round(score, 1)
         };
       });
@@ -2568,16 +2582,17 @@
           const risk = riskAssessmentFor(row);
           return {
             ...row,
-            opportunityStrength: 0,
-            opportunityContrib: { ratio: 0, trend: 0, heat: 0, conversion: 0 },
+            ...emptyBoiBreakdown(),
+            criterionContrib: {},
             feasibility: 0,
-            feasibilityParts: { value: 0, marginFit: 0, saturationFit: 0, concentrationFit: row.concentrationFit || 1 },
             riskScore: risk.score,
             riskReasons: risk.reasons,
             riskReview: risk.review,
             riskDataFlags: risk.dataFlags,
             riskGate: 0,
             confidence: confidenceFor(row),
+            boiRaw: 0,
+            boiWeights: boiModel.weights,
             score: 0,
             grade: "C"
           };
@@ -2589,6 +2604,246 @@
       state.scored = scored;
       render();
     }
+
+    function buildCategoryBenchmarks(rows) {
+      const groups = new Map();
+      rows.forEach(row => {
+        const key = row.category || "全品类";
+        if (!groups.has(key)) groups.set(key, []);
+        if (row.conversion > 0) groups.get(key).push(row.conversion);
+      });
+      const all = rows.map(row => row.conversion).filter(value => value > 0);
+      const fallback = median(all) || modelConfig.boi.benchmarkConversionFallback;
+      const result = new Map([["全品类", fallback]]);
+      groups.forEach((values, key) => {
+        result.set(key, median(values) || fallback);
+      });
+      return result;
+    }
+
+    function buildBoiModel(rows) {
+      const criteria = modelConfig.boi.criteria;
+      if (!rows.length) return { byIndex: new Map(), weights: {}, entropyWeights: {}, subjectiveWeights: {} };
+      const zRows = rows.map(row => {
+        const z = {};
+        criteria.forEach(criterion => {
+          z[criterion.key] = criterionValue(row, criterion);
+        });
+        return { row, z };
+      });
+      const rRows = vectorNormalizeRows(zRows, criteria);
+      const entropyWeights = entropyWeightsFor(rRows, criteria);
+      const subjectiveWeights = normalizedSubjectiveWeights(criteria);
+      const weights = mixedWeights(subjectiveWeights, entropyWeights, modelConfig.boi.entropyLambda);
+      const sqrtN = Math.sqrt(Math.max(1, rows.length));
+      const byIndex = new Map();
+      rRows.forEach(item => {
+        const weighted = {};
+        const ideal = {};
+        const negative = {};
+        criteria.forEach(criterion => {
+          weighted[criterion.key] = (weights[criterion.key] || 0) * (item.r[criterion.key] || 0);
+          ideal[criterion.key] = (weights[criterion.key] || 0) * ((criterion.positiveAnchor ?? 1) / sqrtN);
+          negative[criterion.key] = (weights[criterion.key] || 0) * ((criterion.negativeAnchor ?? 0) / sqrtN);
+        });
+        const dPlus = distanceFor(weighted, ideal, criteria);
+        const dMinus = distanceFor(weighted, negative, criteria);
+        const closeness = (dPlus + dMinus) > 0 ? dMinus / (dPlus + dMinus) : 0;
+        const boiRaw = 100 * closeness;
+        const obstacles = obstacleDegrees(item.z, weights, criteria);
+        const criterionContrib = criterionContribFor(item.z, weights, criteria);
+        const groupScores = groupScoresFor(item.z, weights, criteria);
+        byIndex.set(item.row.rawIndex, {
+          z: roundObject(item.z, 3),
+          r: roundObject(item.r, 5),
+          weighted: roundObject(weighted, 5),
+          dPlus: round(dPlus, 5),
+          dMinus: round(dMinus, 5),
+          topsisCloseness: round(closeness, 3),
+          boiRaw: round(boiRaw, 1),
+          obstacles,
+          criterionContrib,
+          groupScores
+        });
+      });
+      return {
+        byIndex,
+        weights: roundObject(weights, 4),
+        entropyWeights: roundObject(entropyWeights, 4),
+        subjectiveWeights: roundObject(subjectiveWeights, 4)
+      };
+    }
+
+    function criterionValue(row, criterion) {
+      const raw = row.boiRawInputs?.[criterion.key] ?? 0;
+      return positiveScale(raw, criterion.good, criterion.bad);
+    }
+
+    function vectorNormalizeRows(zRows, criteria) {
+      const denominators = {};
+      criteria.forEach(criterion => {
+        const sumSquares = zRows.reduce((sum, item) => sum + ((item.z[criterion.key] || 0) ** 2), 0);
+        denominators[criterion.key] = Math.sqrt(sumSquares);
+      });
+      return zRows.map(item => {
+        const r = {};
+        criteria.forEach(criterion => {
+          const denom = denominators[criterion.key];
+          r[criterion.key] = denom > 0 ? (item.z[criterion.key] || 0) / denom : 0;
+        });
+        return { ...item, r };
+      });
+    }
+
+    function entropyWeightsFor(rRows, criteria) {
+      const n = rRows.length;
+      if (n <= 1) return normalizedSubjectiveWeights(criteria);
+      const entropy = {};
+      const diversity = {};
+      criteria.forEach(criterion => {
+        const sumR = rRows.reduce((sum, item) => sum + (item.r[criterion.key] || 0), 0);
+        if (sumR <= 0) {
+          entropy[criterion.key] = 1;
+          diversity[criterion.key] = 0;
+          return;
+        }
+        const entropySum = rRows.reduce((sum, item) => {
+          const p = (item.r[criterion.key] || 0) / sumR;
+          return p > 0 ? sum + (p * Math.log(p)) : sum;
+        }, 0);
+        entropy[criterion.key] = -(1 / Math.log(n)) * entropySum;
+        diversity[criterion.key] = Math.max(0, 1 - entropy[criterion.key]);
+      });
+      const totalDiversity = Object.values(diversity).reduce((sum, value) => sum + value, 0);
+      if (totalDiversity <= 1e-9) return normalizedSubjectiveWeights(criteria);
+      return Object.fromEntries(criteria.map(criterion => [criterion.key, diversity[criterion.key] / totalDiversity]));
+    }
+
+    function normalizedSubjectiveWeights(criteria) {
+      const total = criteria.reduce((sum, criterion) => sum + Math.max(0, criterion.subjectiveWeight || 0), 0) || 1;
+      return Object.fromEntries(criteria.map(criterion => [criterion.key, Math.max(0, criterion.subjectiveWeight || 0) / total]));
+    }
+
+    function mixedWeights(subjective, entropy, lambda) {
+      const keys = Object.keys(subjective);
+      const mixed = {};
+      keys.forEach(key => {
+        mixed[key] = (lambda * (subjective[key] || 0)) + ((1 - lambda) * (entropy[key] || 0));
+      });
+      const total = Object.values(mixed).reduce((sum, value) => sum + value, 0) || 1;
+      keys.forEach(key => {
+        mixed[key] /= total;
+      });
+      return mixed;
+    }
+
+    function distanceFor(weighted, anchor, criteria) {
+      return Math.sqrt(criteria.reduce((sum, criterion) => {
+        const delta = (weighted[criterion.key] || 0) - (anchor[criterion.key] || 0);
+        return sum + (delta ** 2);
+      }, 0));
+    }
+
+    function obstacleDegrees(z, weights, criteria) {
+      const raw = criteria.map(criterion => ({
+        key: criterion.key,
+        label: criterion.label,
+        group: criterion.group,
+        value: (weights[criterion.key] || 0) * (1 - clamp(z[criterion.key] || 0, 0, 1))
+      }));
+      const total = raw.reduce((sum, item) => sum + item.value, 0) || 1;
+      return raw
+        .map(item => ({ ...item, degree: round((item.value / total) * 100, 1) }))
+        .sort((a, b) => b.degree - a.degree);
+    }
+
+    function criterionContribFor(z, weights, criteria) {
+      return Object.fromEntries(criteria.map(criterion => [
+        criterion.key,
+        round((weights[criterion.key] || 0) * clamp(z[criterion.key] || 0, 0, 1) * 100, 1)
+      ]));
+    }
+
+    function groupScoresFor(z, weights, criteria) {
+      const groups = {};
+      criteria.forEach(criterion => {
+        if (!groups[criterion.group]) groups[criterion.group] = { score: 0, weight: 0 };
+        groups[criterion.group].score += (weights[criterion.key] || 0) * clamp(z[criterion.key] || 0, 0, 1);
+        groups[criterion.group].weight += weights[criterion.key] || 0;
+      });
+      return {
+        demand: round(((groups["需求"]?.score || 0) / Math.max(groups["需求"]?.weight || 0, 1e-9)) * 100, 1),
+        competition: round(((groups["竞争"]?.score || 0) / Math.max(groups["竞争"]?.weight || 0, 1e-9)) * 100, 1),
+        feasibility: round(((groups["可行"]?.score || 0) / Math.max(groups["可行"]?.weight || 0, 1e-9)) * 100, 1)
+      };
+    }
+
+    function emptyBoiBreakdown() {
+      return {
+        z: {},
+        r: {},
+        weighted: {},
+        dPlus: 0,
+        dMinus: 0,
+        topsisCloseness: 0,
+        boiRaw: 0,
+        obstacles: [],
+        criterionContrib: {},
+        groupScores: { demand: 0, competition: 0, feasibility: 0 }
+      };
+    }
+
+    function positiveScale(value, good, bad = 0) {
+      if (!Number.isFinite(value)) return 0;
+      if (good === bad) return value >= good ? 1 : 0;
+      return clamp((value - bad) / (good - bad), 0, 1);
+    }
+
+    function trendTypeFor(rawGrowth7, cappedGrowth7, growth4, cap, trendMetric) {
+      if (Number.isFinite(cap) && rawGrowth7 > cap && rawGrowth7 > Math.max(40, growth4 * 2)) return "尖峰";
+      if (trendMetric >= 10) return "上升";
+      if (trendMetric <= -5) return "下降";
+      return "平稳";
+    }
+
+    function supplyDemandOpportunityFor(supplyGrowth, demandGrowth) {
+      const eps = modelConfig.boi.epsilon;
+      if (!Number.isFinite(supplyGrowth) || !Number.isFinite(demandGrowth)) {
+        return { opportunity: 0.5, signal: 0, flag: "增速缺失" };
+      }
+      if (demandGrowth <= 0) {
+        return {
+          opportunity: supplyGrowth > 0 ? 0 : 0.5,
+          signal: supplyGrowth > 0 ? 1 : 0,
+          flag: "需求增速≤0"
+        };
+      }
+      const safeSupply = Math.max(0, supplyGrowth) + eps;
+      const safeDemand = Math.max(0, demandGrowth) + eps;
+      const signal = Math.tanh(Math.log(safeSupply / safeDemand));
+      return {
+        opportunity: clamp((1 - signal) / 2, 0, 1),
+        signal,
+        flag: ""
+      };
+    }
+
+    function calibrateBoiAnchorsFromCurrentData() {
+      const rows = state.scored.filter(row => row.pass && row.z);
+      if (!rows.length) return null;
+      const criteria = modelConfig.boi.criteria;
+      const anchors = {};
+      criteria.forEach(criterion => {
+        anchors[criterion.key] = {
+          positiveAnchor: round(quantile(rows.map(row => row.z[criterion.key]), 0.9), 3),
+          negativeAnchor: round(quantile(rows.map(row => row.z[criterion.key]), 0.1), 3)
+        };
+      });
+      console.table(anchors);
+      return anchors;
+    }
+
+    window.calibrateBoiAnchorsFromCurrentData = calibrateBoiAnchorsFromCurrentData;
 
     function shrinkLogRatio(logRatio, search, globalLogRatio) {
       const sampleWeight = Math.max(0, search) / (Math.max(0, search) + modelConfig.shrink.searchK);
@@ -2650,29 +2905,6 @@
       return clamp(supplyGrowth / demandGrowth, -2, 4);
     }
 
-    function feasibilityCoefficient(row, percentiles) {
-      const marginFit = percentiles.margin(row.marginSpace) / 100;
-      const saturationFit = percentiles.saturationFit(1 - row.saturation) / 100;
-      const concentrationFit = row.concentrationFit ?? 1;
-      const value = clamp(
-        boundedPower(marginFit, modelConfig.feasibility.marginExponent) *
-        boundedPower(saturationFit, modelConfig.feasibility.saturationExponent) *
-        boundedPower(concentrationFit, modelConfig.feasibility.concentrationExponent),
-        0,
-        1
-      );
-      return {
-        marginFit: round(marginFit, 2),
-        saturationFit: round(saturationFit, 2),
-        concentrationFit: round(concentrationFit, 2),
-        value: round(value, 2)
-      };
-    }
-
-    function boundedPower(value, exponent) {
-      return Math.pow(clamp(value, 0, 1), exponent);
-    }
-
     function concentrationFitFor(row) {
       const shares = [row.topSellerShare, row.cr3]
         .filter(value => Number.isFinite(value))
@@ -2681,7 +2913,8 @@
       const sellerRisk = Number.isFinite(row.sellerCount) && row.sellerCount > 0
         ? clamp(1 - (row.sellerCount / 50), 0, 0.8)
         : 0;
-      const concentrationRisk = Math.max(0, sellerRisk, ...shares);
+      const proxyRisk = row.fieldFlags?.concentrationMissing ? clamp((row.competition || 0) / 100, 0, 1) : 0;
+      const concentrationRisk = Math.max(0, sellerRisk, proxyRisk, ...shares);
       if (!concentrationRisk) return 1;
       return round(clamp(1 - concentrationRisk, 0.2, 1), 2);
     }
@@ -2698,6 +2931,7 @@
         };
       }
       if (row.fieldFlags?.conversionMissing) dataFlags.push("转化率缺失或为 0");
+      if (row.fieldFlags?.riskInferred) dataFlags.push("风险分缺失，闸门按中性处理");
       if (row.riskInput !== null && Number.isFinite(row.riskInput)) {
         const score = round(clamp(row.riskInput, 0, 100), 1);
         if (score >= modelConfig.risk.hardThreshold) reasons.push("上传风险分超过阈值");
@@ -2709,13 +2943,10 @@
           dataFlags
         };
       }
-      const competitionRisk = clamp(row.competition * modelConfig.risk.competitionWeight, 0, modelConfig.risk.competitionMax);
-      if (competitionRisk >= modelConfig.risk.reviewThreshold) reasons.push("竞争强度偏高，需要人工复核同质化");
-      else reasons.push("未提供风险分，使用竞争强度近似");
       return {
-        score: round(clamp(competitionRisk, 0, 100), 1),
-        reasons,
-        review: competitionRisk >= modelConfig.risk.reviewThreshold,
+        score: 20,
+        reasons: ["未提供风险分，风险闸门按中性值处理"],
+        review: false,
         dataFlags
       };
     }
@@ -2723,12 +2954,6 @@
     function riskGateFor(riskScore) {
       if (modelConfig.risk.gateMode === "hard") return riskScore <= modelConfig.risk.hardThreshold ? 1 : 0;
       return round(1 / (1 + Math.exp(modelConfig.risk.softSteepness * (riskScore - modelConfig.risk.softThreshold))), 2);
-    }
-
-    function compositeScore(opportunityStrength, feasibility, riskGate) {
-      return Math.pow(Math.max(0, opportunityStrength), modelConfig.feasibility.scoreAlpha) *
-        boundedPower(feasibility, modelConfig.feasibility.scoreBeta) *
-        riskGate;
     }
 
     function confidenceFor(row) {
@@ -2751,14 +2976,14 @@
     }
 
     function referencePositionFor(score) {
-      return percentileScore(score, modelConfig.referenceDistribution);
+      return percentileScore(score, modelConfig.boi.referenceDistribution);
     }
 
     function gradeFor(score) {
       if (score <= 0) return "C";
-      if (score >= modelConfig.gradeThresholds.s) return "S";
-      if (score >= modelConfig.gradeThresholds.a) return "A";
-      if (score >= modelConfig.gradeThresholds.b) return "B";
+      if (score >= modelConfig.boi.gradeThresholds.s) return "S";
+      if (score >= modelConfig.boi.gradeThresholds.a) return "A";
+      if (score >= modelConfig.boi.gradeThresholds.b) return "B";
       return "C";
     }
 
@@ -2906,7 +3131,7 @@
 
       els.topListMeta.textContent = rows.length
         ? `${topCount} 个 S/A · 中位 ${formatNumber(water.medianScore, 1)} · 基准水位 ${formatNumber(water.referencePercentile, 0)}%`
-        : "按综合分排序";
+        : "按 BOI 分排序";
 
       if (!best) {
         els.headlineKeyword.textContent = state.rows.length ? "暂无通过筛选的机会" : "等待数据";
@@ -2936,12 +3161,12 @@
           <div class="top-card-reason">${escapeHtml(recommendationReason(row))}</div>
           <dl>
             <div>
-              <dt>综合分</dt>
+              <dt>BOI 分</dt>
               <dd>${formatNumber(row.score, 1)}</dd>
             </div>
             <div>
-              <dt>机会强度</dt>
-              <dd>${formatNumber(row.opportunityStrength, 1)}</dd>
+              <dt>贴近度</dt>
+              <dd>${formatNumber(row.topsisCloseness * 100, 1)}</dd>
             </div>
             <div>
               <dt>修正供需</dt>
@@ -3064,14 +3289,16 @@
             <tr>
               ${th("grade", "等级")}
               ${th("keyword", "关键词")}
-              ${th("score", "综合分", "num")}
-              ${th("opportunityStrength", "机会强度", "num")}
+              ${th("score", "BOI分", "num")}
+              ${th("boiRaw", "原始BOI", "num")}
+              ${th("topsisCloseness", "贴近度", "num")}
+              <th>Top短板</th>
               ${th("adjustedRatio", "修正供需", "num")}
               ${th("trueHeat", "真实热度", "num")}
               ${th("trendMetric", "趋势分", "num")}
               ${th("saturation", "饱和度", "num")}
               ${th("marginSpace", "毛利空间", "num")}
-              ${th("feasibility", "可行性", "num")}
+              ${th("feasibility", "可行分", "num")}
               ${th("riskScore", "风险", "num")}
               ${th("riskGate", "闸门", "num")}
               ${th("confidence", "置信度", "num")}
@@ -3090,7 +3317,9 @@
                 <td>${gradeBadge(row.grade)} ${confidenceBadge(row)}</td>
                 <td class="keyword" title="${escapeHtml(row.keyword)}">${escapeHtml(row.keyword)}</td>
                 <td class="num">${formatNumber(row.score, 1)}</td>
-                <td class="num">${formatNumber(row.opportunityStrength, 1)}</td>
+                <td class="num">${formatNumber(row.boiRaw, 1)}</td>
+                <td class="num">${formatNumber(row.topsisCloseness * 100, 1)}</td>
+                <td>${escapeHtml(topObstacleText(row))}</td>
                 <td class="num">${formatNumber(row.adjustedRatio, 2)}</td>
                 <td class="num">${formatNumber(row.trueHeat, 2)}</td>
                 <td class="num">${formatNumber(row.trendMetric, 1)}</td>
@@ -3184,11 +3413,11 @@
       const lowConfidenceRows = rows.filter(row => row.confidence < lowConfidenceCutoff);
       const water = batchWatermark(rows);
       const items = [];
-      if (best) items.push(`综合分最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}，风险 ${formatNumber(best.riskScore, 0)}。`);
+      if (best) items.push(`BOI 最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}，主要短板 ${topObstacleText(best) || "暂无"}。`);
       if (bestRatio) items.push(`修正供需最高：${bestRatio.keyword}，修正供需 ${formatNumber(bestRatio.adjustedRatio, 2)}。`);
       if (bestTrend) items.push(`趋势最强：${bestTrend.keyword}，趋势分 ${formatNumber(bestTrend.trendMetric, 1)}。`);
       if (lowConfidenceRows.length) items.push(`低置信结果 ${lowConfidenceRows.length} 个，已灰显且不会进入 S 级。`);
-      if (rows.length) items.push(`本批综合分中位数 ${formatNumber(water.medianScore, 1)}，位于基准分布约 ${formatNumber(water.referencePercentile, 0)}% 水位。`);
+      if (rows.length) items.push(`本批 BOI 中位数 ${formatNumber(water.medianScore, 1)}，位于基准分布约 ${formatNumber(water.referencePercentile, 0)}% 水位。`);
       items.push(`当前 S 级 ${sRows.length} 个，A 级 ${aRows.length} 个，通过率 ${formatNumber(percent(rows.length, state.rows.length), 1)}%。`);
       els.insights.innerHTML = items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
     }
@@ -3200,10 +3429,10 @@
         return;
       }
       const signals = [
-        ["供需", row => row.ratioScore],
-        ["趋势", row => row.trendScore],
-        ["热度", row => row.heatScore],
-        ["转化", row => row.conversionScore]
+        ["真实需求", row => (row.z?.trueDemand || 0) * 100],
+        ["未满足", row => (row.z?.unmetDemand || 0) * 100],
+        ["趋势", row => (row.z?.trend || 0) * 100],
+        ["毛利", row => (row.z?.margin || 0) * 100]
       ];
       const cells = [`<div class="matrix-cell head">信号</div>`]
         .concat(signals.map(([label]) => `<div class="matrix-cell head">${escapeHtml(label)}</div>`));
@@ -3240,19 +3469,16 @@
     function recommendationReason(row) {
       if (!row) return "";
       const pieces = [];
-      if (row.adjustedRatio >= 2) pieces.push("供需差较明显");
-      else if (row.adjustedRatio >= 1) pieces.push("供需结构可观察");
-      else pieces.push("供需优势不强");
-      if (row.trendMetric >= 30) pieces.push("趋势上升快");
-      else if (row.trendMetric >= 5) pieces.push("趋势温和上升");
-      else pieces.push("趋势偏弱");
-      if (row.trueHeat >= 1.2) pieces.push("真实热度高于基线");
-      if (row.marginSpace >= 0.3) pieces.push("毛利空间较足");
-      else if (row.marginSpace < 0.15) pieces.push("毛利偏低");
-      if (row.saturation > 1) pieces.push("供给增速偏快");
+      if (row.boiRaw >= modelConfig.boi.gradeThresholds.s) pieces.push("BOI 原始分达到 S 档");
+      else if (row.boiRaw >= modelConfig.boi.gradeThresholds.a) pieces.push("BOI 原始分达到 A 档");
+      if ((row.groupScores?.demand || 0) >= 65) pieces.push("需求信号较强");
+      if ((row.groupScores?.competition || 0) >= 60) pieces.push("竞争/供给机会较好");
+      if ((row.groupScores?.feasibility || 0) >= 60) pieces.push("毛利可行性较好");
+      if (row.trendType) pieces.push(`趋势${row.trendType}`);
       if (row.riskGate < 0.5) pieces.push("风险闸门压分");
       if (row.confidence < lowConfidenceCutoff) pieces.push("置信度偏低");
-      if (row.nichePotential) pieces.push("小众潜力");
+      const obstacle = topObstacleText(row);
+      if (obstacle) pieces.push(`短板：${obstacle}`);
       return `${pieces.slice(0, 4).join("，")}。`;
     }
 
@@ -3295,11 +3521,40 @@
       const labels = [];
       if (row.nichePotential) labels.push("小众潜力");
       if (row.riskReview) labels.push("风险待复核");
+      if (row.trendType) labels.push(`趋势${row.trendType}`);
       if (row.confidence < lowConfidenceCutoff) labels.push("低置信");
       if (row.fieldFlags?.seasonBaselineInferred) labels.push("热度中性回退");
       if (row.fieldFlags?.marginInferred) labels.push("毛利推算");
       if (row.fieldFlags?.concentrationMissing) labels.push("集中度缺失");
+      if (row.fieldFlags?.riskInferred) labels.push("风险分缺失");
+      if (row.supplyDemandFlag) labels.push(row.supplyDemandFlag);
       return labels.join(" / ");
+    }
+
+    function topObstacleText(row, count = 2) {
+      return (row.obstacles || [])
+        .slice(0, count)
+        .map(item => `${item.label}${formatNumber(item.degree, 0)}%`)
+        .join("、");
+    }
+
+    function boiCriterionScoreText(row) {
+      return modelConfig.boi.criteria.map(criterion =>
+        `${criterion.label} ${formatNumber((row.z?.[criterion.key] || 0) * 100, 1)}`
+      ).join("，");
+    }
+
+    function boiContributionText(row) {
+      return modelConfig.boi.criteria.map(criterion =>
+        `${criterion.label} ${formatNumber(row.criterionContrib?.[criterion.key] || 0, 1)}`
+      ).join("，");
+    }
+
+    function boiWeightText(row) {
+      const weights = row.boiWeights || {};
+      return modelConfig.boi.criteria.map(criterion =>
+        `${criterion.label} ${formatNumber((weights[criterion.key] || 0) * 100, 1)}%`
+      ).join("，");
     }
 
     function bindDetailTriggers() {
@@ -3342,14 +3597,14 @@
     function renderDetail(row) {
       els.detailTitle.textContent = row.keyword;
       const tips = validationTips(row);
-      const feasibility = row.feasibilityParts || {};
       const riskReasons = row.riskReasons?.length ? row.riskReasons : ["无明显风险复核项"];
       const dataFlags = row.riskDataFlags?.length ? row.riskDataFlags : ["无明显数据缺失标记"];
       els.detailContent.innerHTML = `
         <div class="detail-score-grid">
           ${detailScore("等级", row.grade)}
-          ${detailScore("综合分", formatNumber(row.score, 1))}
-          ${detailScore("机会强度", formatNumber(row.opportunityStrength, 1))}
+          ${detailScore("BOI 分", formatNumber(row.score, 1))}
+          ${detailScore("原始 BOI", formatNumber(row.boiRaw, 1))}
+          ${detailScore("贴近度", formatNumber(row.topsisCloseness * 100, 1))}
           ${detailScore("置信度", `${formatNumber(row.confidence * 100, 0)}%`)}
           ${detailScore("风险分", formatNumber(row.riskScore, 0))}
           ${detailScore("风险闸门", formatNumber(row.riskGate, 2))}
@@ -3361,9 +3616,13 @@
         <section class="detail-section">
           <h3>分数分解</h3>
           <ul class="detail-list">
-            <li class="issue-item">综合分 = 机会强度 ${formatNumber(row.opportunityStrength, 1)} × 可行性 ${formatNumber(row.feasibility, 2)}^${modelConfig.feasibility.scoreBeta} × 风险闸门 ${formatNumber(row.riskGate, 2)}。</li>
-            <li class="issue-item">机会贡献：供需 ${formatNumber(row.opportunityContrib?.ratio || 0, 1)}，趋势 ${formatNumber(row.opportunityContrib?.trend || 0, 1)}，热度 ${formatNumber(row.opportunityContrib?.heat || 0, 1)}，转化 ${formatNumber(row.opportunityContrib?.conversion || 0, 1)}。</li>
-            <li class="issue-item">可行性：毛利适配 ${formatNumber(feasibility.marginFit || 0, 2)}，饱和适配 ${formatNumber(feasibility.saturationFit || 0, 2)}，集中度适配 ${formatNumber(feasibility.concentrationFit ?? 1, 2)}，最终 ${formatNumber(row.feasibility, 2)}。</li>
+            <li class="issue-item">BOI = 100 × D- / (D+ + D-)；本词 D+ ${formatNumber(row.dPlus, 5)}，D- ${formatNumber(row.dMinus, 5)}，原始 BOI ${formatNumber(row.boiRaw, 1)}。</li>
+            <li class="issue-item">最终 BOI 分 = 原始 BOI ${formatNumber(row.boiRaw, 1)} × 风险闸门 ${formatNumber(row.riskGate, 2)} = ${formatNumber(row.score, 1)}。</li>
+            <li class="issue-item">混合权重：${escapeHtml(boiWeightText(row))}。</li>
+            <li class="issue-item">指标得分：${escapeHtml(boiCriterionScoreText(row))}。</li>
+            <li class="issue-item">指标贡献：${escapeHtml(boiContributionText(row))}。</li>
+            <li class="issue-item">分组得分：需求 ${formatNumber(row.groupScores?.demand || 0, 1)}，竞争/供给 ${formatNumber(row.groupScores?.competition || 0, 1)}，可行 ${formatNumber(row.groupScores?.feasibility || 0, 1)}。</li>
+            <li class="issue-item">障碍短板：${escapeHtml(topObstacleText(row) || "暂无明显短板")}。</li>
             <li class="issue-item">置信度：搜索量样本 + 字段完整度共同计算；低置信结果不能进入 S/A。</li>
           </ul>
         </section>
@@ -3371,9 +3630,10 @@
           <h3>核心数据</h3>
           <ul class="detail-list">
             <li class="issue-item">搜索量 ${formatNumber(row.search, 0)}，在售数 ${formatNumber(row.listings, 0)}，修正供需 ${formatNumber(row.adjustedRatio, 2)}。</li>
-            <li class="issue-item">真实热度 ${formatNumber(row.trueHeat, 2)} 倍，趋势分 ${formatNumber(row.trendMetric, 1)}，7 天增长截断值 ${formatNumber(row.cappedGrowth7, 1)}。</li>
-            <li class="issue-item">饱和度 ${formatNumber(row.saturation, 2)}，毛利空间 ${formatNumber(row.marginSpace * 100, 1)}%，转化率 ${formatNumber(row.conversion, 1)}%。</li>
-            <li class="issue-item">价格带 ${escapeHtml(row.price)}，平台 ${escapeHtml(row.platform)}，标签 ${escapeHtml(rowLabels(row) || "无")}。</li>
+            <li class="issue-item">真实需求 ${formatNumber(row.trueDemand, 0)}，未满足度 ${formatNumber(row.unmetDemand * 100, 1)}，类目基准转化 ${formatNumber(row.benchmarkConversion, 1)}%。</li>
+            <li class="issue-item">真实热度 ${formatNumber(row.trueHeat, 2)} 倍，趋势分 ${formatNumber(row.trendMetric, 1)}，趋势类型 ${escapeHtml(row.trendType || "未标注")}，7 天增长截断值 ${formatNumber(row.cappedGrowth7, 1)}。</li>
+            <li class="issue-item">供需增速信号 ${formatNumber(row.supplyDemandRatioSignal, 2)}，饱和度 ${formatNumber(row.saturation, 2)}，毛利空间 ${formatNumber(row.marginSpace * 100, 1)}%，转化率 ${formatNumber(row.conversion, 1)}%。</li>
+            <li class="issue-item">类目 ${escapeHtml(row.category || "全品类")}，价格带 ${escapeHtml(row.price)}，平台 ${escapeHtml(row.platform)}，标签 ${escapeHtml(rowLabels(row) || "无")}。</li>
           </ul>
         </section>
         <section class="detail-section">
@@ -3425,12 +3685,12 @@
       }, {});
       const water = batchWatermark(rows);
       const topText = rows.slice(0, 3).map((row, index) =>
-        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，${recommendationReason(row)}风险 ${formatNumber(row.riskScore, 0)}，闸门 ${formatNumber(row.riskGate, 2)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
+        `${index + 1}. ${row.keyword}：${row.grade} 级，BOI 分 ${formatNumber(row.score, 1)}，短板 ${topObstacleText(row) || "暂无"}，${recommendationReason(row)}风险 ${formatNumber(row.riskScore, 0)}，闸门 ${formatNumber(row.riskGate, 2)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
       ).join("\n");
       return [
         "AI 选品机会摘要",
         `主推机会：${best.keyword}`,
-        `核心指标：综合分 ${formatNumber(best.score, 1)}，可行性 ${formatNumber(best.feasibility, 2)}，毛利空间 ${formatNumber(best.marginSpace * 100, 1)}%，饱和度 ${formatNumber(best.saturation, 2)}。`,
+        `核心指标：BOI 分 ${formatNumber(best.score, 1)}，原始 BOI ${formatNumber(best.boiRaw, 1)}，贴近度 ${formatNumber(best.topsisCloseness * 100, 1)}，Top短板 ${topObstacleText(best) || "暂无"}。`,
         `本批水位：中位数 ${formatNumber(water.medianScore, 1)}，基准位置 ${formatNumber(water.referencePercentile, 0)}%。`,
         `推荐动作：${shortActionForGrade(best.grade)}，${actionForGrade(best.grade)}`,
         `机会分布：S ${counts.S || 0} 个，A ${counts.A || 0} 个，B ${counts.B || 0} 个，C ${counts.C || 0} 个。`,
@@ -3471,8 +3731,8 @@
     function downloadTemplate() {
       const sampleRows = [
         templateHeaders,
-        ["防晒冰袖", 26000, 18000, 28, 35, 6.8, "20-39", "抖音", 42, 26000, 19000, 34, 18, 39, 16, 28, 120, 18, 42],
-        ["宠物除毛刷", 18000, 12000, 16, 22, 5.4, "30-59", "天猫", 36, 18000, 15000, 24, 15, 59, 24, 32, 86, 22, 48]
+        ["防晒冰袖", 26000, 18000, 28, 35, 6.8, "20-39", "抖音", 42, 26000, 19000, 34, 18, 39, 16, 28, 120, 18, 42, "服饰配件", "常规机会"],
+        ["宠物除毛刷", 18000, 12000, 16, 22, 5.4, "30-59", "天猫", 36, 18000, 15000, 24, 15, 59, 24, 32, 86, 22, 48, "宠物用品", "常规机会"]
       ];
       if (window.XLSX) {
         const workbook = XLSX.utils.book_new();
@@ -3510,7 +3770,7 @@
         `自动推算字段：${audit.inferredKeys.map(key => fieldLabels[key] || key).join("、") || "无"}`
       ] : [];
       const topLines = rows.slice(0, 10).map((row, index) =>
-        `${index + 1}. ${row.keyword}｜${row.grade}级｜综合分 ${formatNumber(row.score, 1)}｜${recommendationReason(row)}｜验证：${validationTips(row)[0]}`
+        `${index + 1}. ${row.keyword}｜${row.grade}级｜BOI ${formatNumber(row.score, 1)}｜原始 ${formatNumber(row.boiRaw, 1)}｜短板 ${topObstacleText(row) || "暂无"}｜${recommendationReason(row)}｜验证：${validationTips(row)[0]}`
       );
       const rejectLines = Object.entries(reasonCounts).sort((a, b) => b[1] - a[1]).map(([reason, count]) => `${reason}：${formatNumber(count, 0)} 个`);
       const best = rows[0];
@@ -3524,7 +3784,7 @@
         ...(topLines.length ? topLines : ["当前阈值下暂无通过筛选的机会。"]),
         "",
         "三、本批水位",
-        `综合分中位数：${formatNumber(water.medianScore, 1)}`,
+        `BOI 分中位数：${formatNumber(water.medianScore, 1)}`,
         `基准分布位置：${formatNumber(water.referencePercentile, 0)}%`,
         "",
         "四、风险待复核",
@@ -3549,11 +3809,11 @@
         return;
       }
       const headers = state.view === "product"
-        ? ["价格带", "词数", "平均综合分", "平均修正供需", "平均转化率", "平均置信度", "代表关键词", "最高等级", "平台", "建议动作"]
-        : ["等级", "关键词", "综合分", "机会强度", "供需贡献", "趋势贡献", "热度贡献", "转化贡献", "修正供需", "真实热度", "趋势分", "7天截断值", "饱和度", "毛利空间", "可行性系数", "毛利适配", "饱和适配", "集中度适配", "风险分", "风险闸门", "风险原因", "置信度", "标签", "推荐理由", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
+        ? ["价格带", "词数", "平均 BOI", "平均修正供需", "平均转化率", "平均置信度", "代表关键词", "最高等级", "平台", "建议动作"]
+        : ["等级", "关键词", "BOI分", "原始BOI", "TOPSIS贴近度", "D+", "D-", "Top短板", "真实需求得分", "未满足度得分", "真实热度得分", "趋势得分", "集中度机会得分", "供需增速得分", "毛利空间得分", "真实需求贡献", "未满足度贡献", "真实热度贡献", "趋势贡献", "集中度贡献", "供需增速贡献", "毛利贡献", "需求组得分", "竞争供给组得分", "可行组得分", "修正供需", "真实热度", "趋势分", "趋势类型", "7天截断值", "供需增速标记", "饱和度", "毛利空间", "风险分", "风险闸门", "风险原因", "置信度", "标签", "推荐理由", "搜索量", "在售商品数", "转化率", "品类", "价格带", "平台", "推荐动作", "验证重点"];
       const body = rows.map(row => state.view === "product"
         ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, `${row.avgConfidence}%`, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
-        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.opportunityContrib?.ratio, row.opportunityContrib?.trend, row.opportunityContrib?.heat, row.opportunityContrib?.conversion, row.adjustedRatio, row.trueHeat, row.trendMetric, row.cappedGrowth7, row.saturation, row.marginSpace, row.feasibility, row.feasibilityParts?.marginFit, row.feasibilityParts?.saturationFit, row.feasibilityParts?.concentrationFit, row.riskScore, row.riskGate, (row.riskReasons || []).join(" / "), row.confidence, rowLabels(row), recommendationReason(row), row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
+        : [row.grade, row.keyword, row.score, row.boiRaw, row.topsisCloseness, row.dPlus, row.dMinus, topObstacleText(row), (row.z?.trueDemand || 0) * 100, (row.z?.unmetDemand || 0) * 100, (row.z?.trueHeat || 0) * 100, (row.z?.trend || 0) * 100, (row.z?.concentration || 0) * 100, (row.z?.supplyDemand || 0) * 100, (row.z?.margin || 0) * 100, row.criterionContrib?.trueDemand, row.criterionContrib?.unmetDemand, row.criterionContrib?.trueHeat, row.criterionContrib?.trend, row.criterionContrib?.concentration, row.criterionContrib?.supplyDemand, row.criterionContrib?.margin, row.groupScores?.demand, row.groupScores?.competition, row.groupScores?.feasibility, row.adjustedRatio, row.trueHeat, row.trendMetric, row.trendType, row.cappedGrowth7, row.supplyDemandFlag, row.saturation, row.marginSpace, row.riskScore, row.riskGate, (row.riskReasons || []).join(" / "), row.confidence, rowLabels(row), recommendationReason(row), row.search, row.listings, row.conversion, row.category, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
       );
       const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
       downloadBlob(state.view === "product" ? "产品逻辑聚合.csv" : "AI选品机会清单.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
