@@ -926,10 +926,6 @@
           <label for="dataInput">关键词数据</label>
           <textarea id="dataInput" spellcheck="false"></textarea>
         </div>
-        <div class="actions">
-          <button class="btn primary" id="runBtn" type="button">运行筛选</button>
-          <button class="btn" id="sampleBtn" type="button">载入样例</button>
-        </div>
         <div class="actions single">
           <a class="btn" href="sample-data.csv" download>下载 300 条测试数据</a>
         </div>
@@ -1177,8 +1173,6 @@
     const els = {
       fileInput: document.getElementById("fileInput"),
       dataInput: document.getElementById("dataInput"),
-      runBtn: document.getElementById("runBtn"),
-      sampleBtn: document.getElementById("sampleBtn"),
       exportBtn: document.getElementById("exportBtn"),
       copySummaryBtn: document.getElementById("copySummaryBtn"),
       statusText: document.getElementById("statusText"),
@@ -1204,6 +1198,8 @@
       metricRatio: document.getElementById("metricRatio"),
       metricScore: document.getElementById("metricScore")
     };
+
+    let pasteTimer = 0;
 
     const presets = {
       loose: {
@@ -1934,8 +1930,10 @@
       reader.readAsText(file);
     });
 
-    els.runBtn.addEventListener("click", () => loadText(els.dataInput.value));
-    els.sampleBtn.addEventListener("click", () => loadText(sampleData));
+    els.dataInput.addEventListener("input", () => {
+      clearTimeout(pasteTimer);
+      pasteTimer = setTimeout(() => loadText(els.dataInput.value), 350);
+    });
     els.exportBtn.addEventListener("click", exportCsv);
     els.copySummaryBtn.addEventListener("click", copySummary);
     els.searchInput.addEventListener("input", () => {
