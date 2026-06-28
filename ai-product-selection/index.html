@@ -395,7 +395,18 @@
       display: none;
     }
 
+    body.is-processing .toolbar,
+    body.is-processing .result-stage,
+    body.is-processing .metrics,
+    body.is-processing .workspace {
+      display: none;
+    }
+
     body:not(.has-data) .start-empty {
+      display: flex;
+    }
+
+    body.is-processing .start-empty {
       display: flex;
     }
 
@@ -1610,8 +1621,8 @@
       state.scored = [];
       state.query = "";
       els.searchInput.value = "";
-      render();
       setProcessingStage(8, "文件已接收", `${label} 上传成功，正在读取内容。`);
+      render();
       els.statusText.textContent = `${label} 已上传，正在分析...`;
       return processingToken;
     }
@@ -2680,6 +2691,10 @@
 
     document.querySelectorAll("[data-preset]").forEach(button => {
       button.addEventListener("click", () => applyPreset(button.dataset.preset));
+    });
+
+    els.fileInput.addEventListener("click", () => {
+      els.fileInput.value = "";
     });
 
     els.fileInput.addEventListener("change", event => {
