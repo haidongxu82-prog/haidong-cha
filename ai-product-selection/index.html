@@ -1626,33 +1626,6 @@
         </div>
       </section>
 
-      <div class="toolbar">
-        <div class="tabs" aria-label="分析视角">
-          <button class="tab active" id="keywordTab" type="button" data-view="keyword">关键词逻辑</button>
-          <button class="tab" id="productTab" type="button" data-view="product">产品逻辑</button>
-        </div>
-        <div class="right-actions">
-          <input class="search" id="searchInput" type="text" placeholder="搜索关键词 / 平台 / 价格带">
-          <button class="btn" id="copySummaryBtn" type="button">复制摘要</button>
-          <button class="btn" id="reportBtn" type="button">导出报告</button>
-          <button class="btn" id="exportBtn" type="button">导出 CSV</button>
-        </div>
-      </div>
-
-      <section class="quality-panel" aria-label="数据体检">
-        <div class="quality-head">
-          <div>
-            <span>数据体检</span>
-            <h2 id="qualityTitle">等待数据</h2>
-          </div>
-          <span class="badge pass">本地处理</span>
-        </div>
-        <div class="quality-grid" id="qualityStats"></div>
-        <div class="issue-list" id="qualityIssues"></div>
-        <div class="quality-subhead">字段识别确认</div>
-        <div class="field-map" id="fieldMap"></div>
-      </section>
-
       <section class="result-stage" aria-label="最终结果">
         <div class="stage-main">
           <div>
@@ -1706,6 +1679,33 @@
           <label>平均综合分</label>
           <strong id="metricScore">0</strong>
         </div>
+      </section>
+
+      <div class="toolbar">
+        <div class="tabs" aria-label="分析视角">
+          <button class="tab active" id="keywordTab" type="button" data-view="keyword">关键词逻辑</button>
+          <button class="tab" id="productTab" type="button" data-view="product">产品逻辑</button>
+        </div>
+        <div class="right-actions">
+          <input class="search" id="searchInput" type="text" placeholder="搜索关键词 / 平台 / 价格带">
+          <button class="btn" id="copySummaryBtn" type="button">复制摘要</button>
+          <button class="btn" id="reportBtn" type="button">导出报告</button>
+          <button class="btn" id="exportBtn" type="button">导出 CSV</button>
+        </div>
+      </div>
+
+      <section class="quality-panel" aria-label="数据体检">
+        <div class="quality-head">
+          <div>
+            <span>数据体检</span>
+            <h2 id="qualityTitle">等待数据</h2>
+          </div>
+          <span class="badge pass">本地处理</span>
+        </div>
+        <div class="quality-grid" id="qualityStats"></div>
+        <div class="issue-list" id="qualityIssues"></div>
+        <div class="quality-subhead">字段识别确认</div>
+        <div class="field-map" id="fieldMap"></div>
       </section>
 
       <div class="workspace">
