@@ -190,6 +190,10 @@
       grid-template-columns: 1fr;
     }
 
+    .actions.compact {
+      grid-template-columns: 1fr 1fr;
+    }
+
     .preset-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -252,6 +256,17 @@
       font-size: 12px;
       line-height: 1.5;
       min-height: 18px;
+      margin-top: 10px;
+    }
+
+    .privacy-note {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcff;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 9px;
       margin-top: 10px;
     }
 
@@ -422,6 +437,145 @@
       display: flex;
     }
 
+    .quality-panel {
+      display: grid;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    body:not(.has-data) .quality-panel,
+    body.is-processing .quality-panel {
+      display: none;
+    }
+
+    .quality-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .quality-head span {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .quality-head h2 {
+      margin: 3px 0 0;
+      color: var(--ink);
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .quality-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcff;
+      padding: 10px;
+      min-height: 76px;
+    }
+
+    .quality-card label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .quality-card strong {
+      color: var(--ink);
+      font-size: 20px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .quality-card p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .quality-subhead {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field-map,
+    .issue-list,
+    .trust-list,
+    .detail-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-map {
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+
+    .field-chip {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px;
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .field-chip label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .field-chip strong {
+      color: var(--ink);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .field-chip.missing strong {
+      color: var(--amber);
+    }
+
+    .issue-item,
+    .trust-item {
+      border-left: 3px solid var(--line-strong);
+      padding-left: 9px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .issue-item.warn,
+    .trust-item.warn {
+      border-color: var(--amber);
+    }
+
+    .issue-item.pass,
+    .trust-item.pass {
+      border-color: var(--green);
+    }
+
+    .issue-item.fail,
+    .trust-item.fail {
+      border-color: var(--red);
+    }
+
     .result-stage {
       display: grid;
       grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.35fr);
@@ -558,6 +712,11 @@
       box-shadow: inset 0 0 0 1px #9ad7bd;
     }
 
+    .top-card[data-detail],
+    tr[data-detail] {
+      cursor: pointer;
+    }
+
     .rank {
       display: inline-flex;
       align-items: center;
@@ -624,6 +783,12 @@
       background: #f6f8fb;
       border-radius: 6px;
       padding: 8px;
+    }
+
+    .top-card-reason {
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
     }
 
     .top-cards .empty {
@@ -715,7 +880,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
-      min-width: 1480px;
+      min-width: 1740px;
     }
 
     th,
@@ -760,6 +925,14 @@
       text-overflow: ellipsis;
     }
 
+    .reason-cell {
+      min-width: 260px;
+      max-width: 360px;
+      white-space: normal;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
     .grade {
       display: inline-flex;
       align-items: center;
@@ -794,6 +967,26 @@
     .side-panel {
       display: grid;
       gap: 14px;
+    }
+
+    .panel-body {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .panel-body p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
     .chart {
@@ -924,6 +1117,102 @@
     .badge.warn {
       background: var(--amber-soft);
       color: var(--amber);
+    }
+
+    .badge.info {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .detail-drawer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 24;
+      width: min(460px, calc(100vw - 40px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 24px 70px rgba(20, 34, 54, 0.26);
+      padding: 14px;
+      display: none;
+      gap: 12px;
+    }
+
+    body.detail-open .detail-drawer {
+      display: grid;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .detail-head span {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .detail-head h2 {
+      margin: 3px 0 0;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .detail-content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-score {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcff;
+      padding: 9px;
+    }
+
+    .detail-score label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .detail-score strong {
+      color: var(--ink);
+      font-size: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .detail-section {
+      display: grid;
+      gap: 7px;
+    }
+
+    .detail-section h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .detail-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }
 
     .model-card {
@@ -1149,6 +1438,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .quality-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .result-stage {
         grid-template-columns: 1fr;
       }
@@ -1184,6 +1477,13 @@
         grid-template-columns: 1fr;
       }
 
+      .quality-grid,
+      .detail-score-grid,
+      .cta-row,
+      .actions.compact {
+        grid-template-columns: 1fr;
+      }
+
       .stage-main h2 {
         font-size: 24px;
       }
@@ -1212,6 +1512,13 @@
         width: calc(100vw - 28px);
         max-height: calc(100vh - 98px);
       }
+
+      .detail-drawer {
+        top: 14px;
+        right: 14px;
+        width: calc(100vw - 28px);
+        max-height: calc(100vh - 28px);
+      }
     }
   </style>
 </head>
@@ -1232,9 +1539,11 @@
           <label for="dataInput">关键词数据</label>
           <textarea id="dataInput" spellcheck="false"></textarea>
         </div>
-        <div class="actions single">
-          <a class="btn" href="sample-data.csv" download>下载 100,000 条测试数据</a>
+        <div class="actions compact">
+          <button class="btn" id="templateBtn" type="button">下载标准模板</button>
+          <a class="btn" href="sample-data.csv" download>下载测试数据</a>
         </div>
+        <div class="privacy-note">数据只在当前浏览器本地分析，不上传服务器；只有你主动提交的留言会发送到邮箱。</div>
         <div class="status" id="statusText"></div>
       </section>
 
@@ -1325,9 +1634,24 @@
         <div class="right-actions">
           <input class="search" id="searchInput" type="text" placeholder="搜索关键词 / 平台 / 价格带">
           <button class="btn" id="copySummaryBtn" type="button">复制摘要</button>
+          <button class="btn" id="reportBtn" type="button">导出报告</button>
           <button class="btn" id="exportBtn" type="button">导出 CSV</button>
         </div>
       </div>
+
+      <section class="quality-panel" aria-label="数据体检">
+        <div class="quality-head">
+          <div>
+            <span>数据体检</span>
+            <h2 id="qualityTitle">等待数据</h2>
+          </div>
+          <span class="badge pass">本地处理</span>
+        </div>
+        <div class="quality-grid" id="qualityStats"></div>
+        <div class="issue-list" id="qualityIssues"></div>
+        <div class="quality-subhead">字段识别确认</div>
+        <div class="field-map" id="fieldMap"></div>
+      </section>
 
       <section class="result-stage" aria-label="最终结果">
         <div class="stage-main">
@@ -1396,6 +1720,16 @@
         <aside class="side-panel" aria-label="分析摘要">
           <section class="panel">
             <div class="panel-head">
+              <h2>可信度与风险</h2>
+              <span id="trustMeta">实时</span>
+            </div>
+            <div class="panel-body">
+              <div class="trust-list" id="trustList"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
               <h2>等级分布</h2>
               <span id="gradeMeta">S/A/B/C</span>
             </div>
@@ -1424,6 +1758,20 @@
               <span id="nextStepMeta">下一步</span>
             </div>
             <ul class="checklist" id="nextSteps"></ul>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>定制模型</h2>
+              <span>海东 AI</span>
+            </div>
+            <div class="panel-body">
+              <p>需要把自有数据口径、平台规则、供应链约束接入模型，可以直接联系海东。</p>
+              <div class="cta-row">
+                <button class="btn primary" id="feedbackCtaBtn" type="button">留言咨询</button>
+                <a class="btn" href="mailto:xu-haidong@qq.com?subject=AI%E9%80%89%E5%93%81%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6">邮件联系</a>
+              </div>
+            </div>
           </section>
 
         </aside>
@@ -1455,11 +1803,24 @@
     <div class="feedback-list" id="feedbackList"></div>
   </section>
 
+  <section class="detail-drawer" id="detailDrawer" aria-label="机会详情" aria-hidden="true">
+    <div class="detail-head">
+      <div>
+        <span>机会详情</span>
+        <h2 id="detailTitle">等待选择</h2>
+      </div>
+      <button class="icon-btn" id="detailCloseBtn" type="button" aria-label="关闭机会详情">×</button>
+    </div>
+    <div class="detail-content" id="detailContent"></div>
+  </section>
+
   <script src="xlsx.full.min.js"></script>
   <script>
     const state = {
       rows: [],
       scored: [],
+      dataAudit: null,
+      detailRawIndex: null,
       view: "keyword",
       sortKey: "score",
       sortDir: "desc",
@@ -1485,10 +1846,36 @@
       risk: ["风险", "风险分", "风险评分", "risk", "riskScore"]
     };
 
+    const fieldLabels = {
+      keyword: "关键词",
+      search: "搜索量",
+      listings: "在售商品数",
+      growth7: "近7天增长",
+      growth4: "近4周增长",
+      conversion: "转化率",
+      price: "价格带",
+      platform: "平台来源",
+      competition: "竞争强度",
+      market: "市场体量",
+      seasonBaseline: "季节基线",
+      demandGrowth: "需求增速",
+      supplyGrowth: "供给增速",
+      estimatedPrice: "预估售价",
+      cost: "成本",
+      risk: "风险分",
+      marginSpace: "毛利空间"
+    };
+
+    const requiredFieldKeys = ["keyword", "search", "listings", "growth7", "growth4", "conversion"];
+    const optionalFieldKeys = ["price", "platform", "competition", "market", "seasonBaseline", "demandGrowth", "supplyGrowth", "estimatedPrice", "cost", "risk"];
+    const templateHeaders = requiredFieldKeys.concat(optionalFieldKeys).map(key => fieldLabels[key]);
+
     const els = {
       fileInput: document.getElementById("fileInput"),
       dataInput: document.getElementById("dataInput"),
+      templateBtn: document.getElementById("templateBtn"),
       exportBtn: document.getElementById("exportBtn"),
+      reportBtn: document.getElementById("reportBtn"),
       copySummaryBtn: document.getElementById("copySummaryBtn"),
       statusText: document.getElementById("statusText"),
       processingPanel: document.getElementById("processingPanel"),
@@ -1513,6 +1900,12 @@
       headlineAction: document.getElementById("headlineAction"),
       topCards: document.getElementById("topCards"),
       topListMeta: document.getElementById("topListMeta"),
+      qualityTitle: document.getElementById("qualityTitle"),
+      qualityStats: document.getElementById("qualityStats"),
+      qualityIssues: document.getElementById("qualityIssues"),
+      fieldMap: document.getElementById("fieldMap"),
+      trustMeta: document.getElementById("trustMeta"),
+      trustList: document.getElementById("trustList"),
       metricTotal: document.getElementById("metricTotal"),
       metricPassed: document.getElementById("metricPassed"),
       metricTop: document.getElementById("metricTop"),
@@ -1528,7 +1921,12 @@
       feedbackList: document.getElementById("feedbackList"),
       feedbackOpenBtn: document.getElementById("feedbackOpenBtn"),
       feedbackCloseBtn: document.getElementById("feedbackCloseBtn"),
-      feedbackDrawer: document.getElementById("feedbackDrawer")
+      feedbackCtaBtn: document.getElementById("feedbackCtaBtn"),
+      feedbackDrawer: document.getElementById("feedbackDrawer"),
+      detailDrawer: document.getElementById("detailDrawer"),
+      detailCloseBtn: document.getElementById("detailCloseBtn"),
+      detailTitle: document.getElementById("detailTitle"),
+      detailContent: document.getElementById("detailContent")
     };
 
     let pasteTimer = 0;
@@ -1626,13 +2024,33 @@
       });
     }
 
+    function normalizeAlias(value) {
+      return String(value ?? "").trim().toLowerCase().replace(/[\s_\-（）()]/g, "");
+    }
+
+    function getHeaderMatch(headers, key) {
+      const aliases = columnAliases[key] || [];
+      const normalizedAliases = aliases.map(normalizeAlias);
+      return headers.find(header => normalizedAliases.includes(normalizeAlias(header))) || "";
+    }
+
+    function buildFieldMapping(headers) {
+      return [...requiredFieldKeys, ...optionalFieldKeys].reduce((mapping, key) => {
+        mapping[key] = getHeaderMatch(headers, key);
+        return mapping;
+      }, {});
+    }
+
     function beginProcessing(label) {
       processingToken += 1;
       clearTimeout(processingHideTimer);
       state.rows = [];
       state.scored = [];
+      state.dataAudit = null;
+      state.detailRawIndex = null;
       state.query = "";
       els.searchInput.value = "";
+      closeDetail();
       setProcessingStage(8, "文件已接收", `${label} 上传成功，正在读取内容。`);
       render();
       els.statusText.textContent = `${label} 已上传，正在分析...`;
@@ -1669,6 +2087,8 @@
       if (!isCurrentProcessing(token)) return;
       state.rows = [];
       state.scored = [];
+      state.dataAudit = null;
+      state.detailRawIndex = null;
       render();
       setProcessingStage(100, "处理未完成", message);
       els.statusText.textContent = message;
@@ -1688,7 +2108,7 @@
 
     function parseDelimited(text) {
       const clean = text.replace(/^\uFEFF/, "").trim();
-      if (!clean) return [];
+      if (!clean) return { rows: [], headers: [], rawRowCount: 0, skippedRows: 0 };
       const delimiter = clean.includes("\t") && clean.split("\n")[0].includes("\t") ? "\t" : ",";
       const rows = [];
       let row = [];
@@ -1717,20 +2137,26 @@
       }
       row.push(cell);
       if (row.some(value => value.trim() !== "")) rows.push(row);
-      if (rows.length < 2) return [];
+      if (rows.length < 2) return { rows: [], headers: rows[0] || [], rawRowCount: 0, skippedRows: 0 };
       const headers = rows[0].map(value => value.trim());
-      return rows.slice(1).map((values, index) => {
+      const normalizedRows = rows.slice(1).map((values, index) => {
         const item = { rawIndex: index + 1 };
         headers.forEach((header, headerIndex) => {
           item[header] = (values[headerIndex] || "").trim();
         });
         return normalizeRow(item, headers);
       }).filter(row => row.keyword);
+      const rawRowCount = rows.length - 1;
+      return {
+        rows: normalizedRows,
+        headers,
+        rawRowCount,
+        skippedRows: rawRowCount - normalizedRows.length
+      };
     }
 
     function findValue(row, headers, key) {
-      const aliases = columnAliases[key];
-      const match = headers.find(header => aliases.includes(header));
+      const match = getHeaderMatch(headers, key);
       return match ? row[match] : "";
     }
 
@@ -1762,6 +2188,14 @@
       const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue];
       const requiredCompleteness = requiredValues.filter(hasValue).length / requiredValues.length;
       const optionalCompleteness = optionalValues.filter(hasValue).length / optionalValues.length;
+      const inferredFields = [];
+      if (!hasValue(competitionValue)) inferredFields.push("competition");
+      if (!hasValue(marketValue)) inferredFields.push("market");
+      if (!hasValue(seasonBaselineValue)) inferredFields.push("seasonBaseline");
+      if (!hasDemandGrowth) inferredFields.push("demandGrowth");
+      if (!hasSupplyGrowth) inferredFields.push("supplyGrowth");
+      if (!hasValue(estimatedPriceValue) || !hasValue(costValue) || estimatedPrice <= 0) inferredFields.push("marginSpace");
+      if (!hasValue(riskValue)) inferredFields.push("risk");
       return {
         keyword: keywordValue,
         search,
@@ -1780,8 +2214,38 @@
         cost,
         marginSpace: hasValue(estimatedPriceValue) && hasValue(costValue) && estimatedPrice > 0 ? (estimatedPrice - cost) / estimatedPrice : 0.35,
         riskInput: hasValue(riskValue) ? toNumber(riskValue) : null,
+        inferredFields,
         dataCompleteness: round((requiredCompleteness * 0.7) + (optionalCompleteness * 0.3), 3),
         rawIndex: row.rawIndex
+      };
+    }
+
+    function buildDataAudit(parsed, sourceName) {
+      const mapping = buildFieldMapping(parsed.headers);
+      const missingRequired = requiredFieldKeys.filter(key => !mapping[key]);
+      const missingOptional = optionalFieldKeys.filter(key => !mapping[key]);
+      const inferredCounts = {};
+      parsed.rows.forEach(row => {
+        (row.inferredFields || []).forEach(key => {
+          inferredCounts[key] = (inferredCounts[key] || 0) + 1;
+        });
+      });
+      const inferredKeys = Object.entries(inferredCounts)
+        .filter(([, count]) => count > 0)
+        .sort((a, b) => b[1] - a[1])
+        .map(([key]) => key);
+      return {
+        sourceName: sourceName || "导入数据",
+        headers: parsed.headers,
+        mapping,
+        rawRowCount: parsed.rawRowCount,
+        validRows: parsed.rows.length,
+        skippedRows: parsed.skippedRows,
+        missingRequired,
+        missingOptional,
+        inferredCounts,
+        inferredKeys,
+        completeness: parsed.rows.length ? avg(parsed.rows.map(row => row.dataCompleteness)) : 0
       };
     }
 
@@ -2028,12 +2492,92 @@
         ? `${formatNumber(visibleRows.length, 0)} 条，显示前 ${formatNumber(tableRenderLimit, 0)} 条`
         : `${formatNumber(visibleRows.length, 0)} 条`;
       els.tableTitle.textContent = state.view === "keyword" ? "机会清单" : "价格带聚合";
+      renderDataAudit();
       renderResultStage(passed);
       renderTable(visibleRows);
       renderGradeChart(passed);
       renderRejectReasons(state.scored);
+      renderTrustPanel(passed);
       renderInsights(passed);
       renderNextSteps(passed);
+      syncOpenDetail();
+      bindDetailTriggers();
+    }
+
+    function renderDataAudit() {
+      const audit = state.dataAudit;
+      if (!audit) {
+        els.qualityTitle.textContent = "等待数据";
+        els.qualityStats.innerHTML = "";
+        els.qualityIssues.innerHTML = "";
+        els.fieldMap.innerHTML = "";
+        return;
+      }
+      const completeness = audit.completeness * 100;
+      const recognizedRequired = requiredFieldKeys.length - audit.missingRequired.length;
+      const recognizedOptional = optionalFieldKeys.length - audit.missingOptional.length;
+      els.qualityTitle.textContent = `${audit.sourceName} · ${formatNumber(audit.validRows, 0)} 条有效关键词`;
+      els.qualityStats.innerHTML = [
+        qualityCard("原始行数", formatNumber(audit.rawRowCount, 0), audit.skippedRows ? `${formatNumber(audit.skippedRows, 0)} 行未识别关键词` : "全部进入识别"),
+        qualityCard("关键字段", `${recognizedRequired}/${requiredFieldKeys.length}`, audit.missingRequired.length ? `缺 ${audit.missingRequired.map(key => fieldLabels[key]).join("、")}` : "关键字段完整"),
+        qualityCard("补充字段", `${recognizedOptional}/${optionalFieldKeys.length}`, audit.missingOptional.length ? "缺失项已按模型默认值推算" : "补充字段完整"),
+        qualityCard("完整度", `${formatNumber(completeness, 0)}%`, dataQualityLabel(completeness))
+      ].join("");
+
+      const issues = [];
+      if (audit.missingRequired.length) issues.push({ level: "fail", text: `关键字段缺失：${audit.missingRequired.map(key => fieldLabels[key]).join("、")}。结果可读，但可信度会下降。` });
+      if (audit.skippedRows) issues.push({ level: "warn", text: `${formatNumber(audit.skippedRows, 0)} 行没有识别到关键词，已自动跳过。` });
+      if (audit.inferredKeys.length) {
+        const inferredText = audit.inferredKeys.slice(0, 6).map(key => `${fieldLabels[key] || key} ${formatNumber(audit.inferredCounts[key], 0)} 行`).join("、");
+        issues.push({ level: "warn", text: `系统推算字段：${inferredText}。建议后续补齐这些字段。` });
+      }
+      if (audit.validRows > tableRenderLimit) issues.push({ level: "pass", text: `大文件已启用流畅保护：表格显示前 ${formatNumber(tableRenderLimit, 0)} 条，汇总和导出仍基于当前筛选结果。` });
+      if (!issues.length) issues.push({ level: "pass", text: "字段识别完整，当前数据可以进入机会判断。" });
+      els.qualityIssues.innerHTML = issues.map(item => `<div class="issue-item ${item.level}">${escapeHtml(item.text)}</div>`).join("");
+
+      els.fieldMap.innerHTML = [...requiredFieldKeys, ...optionalFieldKeys].map(key => {
+        const match = audit.mapping[key];
+        return `
+          <div class="field-chip${match ? "" : " missing"}">
+            <label>${escapeHtml(fieldLabels[key])}</label>
+            <strong>${escapeHtml(match || "未提供，模型推算")}</strong>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function qualityCard(label, value, detail) {
+      return `
+        <div class="quality-card">
+          <label>${escapeHtml(label)}</label>
+          <strong>${escapeHtml(value)}</strong>
+          <p>${escapeHtml(detail)}</p>
+        </div>
+      `;
+    }
+
+    function dataQualityLabel(score) {
+      if (score >= 85) return "高可信数据";
+      if (score >= 65) return "可用，建议补充字段";
+      return "字段缺口较多，仅适合初筛";
+    }
+
+    function renderTrustPanel(rows) {
+      const high = rows.filter(row => row.confidence >= 0.7).length;
+      const mid = rows.filter(row => row.confidence >= lowConfidenceCutoff && row.confidence < 0.7).length;
+      const low = rows.filter(row => row.confidence < lowConfidenceCutoff).length;
+      const riskBlocked = state.scored.filter(row => row.pass && row.riskGate === 0).length;
+      els.trustMeta.textContent = rows.length ? `${formatNumber(rows.length, 0)} 个通过词` : "实时";
+      const items = [];
+      if (!state.rows.length) {
+        items.push({ level: "", text: "导入数据后显示可信度和风险分布。" });
+      } else {
+        items.push({ level: high ? "pass" : "", text: `高置信机会 ${formatNumber(high, 0)} 个，中置信 ${formatNumber(mid, 0)} 个，低置信 ${formatNumber(low, 0)} 个。` });
+        if (low) items.push({ level: "warn", text: "低置信结果已灰显，且不会进入 S 级。建议补齐搜索量、季节基线、供给增速、成本或风险字段。" });
+        if (riskBlocked) items.push({ level: "fail", text: `${formatNumber(riskBlocked, 0)} 个词被风险闸门拦截，先排查合规、供应链或竞争风险。` });
+        if (!low && !riskBlocked) items.push({ level: "pass", text: "当前通过词没有明显低置信或风险闸门问题。" });
+      }
+      els.trustList.innerHTML = items.map(item => `<div class="trust-item ${item.level}">${escapeHtml(item.text)}</div>`).join("");
     }
 
     function getRejectReasons(row, ratio, settings) {
@@ -2066,18 +2610,19 @@
       }
 
       els.headlineKeyword.textContent = best.keyword;
-      els.headlineReason.textContent = `修正供需 ${formatNumber(best.adjustedRatio, 2)}，真实热度 ${formatNumber(best.trueHeat, 2)} 倍，毛利空间 ${formatNumber(best.marginSpace * 100, 1)}%，置信度 ${formatNumber(best.confidence * 100, 0)}%。${best.confidence < lowConfidenceCutoff ? "低置信结果已降级展示。" : ""}${actionForGrade(best.grade)}`;
+      els.headlineReason.textContent = `${recommendationReason(best)} ${actionForGrade(best.grade)}`;
       els.headlineGrade.innerHTML = `<span class="big-grade grade-${best.grade.toLowerCase()}">${best.grade}</span>`;
       els.headlineScore.textContent = formatNumber(best.score, 1);
       els.headlineAction.textContent = shortActionForGrade(best.grade);
 
       els.topCards.innerHTML = topThree.map((row, index) => `
-        <article class="top-card${row.confidence < lowConfidenceCutoff ? " low-confidence" : ""}">
+        <article class="top-card${row.confidence < lowConfidenceCutoff ? " low-confidence" : ""}" data-detail="${row.rawIndex}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(row.keyword)} 详情">
           <div class="top-card-head">
             <span class="rank">#${index + 1}</span>
             <span>${gradeBadge(row.grade)} ${confidenceBadge(row)}</span>
           </div>
           <h3>${escapeHtml(row.keyword)}</h3>
+          <div class="top-card-reason">${escapeHtml(recommendationReason(row))}</div>
           <dl>
             <div>
               <dt>综合分</dt>
@@ -2209,6 +2754,7 @@
               ${th("feasibility", "可行性", "num")}
               ${th("riskScore", "风险", "num")}
               ${th("confidence", "置信度", "num")}
+              <th>推荐理由</th>
               ${th("search", "搜索量", "num")}
               ${th("listings", "在售数", "num")}
               ${th("conversion", "转化率", "num")}
@@ -2218,7 +2764,7 @@
           </thead>
           <tbody>
             ${tableRows.map(row => `
-              <tr class="${row.confidence < lowConfidenceCutoff ? "low-confidence" : ""}">
+              <tr class="${row.confidence < lowConfidenceCutoff ? "low-confidence" : ""}" data-detail="${row.rawIndex}" tabindex="0">
                 <td>${gradeBadge(row.grade)} ${confidenceBadge(row)}</td>
                 <td class="keyword" title="${escapeHtml(row.keyword)}">${escapeHtml(row.keyword)}</td>
                 <td class="num">${formatNumber(row.score, 1)}</td>
@@ -2231,6 +2777,7 @@
                 <td class="num">${formatNumber(row.feasibility, 2)}</td>
                 <td class="num">${formatNumber(row.riskScore, 0)}</td>
                 <td class="num">${formatNumber(row.confidence * 100, 0)}%</td>
+                <td class="reason-cell">${escapeHtml(recommendationReason(row))}</td>
                 <td class="num">${formatNumber(row.search, 0)}</td>
                 <td class="num">${formatNumber(row.listings, 0)}</td>
                 <td class="num">${formatNumber(row.conversion, 1)}%</td>
@@ -2328,6 +2875,30 @@
       `).join("");
     }
 
+    function recommendationReason(row) {
+      if (!row) return "";
+      const pieces = [];
+      if (row.adjustedRatio >= 2) pieces.push("供需差较明显");
+      else if (row.adjustedRatio >= 1) pieces.push("供需结构可观察");
+      else pieces.push("供需优势不强");
+      if (row.trendMetric >= 30) pieces.push("趋势上升快");
+      else if (row.trendMetric >= 5) pieces.push("趋势温和上升");
+      else pieces.push("趋势偏弱");
+      if (row.trueHeat >= 1.2) pieces.push("真实热度高于基线");
+      if (row.marginSpace >= 0.3) pieces.push("毛利空间较足");
+      else if (row.marginSpace < 0.15) pieces.push("毛利偏低");
+      if (row.saturation > 1) pieces.push("供给增速偏快");
+      if (row.riskGate === 0) pieces.push("风险闸门拦截");
+      if (row.confidence < lowConfidenceCutoff) pieces.push("置信度偏低");
+      return `${pieces.slice(0, 4).join("，")}。`;
+    }
+
+    function confidenceLevel(row) {
+      if (!row || row.confidence < lowConfidenceCutoff) return { label: "低置信", className: "warn" };
+      if (row.confidence < 0.7) return { label: "中置信", className: "info" };
+      return { label: "高置信", className: "pass" };
+    }
+
     function validationTips(row) {
       if (!row) return [];
       const tips = [
@@ -2351,8 +2922,88 @@
     }
 
     function confidenceBadge(row) {
-      if (!row || row.confidence >= lowConfidenceCutoff) return "";
-      return `<span class="badge warn">低置信</span>`;
+      if (!row) return "";
+      const level = confidenceLevel(row);
+      return `<span class="badge ${level.className}">${level.label}</span>`;
+    }
+
+    function bindDetailTriggers() {
+      document.querySelectorAll("[data-detail]").forEach(item => {
+        item.addEventListener("click", () => openDetail(item.dataset.detail));
+        item.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openDetail(item.dataset.detail);
+          }
+        });
+      });
+    }
+
+    function openDetail(rawIndex) {
+      const row = state.scored.find(item => String(item.rawIndex) === String(rawIndex));
+      if (!row) return;
+      state.detailRawIndex = row.rawIndex;
+      renderDetail(row);
+      document.body.classList.add("detail-open");
+      els.detailDrawer.setAttribute("aria-hidden", "false");
+    }
+
+    function closeDetail() {
+      document.body.classList.remove("detail-open");
+      state.detailRawIndex = null;
+      if (els.detailDrawer) els.detailDrawer.setAttribute("aria-hidden", "true");
+    }
+
+    function syncOpenDetail() {
+      if (!document.body.classList.contains("detail-open") || state.detailRawIndex === null) return;
+      const row = state.scored.find(item => item.rawIndex === state.detailRawIndex);
+      if (!row) {
+        closeDetail();
+        return;
+      }
+      renderDetail(row);
+    }
+
+    function renderDetail(row) {
+      els.detailTitle.textContent = row.keyword;
+      const tips = validationTips(row);
+      els.detailContent.innerHTML = `
+        <div class="detail-score-grid">
+          ${detailScore("等级", row.grade)}
+          ${detailScore("综合分", formatNumber(row.score, 1))}
+          ${detailScore("机会强度", formatNumber(row.opportunityStrength, 1))}
+          ${detailScore("置信度", `${formatNumber(row.confidence * 100, 0)}%`)}
+          ${detailScore("风险分", formatNumber(row.riskScore, 0))}
+          ${detailScore("可行性", formatNumber(row.feasibility, 2))}
+        </div>
+        <section class="detail-section">
+          <h3>为什么推荐</h3>
+          <div class="issue-item">${escapeHtml(recommendationReason(row))}</div>
+        </section>
+        <section class="detail-section">
+          <h3>核心数据</h3>
+          <ul class="detail-list">
+            <li class="issue-item">搜索量 ${formatNumber(row.search, 0)}，在售数 ${formatNumber(row.listings, 0)}，修正供需 ${formatNumber(row.adjustedRatio, 2)}。</li>
+            <li class="issue-item">真实热度 ${formatNumber(row.trueHeat, 2)} 倍，趋势分 ${formatNumber(row.trendMetric, 1)}，饱和度 ${formatNumber(row.saturation, 2)}。</li>
+            <li class="issue-item">毛利空间 ${formatNumber(row.marginSpace * 100, 1)}%，转化率 ${formatNumber(row.conversion, 1)}%，价格带 ${escapeHtml(row.price)}。</li>
+          </ul>
+        </section>
+        <section class="detail-section">
+          <h3>下一步验证</h3>
+          <ul class="detail-list">
+            ${tips.map(tip => `<li class="issue-item">${escapeHtml(tip)}</li>`).join("")}
+          </ul>
+        </section>
+      `;
+    }
+
+    function detailScore(label, value) {
+      return `
+        <div class="detail-score">
+          <label>${escapeHtml(label)}</label>
+          <strong>${escapeHtml(value)}</strong>
+        </div>
+      `;
     }
 
     function shortActionForGrade(grade) {
@@ -2378,7 +3029,7 @@
         return acc;
       }, {});
       const topText = rows.slice(0, 3).map((row, index) =>
-        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，机会强度 ${formatNumber(row.opportunityStrength, 1)}，修正供需 ${formatNumber(row.adjustedRatio, 2)}，风险 ${formatNumber(row.riskScore, 0)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
+        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，${recommendationReason(row)}风险 ${formatNumber(row.riskScore, 0)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
       ).join("\n");
       return [
         "AI 选品机会摘要",
@@ -2420,6 +3071,71 @@
       textarea.remove();
     }
 
+    function downloadTemplate() {
+      const sampleRows = [
+        templateHeaders,
+        ["防晒冰袖", 26000, 18000, 28, 35, 6.8, "20-39", "抖音", 42, 26000, 19000, 34, 18, 39, 16, 28],
+        ["宠物除毛刷", 18000, 12000, 16, 22, 5.4, "30-59", "天猫", 36, 18000, 15000, 24, 15, 59, 24, 32]
+      ];
+      if (window.XLSX) {
+        const workbook = XLSX.utils.book_new();
+        const sheet = XLSX.utils.aoa_to_sheet(sampleRows);
+        XLSX.utils.book_append_sheet(workbook, sheet, "标准模板");
+        XLSX.writeFile(workbook, "海东AI选品标准模板.xlsx");
+        els.statusText.textContent = "已下载标准 Excel 模板。";
+        return;
+      }
+      const csv = sampleRows.map(line => line.map(csvEscape).join(",")).join("\n");
+      downloadBlob("海东AI选品标准模板.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+      els.statusText.textContent = "已下载标准模板。";
+    }
+
+    function exportReport() {
+      const rows = [...state.scored].filter(row => row.pass).sort((a, b) => b.score - a.score);
+      if (!state.rows.length) {
+        els.statusText.textContent = "没有可导出的报告。";
+        return;
+      }
+      const audit = state.dataAudit;
+      const failed = state.scored.filter(row => !row.pass);
+      const reasonCounts = failed.reduce((acc, row) => {
+        acc[row.rejectReason || "其他"] = (acc[row.rejectReason || "其他"] || 0) + 1;
+        return acc;
+      }, {});
+      const auditLines = audit ? [
+        `数据源：${audit.sourceName}`,
+        `原始行数：${formatNumber(audit.rawRowCount, 0)}`,
+        `有效关键词：${formatNumber(audit.validRows, 0)}`,
+        `数据完整度：${formatNumber(audit.completeness * 100, 0)}%`,
+        `缺失关键字段：${audit.missingRequired.map(key => fieldLabels[key]).join("、") || "无"}`,
+        `自动推算字段：${audit.inferredKeys.map(key => fieldLabels[key] || key).join("、") || "无"}`
+      ] : [];
+      const topLines = rows.slice(0, 10).map((row, index) =>
+        `${index + 1}. ${row.keyword}｜${row.grade}级｜综合分 ${formatNumber(row.score, 1)}｜${recommendationReason(row)}｜验证：${validationTips(row)[0]}`
+      );
+      const rejectLines = Object.entries(reasonCounts).sort((a, b) => b[1] - a[1]).map(([reason, count]) => `${reason}：${formatNumber(count, 0)} 个`);
+      const best = rows[0];
+      const report = [
+        "海东 AI 选品报告",
+        "",
+        "一、数据体检",
+        ...auditLines,
+        "",
+        "二、TOP 10 机会",
+        ...(topLines.length ? topLines : ["当前阈值下暂无通过筛选的机会。"]),
+        "",
+        "三、淘汰原因",
+        ...(rejectLines.length ? rejectLines : ["当前阈值下没有淘汰项。"]),
+        "",
+        "四、下一步验证",
+        ...(best ? validationTips(best).map((tip, index) => `${index + 1}. ${tip}`) : ["先放宽筛选阈值或补齐关键字段。"]),
+        "",
+        "说明：本报告由浏览器本地计算生成，建议结合竞品、供应链、合规和真实投放数据复核。"
+      ].join("\n");
+      downloadBlob("海东AI选品报告.txt", report, "text/plain;charset=utf-8");
+      els.statusText.textContent = "已导出选品报告。";
+    }
+
     function exportCsv() {
       const rows = state.view === "product" ? getProductRows(state.query.trim().toLowerCase()) : getVisibleRows();
       if (!rows.length) {
@@ -2428,20 +3144,24 @@
       }
       const headers = state.view === "product"
         ? ["价格带", "词数", "平均综合分", "平均修正供需", "平均转化率", "平均置信度", "代表关键词", "最高等级", "平台", "建议动作"]
-        : ["等级", "关键词", "综合分", "机会强度", "修正供需", "真实热度", "趋势分", "饱和度", "毛利空间", "可行性系数", "风险分", "置信度", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
+        : ["等级", "关键词", "综合分", "机会强度", "修正供需", "真实热度", "趋势分", "饱和度", "毛利空间", "可行性系数", "风险分", "置信度", "推荐理由", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
       const body = rows.map(row => state.view === "product"
         ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, `${row.avgConfidence}%`, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
-        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.adjustedRatio, row.trueHeat, row.trendMetric, row.saturation, row.marginSpace, row.feasibility, row.riskScore, row.confidence, row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
+        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.adjustedRatio, row.trueHeat, row.trendMetric, row.saturation, row.marginSpace, row.feasibility, row.riskScore, row.confidence, recommendationReason(row), row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
       );
       const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
-      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      downloadBlob(state.view === "product" ? "产品逻辑聚合.csv" : "AI选品机会清单.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+      els.statusText.textContent = `已导出 ${rows.length} 条结果。`;
+    }
+
+    function downloadBlob(filename, content, type) {
+      const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = state.view === "product" ? "产品逻辑聚合.csv" : "AI选品机会清单.csv";
+      link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
-      els.statusText.textContent = `已导出 ${rows.length} 条结果。`;
     }
 
     function csvEscape(value) {
@@ -2514,19 +3234,22 @@
       const shouldEchoInput = options.echoInput !== false || text.length < 250000;
       els.dataInput.value = shouldEchoInput ? text : "";
       els.dataInput.placeholder = shouldEchoInput ? "" : "已读取大文件，未在文本框中展开，以保持页面流畅。";
-      const rows = parseDelimited(text);
+      const parsed = parseDelimited(text);
+      const rows = parsed.rows;
       if (!rows.length) {
         if (showProgress) {
           failProcessing(token, "没有识别到有效数据。");
         } else {
           state.rows = [];
           state.scored = [];
+          state.dataAudit = null;
           els.statusText.textContent = "没有识别到有效数据。";
           render();
         }
         return;
       }
       state.rows = rows;
+      state.dataAudit = buildDataAudit(parsed, options.sourceName || "导入数据");
       state.sortKey = "score";
       state.sortDir = "desc";
       if (showProgress) {
@@ -2705,6 +3428,7 @@
       button.addEventListener("click", () => applyPreset(button.dataset.preset));
     });
 
+    els.templateBtn.addEventListener("click", downloadTemplate);
     els.fileInput.addEventListener("click", () => {
       els.fileInput.value = "";
     });
@@ -2742,16 +3466,22 @@
       }, 350);
     });
     els.exportBtn.addEventListener("click", exportCsv);
+    els.reportBtn.addEventListener("click", exportReport);
     els.copySummaryBtn.addEventListener("click", copySummary);
     els.feedbackOpenBtn.addEventListener("click", () => setFeedbackOpen(true));
     els.feedbackCloseBtn.addEventListener("click", () => setFeedbackOpen(false));
+    els.feedbackCtaBtn.addEventListener("click", () => setFeedbackOpen(true));
+    els.detailCloseBtn.addEventListener("click", closeDetail);
     els.feedbackForm.addEventListener("submit", submitFeedback);
     els.searchInput.addEventListener("input", () => {
       state.query = els.searchInput.value;
       render();
     });
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape") setFeedbackOpen(false);
+      if (event.key === "Escape") {
+        setFeedbackOpen(false);
+        closeDetail();
+      }
     });
 
     syncControls();
