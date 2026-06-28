@@ -430,7 +430,7 @@ a {
 
 .tool-card {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: 34px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   min-height: 39px;
@@ -441,6 +441,11 @@ a {
 
 .tool-card:hover {
   color: var(--accent);
+}
+
+.tool-card.muted {
+  color: var(--muted);
+  cursor: default;
 }
 
 .tool-card .index,
@@ -462,23 +467,7 @@ a {
 }
 
 .tool-card em {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 21px;
-  border: 1px solid var(--line);
-  padding: 0 8px;
-  color: var(--muted);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 620;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.tool-card:hover em {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-  color: var(--accent);
+  display: none;
 }
 
 .share-panel,
