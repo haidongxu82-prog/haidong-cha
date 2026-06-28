@@ -499,15 +499,17 @@ a {
 
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .tool-card {
-  min-height: 178px;
+  min-height: 0;
   display: grid;
-  align-content: space-between;
-  gap: 24px;
-  padding: 26px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 13px 15px;
   border-right: 1px solid rgba(185, 255, 220, 0.1);
   border-bottom: 1px solid rgba(185, 255, 220, 0.1);
   background: rgba(255, 255, 255, 0.01);
@@ -520,7 +522,7 @@ a {
 .tool-card:hover {
   border-color: rgba(185, 255, 220, 0.22);
   background: rgba(159, 255, 195, 0.06);
-  transform: translateY(-2px);
+  transform: none;
 }
 
 .tool-card.primary {
@@ -538,15 +540,18 @@ a {
 
 .tool-card strong {
   display: block;
+  overflow: hidden;
   color: var(--text);
-  font-size: clamp(24px, 3vw, 42px);
-  line-height: 1.1;
+  font-size: 16px;
+  line-height: 1.2;
   letter-spacing: 0;
-  font-weight: 760;
+  font-weight: 660;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tool-card em {
-  display: block;
+  display: none;
   margin-top: 10px;
   color: var(--muted);
   font-style: normal;
@@ -782,7 +787,7 @@ a {
   }
 
   .tool-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .tool-card,
@@ -790,7 +795,9 @@ a {
   .tool-card:nth-child(3n),
   .tool-card:nth-last-child(-n + 2),
   .tool-card:nth-last-child(-n + 3) {
-    min-height: 132px;
+    min-height: 0;
+    grid-template-columns: 30px minmax(0, 1fr);
+    padding: 12px;
     border-right: 0;
     border-bottom: 1px solid rgba(185, 255, 220, 0.1);
   }
@@ -800,7 +807,7 @@ a {
   }
 
   .tool-card strong {
-    font-size: 30px;
+    font-size: 15px;
   }
 
   .share-panel {
