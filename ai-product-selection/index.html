@@ -473,6 +473,10 @@
       align-content: start;
     }
 
+    .top-card.low-confidence {
+      opacity: 0.62;
+    }
+
     .top-card:first-child {
       border-color: #9ad7bd;
       box-shadow: inset 0 0 0 1px #9ad7bd;
@@ -635,7 +639,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
-      min-width: 920px;
+      min-width: 1480px;
     }
 
     th,
@@ -660,6 +664,11 @@
 
     tr:hover td {
       background: #fbfcff;
+    }
+
+    tr.low-confidence td {
+      color: #8a94a6;
+      background: #fafbfc;
     }
 
     .num {
@@ -836,6 +845,43 @@
       color: var(--red);
     }
 
+    .badge.warn {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .model-card {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .model-card strong {
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .model-pill {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+    }
+
     @media (max-width: 1100px) {
       .app {
         grid-template-columns: 1fr;
@@ -977,30 +1023,16 @@
       </section>
 
       <section class="section">
-        <h2>评分权重</h2>
-        <div class="field">
-          <label for="wRatio">供需比 <span id="wRatioValue"></span></label>
-          <input id="wRatio" type="range" min="0" max="60" step="1" value="30">
-        </div>
-        <div class="field">
-          <label for="wGrowth">增长趋势 <span id="wGrowthValue"></span></label>
-          <input id="wGrowth" type="range" min="0" max="50" step="1" value="20">
-        </div>
-        <div class="field">
-          <label for="wHeat">搜索热度 <span id="wHeatValue"></span></label>
-          <input id="wHeat" type="range" min="0" max="40" step="1" value="15">
-        </div>
-        <div class="field">
-          <label for="wConversion">转化率 <span id="wConversionValue"></span></label>
-          <input id="wConversion" type="range" min="0" max="40" step="1" value="15">
-        </div>
-        <div class="field">
-          <label for="wCompetition">竞争强度 <span id="wCompetitionValue"></span></label>
-          <input id="wCompetition" type="range" min="0" max="30" step="1" value="10">
-        </div>
-        <div class="field">
-          <label for="wMarket">市场体量 <span id="wMarketValue"></span></label>
-          <input id="wMarket" type="range" min="0" max="30" step="1" value="10">
+        <h2>评分模型</h2>
+        <div class="model-card">
+          <strong>固定机会强度权重</strong>
+          <div class="model-grid">
+            <div class="model-pill"><span>供需</span><b>35%</b></div>
+            <div class="model-pill"><span>趋势</span><b>25%</b></div>
+            <div class="model-pill"><span>真实热度</span><b>20%</b></div>
+            <div class="model-pill"><span>转化</span><b>20%</b></div>
+          </div>
+          <span>可行性由毛利空间和饱和度计算，低置信结果会灰显且不能进入 S 级。</span>
         </div>
       </section>
     </aside>
@@ -1010,7 +1042,7 @@
         <div class="start-empty-inner">
           <span>等待数据</span>
           <h2>上传词表后生成机会榜</h2>
-          <p>页面初始不展示样例结果。上传 CSV / TSV，或粘贴关键词数据后点击运行，系统会生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
+          <p>页面初始不展示样例结果。上传 CSV / TSV，或粘贴关键词数据后，系统会自动生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
         </div>
       </section>
 
@@ -1072,7 +1104,7 @@
           <strong id="metricTop">0</strong>
         </div>
         <div class="metric">
-          <label>平均供需比</label>
+          <label>平均修正供需</label>
           <strong id="metricRatio">0</strong>
         </div>
         <div class="metric">
@@ -1128,26 +1160,6 @@
   </div>
 
   <script>
-    const sampleData = `关键词,搜索量,在售商品数,近7天增长,近4周增长,转化率,价格带,平台来源,竞争强度,市场体量
-露营折叠椅,28600,9400,38,72,5.8,100-199,抖音电商,42,780
-宠物烘干箱,18300,5200,26,41,4.9,300-599,天猫,36,920
-儿童防晒衣,43200,88000,18,22,3.4,50-99,拼多多,78,1160
-厨房沥水架,39100,126000,4,9,2.1,20-49,淘宝,86,880
-户外移动电源,26800,33000,11,19,3.9,600-999,京东,64,1580
-宠物自动喂食器,22400,18400,8,16,4.4,100-299,天猫,58,1060
-便携榨汁杯,14600,76000,-6,-12,2.7,50-99,拼多多,82,620
-骑行防风眼镜,16800,6200,44,68,5.1,50-199,抖音电商,39,540
-婴儿恒温水壶,12600,9800,10,14,4.6,100-299,京东,46,690
-家用除湿机,30500,28500,16,31,3.8,300-799,天猫,57,1420
-猫砂除臭珠,9200,2400,52,84,6.3,20-49,抖音电商,31,360
-可折叠收纳箱,22100,113000,2,5,2.5,20-79,拼多多,88,740
-办公室午睡枕,7800,4900,17,29,4.2,30-99,淘宝,44,310
-筋膜枪迷你款,15100,42000,-3,4,3.1,100-299,京东,75,650
-露营收纳推车,11800,3600,47,76,5.6,200-499,抖音电商,34,590
-旅行压缩袋,17600,54000,7,8,2.9,20-59,淘宝,73,510
-车载冰箱,13800,8900,21,35,4.1,500-1299,京东,51,880
-儿童学习灯,19400,68000,9,13,3.0,100-399,天猫,71,990`;
-
     const state = {
       rows: [],
       scored: [],
@@ -1159,7 +1171,7 @@
 
     const columnAliases = {
       keyword: ["关键词", "keyword", "词", "搜索词"],
-      search: ["搜索量", "搜索人数", "搜索热度", "search", "searchVolume", "volume"],
+      search: ["搜索量", "搜索人数", "搜索热度", "当前热度", "search", "searchVolume", "volume"],
       listings: ["在售商品数", "在售数", "商品数", "供给", "listings", "products"],
       growth7: ["近7天增长", "近7天趋势", "7天增长", "growth7d", "growth7"],
       growth4: ["近4周增长", "近4周趋势", "4周增长", "growth4w", "growth4"],
@@ -1167,7 +1179,13 @@
       price: ["价格带", "priceBand", "price", "价格"],
       platform: ["平台来源", "平台", "source", "platform"],
       competition: ["竞争强度", "头部集中度", "competition", "竞争"],
-      market: ["市场体量", "marketSize", "market", "体量"]
+      market: ["市场体量", "marketSize", "market", "体量"],
+      seasonBaseline: ["季节基线", "季节性基线", "基线热度", "seasonBaseline", "seasonalBaseline", "baseline"],
+      demandGrowth: ["需求增速", "需求增长", "demandGrowth", "demand_growth"],
+      supplyGrowth: ["供给增速", "供给增长", "supplyGrowth", "supply_growth"],
+      estimatedPrice: ["预估售价", "售价", "销售价", "estimatedPrice", "priceEstimate", "salePrice"],
+      cost: ["成本", "预估成本", "cost", "unitCost"],
+      risk: ["风险", "风险分", "风险评分", "risk", "riskScore"]
     };
 
     const els = {
@@ -1232,7 +1250,16 @@
       ["minRatio", "minRatioNumber", "minRatioValue", "", 1]
     ];
 
-    const weightInputs = ["wRatio", "wGrowth", "wHeat", "wConversion", "wCompetition", "wMarket"];
+    const scoreWeights = {
+      ratio: 0.35,
+      trend: 0.25,
+      heat: 0.2,
+      conversion: 0.2
+    };
+
+    const shrinkSearchK = 5000;
+    const lowConfidenceCutoff = 0.45;
+    const riskThreshold = 75;
 
     function setPairedControlValue(rangeId, val) {
       const pair = inputPairs.find(item => item[0] === rangeId);
@@ -1261,16 +1288,6 @@
         setPairedControlValue(rangeId, Number(range.value || 0));
       });
 
-      weightInputs.forEach(id => {
-        const input = document.getElementById(id);
-        const value = document.getElementById(`${id}Value`);
-        const update = () => {
-          value.textContent = `${Number(input.value)}%`;
-          runCurrent();
-        };
-        input.addEventListener("input", update);
-        update();
-      });
     }
 
     function applyPreset(key) {
@@ -1339,23 +1356,58 @@
     }
 
     function normalizeRow(row, headers) {
-      const search = toNumber(findValue(row, headers, "search"));
-      const listings = toNumber(findValue(row, headers, "listings"));
+      const keywordValue = findValue(row, headers, "keyword");
+      const searchValue = findValue(row, headers, "search");
+      const listingsValue = findValue(row, headers, "listings");
+      const growth7Value = findValue(row, headers, "growth7");
+      const growth4Value = findValue(row, headers, "growth4");
+      const conversionValue = findValue(row, headers, "conversion");
+      const priceValue = findValue(row, headers, "price");
+      const platformValue = findValue(row, headers, "platform");
       const competitionValue = findValue(row, headers, "competition");
       const marketValue = findValue(row, headers, "market");
+      const seasonBaselineValue = findValue(row, headers, "seasonBaseline");
+      const demandGrowthValue = findValue(row, headers, "demandGrowth");
+      const supplyGrowthValue = findValue(row, headers, "supplyGrowth");
+      const estimatedPriceValue = findValue(row, headers, "estimatedPrice");
+      const costValue = findValue(row, headers, "cost");
+      const riskValue = findValue(row, headers, "risk");
+      const search = toNumber(searchValue);
+      const listings = toNumber(listingsValue);
+      const growth4 = toNumber(growth4Value);
+      const hasDemandGrowth = hasValue(demandGrowthValue);
+      const hasSupplyGrowth = hasValue(supplyGrowthValue);
+      const estimatedPrice = toNumber(estimatedPriceValue);
+      const cost = toNumber(costValue);
+      const requiredValues = [keywordValue, searchValue, listingsValue, growth7Value, growth4Value, conversionValue];
+      const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue];
+      const requiredCompleteness = requiredValues.filter(hasValue).length / requiredValues.length;
+      const optionalCompleteness = optionalValues.filter(hasValue).length / optionalValues.length;
       return {
-        keyword: findValue(row, headers, "keyword"),
+        keyword: keywordValue,
         search,
         listings,
-        growth7: toNumber(findValue(row, headers, "growth7")),
-        growth4: toNumber(findValue(row, headers, "growth4")),
-        conversion: toNumber(findValue(row, headers, "conversion")),
-        price: findValue(row, headers, "price") || "未标注",
-        platform: findValue(row, headers, "platform") || "未标注",
+        growth7: toNumber(growth7Value),
+        growth4,
+        conversion: toNumber(conversionValue),
+        price: priceValue || "未标注",
+        platform: platformValue || "未标注",
         competition: competitionValue === "" ? Math.min(100, Math.sqrt(Math.max(listings, 0)) / 4) : toNumber(competitionValue),
         market: marketValue === "" ? search : toNumber(marketValue),
+        seasonBaseline: hasValue(seasonBaselineValue) ? Math.max(1, toNumber(seasonBaselineValue)) : Math.max(1, search),
+        demandGrowth: hasDemandGrowth ? toNumber(demandGrowthValue) : growth4,
+        supplyGrowth: hasSupplyGrowth ? toNumber(supplyGrowthValue) : (hasDemandGrowth ? toNumber(demandGrowthValue) : growth4),
+        estimatedPrice,
+        cost,
+        marginSpace: hasValue(estimatedPriceValue) && hasValue(costValue) && estimatedPrice > 0 ? (estimatedPrice - cost) / estimatedPrice : 0.35,
+        riskInput: hasValue(riskValue) ? toNumber(riskValue) : null,
+        dataCompleteness: round((requiredCompleteness * 0.7) + (optionalCompleteness * 0.3), 3),
         rawIndex: row.rawIndex
       };
+    }
+
+    function hasValue(value) {
+      return String(value ?? "").trim() !== "";
     }
 
     function toNumber(value) {
@@ -1373,15 +1425,7 @@
         minGrowth7: Number(document.getElementById("minGrowth7").value),
         minGrowth4: Number(document.getElementById("minGrowth4").value),
         maxListings: Number(document.getElementById("maxListings").value),
-        minRatio: Number(document.getElementById("minRatio").value),
-        weights: {
-          ratio: Number(document.getElementById("wRatio").value),
-          growth: Number(document.getElementById("wGrowth").value),
-          heat: Number(document.getElementById("wHeat").value),
-          conversion: Number(document.getElementById("wConversion").value),
-          competition: Number(document.getElementById("wCompetition").value),
-          market: Number(document.getElementById("wMarket").value)
-        }
+        minRatio: Number(document.getElementById("minRatio").value)
       };
     }
 
@@ -1393,56 +1437,147 @@
       const settings = getSettings();
       const enriched = state.rows.map(row => {
         const ratio = row.listings > 0 ? row.search / row.listings : row.search;
+        const logRatio = Math.log((row.search + 1) / (row.listings + 1));
+        const trueHeat = row.seasonBaseline > 0 ? row.search / row.seasonBaseline : 1;
+        const trendMetric = (0.5 * row.growth7) + (0.3 * row.growth4) + (0.2 * (row.growth7 - row.growth4));
+        const saturation = saturationFor(row.supplyGrowth, row.demandGrowth);
+        const marginSpace = clamp(row.marginSpace, -1, 1);
         const rejectReasons = getRejectReasons(row, ratio, settings);
         const pass = rejectReasons.length === 0;
-        return { ...row, ratio, pass, rejectReasons, rejectReason: rejectReasons[0] || "通过" };
+        return { ...row, ratio, logRatio, trueHeat, trendMetric, saturation, marginSpace, pass, rejectReasons, rejectReason: rejectReasons[0] || "通过" };
       });
 
       const passed = enriched.filter(row => row.pass);
+      const globalLogRatio = median(enriched.map(row => row.logRatio));
       const pools = {
-        ratio: passed.map(row => row.ratio),
-        growth: passed.map(row => (row.growth7 * 0.6) + (row.growth4 * 0.4)),
-        heat: passed.map(row => row.search),
+        ratio: passed.map(row => shrinkLogRatio(row.logRatio, row.search, globalLogRatio)),
+        trend: passed.map(row => row.trendMetric),
+        trueHeat: passed.map(row => row.trueHeat),
         conversion: passed.map(row => row.conversion),
-        competition: passed.map(row => row.competition),
-        market: passed.map(row => row.market)
+        margin: passed.map(row => row.marginSpace),
+        saturationFit: passed.map(row => 1 - row.saturation)
       };
 
-      const weights = normalizeWeights(settings.weights);
       const scoredPassed = passed.map(row => {
-        const growthMetric = (row.growth7 * 0.6) + (row.growth4 * 0.4);
-        const score =
-          normalize(row.ratio, pools.ratio) * weights.ratio +
-          normalize(growthMetric, pools.growth) * weights.growth +
-          normalize(row.search, pools.heat) * weights.heat +
-          normalize(row.conversion, pools.conversion) * weights.conversion +
-          (100 - normalize(row.competition, pools.competition)) * weights.competition +
-          normalize(row.market, pools.market) * weights.market;
-        return { ...row, growthMetric, score: round(score, 1) };
+        const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
+        const adjustedRatio = Math.exp(adjustedLogRatio);
+        const ratioScore = percentileScore(adjustedLogRatio, pools.ratio);
+        const trendScore = percentileScore(row.trendMetric, pools.trend);
+        const heatScore = percentileScore(row.trueHeat, pools.trueHeat);
+        const conversionScore = percentileScore(row.conversion, pools.conversion);
+        const opportunityStrength =
+          (ratioScore * scoreWeights.ratio) +
+          (trendScore * scoreWeights.trend) +
+          (heatScore * scoreWeights.heat) +
+          (conversionScore * scoreWeights.conversion);
+        const feasibility = feasibilityCoefficient(row, pools);
+        const confidence = confidenceFor(row);
+        const riskScore = riskScoreFor(row);
+        const riskGate = riskGateFor(riskScore);
+        const score = opportunityStrength * feasibility * riskGate;
+        return {
+          ...row,
+          adjustedLogRatio,
+          adjustedRatio,
+          ratioScore: round(ratioScore, 1),
+          trendScore: round(trendScore, 1),
+          heatScore: round(heatScore, 1),
+          conversionScore: round(conversionScore, 1),
+          opportunityStrength: round(opportunityStrength, 1),
+          feasibility,
+          riskScore,
+          riskGate,
+          confidence,
+          score: round(score, 1)
+        };
       });
 
-      const cutoffs = getQuantileCutoffs(scoredPassed.map(row => row.score));
+      const cutoffs = getQuantileCutoffs(scoredPassed.map(row => row.score).filter(score => score > 0));
       const scored = enriched.map(row => {
-        if (!row.pass) return { ...row, growthMetric: (row.growth7 * 0.6) + (row.growth4 * 0.4), score: 0, grade: "C" };
+        if (!row.pass) {
+          const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
+          return {
+            ...row,
+            adjustedLogRatio,
+            adjustedRatio: Math.exp(adjustedLogRatio),
+            opportunityStrength: 0,
+            feasibility: 0,
+            riskScore: riskScoreFor(row),
+            riskGate: 0,
+            confidence: confidenceFor(row),
+            score: 0,
+            grade: "C"
+          };
+        }
         const scoredRow = scoredPassed.find(item => item.rawIndex === row.rawIndex);
-        return { ...scoredRow, grade: gradeFor(scoredRow.score, cutoffs) };
+        const grade = gradeFor(scoredRow.score, cutoffs);
+        return { ...scoredRow, grade: grade === "S" && scoredRow.confidence < lowConfidenceCutoff ? "A" : grade };
       });
 
       state.scored = scored;
       render();
     }
 
-    function normalizeWeights(weights) {
-      const total = Object.values(weights).reduce((sum, value) => sum + value, 0) || 1;
-      return Object.fromEntries(Object.entries(weights).map(([key, value]) => [key, value / total]));
+    function shrinkLogRatio(logRatio, search, globalLogRatio) {
+      const sampleWeight = Math.max(0, search) / (Math.max(0, search) + shrinkSearchK);
+      return globalLogRatio + (sampleWeight * (logRatio - globalLogRatio));
     }
 
-    function normalize(value, values) {
-      if (!values.length) return 0;
-      const min = Math.min(...values);
-      const max = Math.max(...values);
-      if (max === min) return 70;
-      return ((value - min) / (max - min)) * 100;
+    function percentileScore(value, values) {
+      const nums = values.filter(Number.isFinite).sort((a, b) => a - b);
+      if (!nums.length) return 0;
+      let less = 0;
+      let equal = 0;
+      nums.forEach(num => {
+        if (num < value) less += 1;
+        if (num === value) equal += 1;
+      });
+      const averageRank = ((less + 1) + (less + Math.max(equal, 1))) / 2;
+      return (averageRank / nums.length) * 100;
+    }
+
+    function saturationFor(supplyGrowth, demandGrowth) {
+      if (!Number.isFinite(supplyGrowth) || !Number.isFinite(demandGrowth)) return 1;
+      if (Math.abs(demandGrowth) < 1) return supplyGrowth > 0 ? 2 : 1;
+      if (demandGrowth <= 0 && supplyGrowth > 0) return 2;
+      return clamp(supplyGrowth / demandGrowth, -2, 4);
+    }
+
+    function feasibilityCoefficient(row, pools) {
+      const marginFit = percentileScore(row.marginSpace, pools.margin) / 100;
+      const saturationFit = percentileScore(1 - row.saturation, pools.saturationFit) / 100;
+      return round(clamp(marginFit * saturationFit, 0, 1), 2);
+    }
+
+    function riskScoreFor(row) {
+      if (row.search <= 0 || row.listings <= 0) return 100;
+      if (row.riskInput !== null && Number.isFinite(row.riskInput)) return round(clamp(row.riskInput, 0, 100), 1);
+      const competitionRisk = clamp(row.competition * 0.45, 0, 45);
+      const saturationRisk = clamp((row.saturation - 1) * 45, 0, 45);
+      const trendRisk = row.trendMetric < 0 ? clamp(Math.abs(row.trendMetric) * 1.2, 0, 20) : 0;
+      const marginRisk = row.marginSpace < 0.15 ? 15 : 0;
+      const conversionRisk = row.conversion <= 0 ? 30 : 0;
+      return round(clamp(competitionRisk + saturationRisk + trendRisk + marginRisk + conversionRisk, 0, 100), 1);
+    }
+
+    function riskGateFor(riskScore) {
+      return riskScore <= riskThreshold ? 1 : 0;
+    }
+
+    function confidenceFor(row) {
+      const sampleConfidence = Math.max(0, row.search) / (Math.max(0, row.search) + shrinkSearchK);
+      return round(clamp((sampleConfidence * 0.65) + (row.dataCompleteness * 0.35), 0, 1), 2);
+    }
+
+    function median(values) {
+      const nums = values.filter(Number.isFinite).sort((a, b) => a - b);
+      if (!nums.length) return 0;
+      const mid = Math.floor(nums.length / 2);
+      return nums.length % 2 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, Number(value) || 0));
     }
 
     function getQuantileCutoffs(scores) {
@@ -1456,6 +1591,7 @@
     }
 
     function gradeFor(score, cutoffs) {
+      if (score <= 0) return "C";
       if (score >= cutoffs.s) return "S";
       if (score >= cutoffs.a) return "A";
       if (score >= cutoffs.b) return "B";
@@ -1470,7 +1606,7 @@
       els.metricTotal.textContent = formatNumber(state.rows.length, 0);
       els.metricPassed.textContent = formatNumber(passed.length, 0);
       els.metricTop.textContent = formatNumber(top.length, 0);
-      els.metricRatio.textContent = formatNumber(avg(passed.map(row => row.ratio)), 1);
+      els.metricRatio.textContent = formatNumber(avg(passed.map(row => row.adjustedRatio)), 1);
       els.metricScore.textContent = formatNumber(avg(passed.map(row => row.score)), 1);
       els.tableMeta.textContent = `${visibleRows.length} 条`;
       els.tableTitle.textContent = state.view === "keyword" ? "机会清单" : "价格带聚合";
@@ -1512,16 +1648,16 @@
       }
 
       els.headlineKeyword.textContent = best.keyword;
-      els.headlineReason.textContent = `供需比 ${formatNumber(best.ratio, 2)}，近 7 天增长 ${formatNumber(best.growth7, 1)}%，转化率 ${formatNumber(best.conversion, 1)}%。${actionForGrade(best.grade)}`;
+      els.headlineReason.textContent = `修正供需 ${formatNumber(best.adjustedRatio, 2)}，真实热度 ${formatNumber(best.trueHeat, 2)} 倍，毛利空间 ${formatNumber(best.marginSpace * 100, 1)}%，置信度 ${formatNumber(best.confidence * 100, 0)}%。${best.confidence < lowConfidenceCutoff ? "低置信结果已降级展示。" : ""}${actionForGrade(best.grade)}`;
       els.headlineGrade.innerHTML = `<span class="big-grade grade-${best.grade.toLowerCase()}">${best.grade}</span>`;
       els.headlineScore.textContent = formatNumber(best.score, 1);
       els.headlineAction.textContent = shortActionForGrade(best.grade);
 
       els.topCards.innerHTML = topThree.map((row, index) => `
-        <article class="top-card">
+        <article class="top-card${row.confidence < lowConfidenceCutoff ? " low-confidence" : ""}">
           <div class="top-card-head">
             <span class="rank">#${index + 1}</span>
-            ${gradeBadge(row.grade)}
+            <span>${gradeBadge(row.grade)} ${confidenceBadge(row)}</span>
           </div>
           <h3>${escapeHtml(row.keyword)}</h3>
           <dl>
@@ -1530,19 +1666,19 @@
               <dd>${formatNumber(row.score, 1)}</dd>
             </div>
             <div>
-              <dt>供需比</dt>
-              <dd>${formatNumber(row.ratio, 2)}</dd>
+              <dt>机会强度</dt>
+              <dd>${formatNumber(row.opportunityStrength, 1)}</dd>
             </div>
             <div>
-              <dt>搜索量</dt>
-              <dd>${formatNumber(row.search, 0)}</dd>
+              <dt>修正供需</dt>
+              <dd>${formatNumber(row.adjustedRatio, 2)}</dd>
             </div>
             <div>
-              <dt>7天增长</dt>
-              <dd>${formatNumber(row.growth7, 1)}%</dd>
+              <dt>置信度</dt>
+              <dd>${formatNumber(row.confidence * 100, 0)}%</dd>
             </div>
           </dl>
-          <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
+          <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · 风险 ${formatNumber(row.riskScore, 0)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
           <div class="top-card-risk">${escapeHtml(validationTips(row)[0])}</div>
         </article>
       `).join("");
@@ -1570,10 +1706,12 @@
           price,
           count: items.length,
           avgScore: round(avg(items.map(item => item.score)), 1),
-          avgRatio: round(avg(items.map(item => item.ratio)), 2),
+          avgRatio: round(avg(items.map(item => item.adjustedRatio)), 2),
           avgConversion: round(avg(items.map(item => item.conversion)), 1),
+          avgConfidence: round(avg(items.map(item => item.confidence)) * 100, 0),
           topKeyword: sorted[0]?.keyword || "",
           topGrade: sorted[0]?.grade || "C",
+          topConfidence: sorted[0]?.confidence || 0,
           platforms: [...new Set(items.map(item => item.platform))].slice(0, 3).join(" / ")
         };
       }).filter(row => !query || [row.price, row.topKeyword, row.platforms, row.topGrade].join(" ").toLowerCase().includes(query));
@@ -1608,8 +1746,9 @@
                 ${th("price", "价格带")}
                 ${th("count", "词数", "num")}
                 ${th("avgScore", "均分", "num")}
-                ${th("avgRatio", "均供需比", "num")}
+                ${th("avgRatio", "均修正供需", "num")}
                 ${th("avgConversion", "均转化率", "num")}
+                ${th("avgConfidence", "均置信度", "num")}
                 ${th("topKeyword", "代表关键词")}
                 ${th("topGrade", "最高等级")}
                 ${th("platforms", "平台")}
@@ -1623,8 +1762,9 @@
                   <td class="num">${formatNumber(row.avgScore, 1)}</td>
                   <td class="num">${formatNumber(row.avgRatio, 2)}</td>
                   <td class="num">${formatNumber(row.avgConversion, 1)}%</td>
+                  <td class="num">${formatNumber(row.avgConfidence, 0)}%</td>
                   <td>${escapeHtml(row.topKeyword)}</td>
-                  <td>${gradeBadge(row.topGrade)}</td>
+                  <td>${gradeBadge(row.topGrade)} ${confidenceBadge({ confidence: row.topConfidence })}</td>
                   <td>${escapeHtml(row.platforms)}</td>
                 </tr>
               `).join("")}
@@ -1641,11 +1781,17 @@
               ${th("grade", "等级")}
               ${th("keyword", "关键词")}
               ${th("score", "综合分", "num")}
-              ${th("ratio", "供需比", "num")}
+              ${th("opportunityStrength", "机会强度", "num")}
+              ${th("adjustedRatio", "修正供需", "num")}
+              ${th("trueHeat", "真实热度", "num")}
+              ${th("trendMetric", "趋势分", "num")}
+              ${th("saturation", "饱和度", "num")}
+              ${th("marginSpace", "毛利空间", "num")}
+              ${th("feasibility", "可行性", "num")}
+              ${th("riskScore", "风险", "num")}
+              ${th("confidence", "置信度", "num")}
               ${th("search", "搜索量", "num")}
               ${th("listings", "在售数", "num")}
-              ${th("growth7", "7天增长", "num")}
-              ${th("growth4", "4周增长", "num")}
               ${th("conversion", "转化率", "num")}
               ${th("price", "价格带")}
               ${th("platform", "平台")}
@@ -1653,15 +1799,21 @@
           </thead>
           <tbody>
             ${rows.map(row => `
-              <tr>
-                <td>${gradeBadge(row.grade)}</td>
+              <tr class="${row.confidence < lowConfidenceCutoff ? "low-confidence" : ""}">
+                <td>${gradeBadge(row.grade)} ${confidenceBadge(row)}</td>
                 <td class="keyword" title="${escapeHtml(row.keyword)}">${escapeHtml(row.keyword)}</td>
                 <td class="num">${formatNumber(row.score, 1)}</td>
-                <td class="num">${formatNumber(row.ratio, 2)}</td>
+                <td class="num">${formatNumber(row.opportunityStrength, 1)}</td>
+                <td class="num">${formatNumber(row.adjustedRatio, 2)}</td>
+                <td class="num">${formatNumber(row.trueHeat, 2)}</td>
+                <td class="num">${formatNumber(row.trendMetric, 1)}</td>
+                <td class="num">${formatNumber(row.saturation, 2)}</td>
+                <td class="num">${formatNumber(row.marginSpace * 100, 1)}%</td>
+                <td class="num">${formatNumber(row.feasibility, 2)}</td>
+                <td class="num">${formatNumber(row.riskScore, 0)}</td>
+                <td class="num">${formatNumber(row.confidence * 100, 0)}%</td>
                 <td class="num">${formatNumber(row.search, 0)}</td>
                 <td class="num">${formatNumber(row.listings, 0)}</td>
-                <td class="num">${formatNumber(row.growth7, 1)}%</td>
-                <td class="num">${formatNumber(row.growth4, 1)}%</td>
                 <td class="num">${formatNumber(row.conversion, 1)}%</td>
                 <td>${escapeHtml(row.price)}</td>
                 <td>${escapeHtml(row.platform)}</td>
@@ -1737,12 +1889,14 @@
       const sRows = rows.filter(row => row.grade === "S");
       const aRows = rows.filter(row => row.grade === "A");
       const best = [...rows].sort((a, b) => b.score - a.score)[0];
-      const bestRatio = [...rows].sort((a, b) => b.ratio - a.ratio)[0];
-      const bestGrowth = [...rows].sort((a, b) => b.growthMetric - a.growthMetric)[0];
+      const bestRatio = [...rows].sort((a, b) => b.adjustedRatio - a.adjustedRatio)[0];
+      const bestTrend = [...rows].sort((a, b) => b.trendMetric - a.trendMetric)[0];
+      const lowConfidenceRows = rows.filter(row => row.confidence < lowConfidenceCutoff);
       const items = [];
-      if (best) items.push(`综合分最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}。`);
-      if (bestRatio) items.push(`供需比最高：${bestRatio.keyword}，供需比 ${formatNumber(bestRatio.ratio, 2)}。`);
-      if (bestGrowth) items.push(`趋势最强：${bestGrowth.keyword}，综合增长 ${formatNumber(bestGrowth.growthMetric, 1)}%。`);
+      if (best) items.push(`综合分最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}，风险 ${formatNumber(best.riskScore, 0)}。`);
+      if (bestRatio) items.push(`修正供需最高：${bestRatio.keyword}，修正供需 ${formatNumber(bestRatio.adjustedRatio, 2)}。`);
+      if (bestTrend) items.push(`趋势最强：${bestTrend.keyword}，趋势分 ${formatNumber(bestTrend.trendMetric, 1)}。`);
+      if (lowConfidenceRows.length) items.push(`低置信结果 ${lowConfidenceRows.length} 个，已灰显且不会进入 S 级。`);
       items.push(`当前 S 级 ${sRows.length} 个，A 级 ${aRows.length} 个，通过率 ${formatNumber(percent(rows.length, state.rows.length), 1)}%。`);
       els.insights.innerHTML = items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
     }
@@ -1762,8 +1916,12 @@
         `测算 ${row.price} 价格带下的毛利、起订量和物流成本。`,
         "用 3 张主图方向做小样测试，先验证点击和收藏。"
       ];
-      if (row.ratio >= 3) tips.unshift("供需比很高，先核验数据源，排除季节性或异常搜索。");
-      if (row.growth7 >= 40) tips.unshift("短期增长很快，优先确认趋势是否持续超过 2 周。");
+      if (row.confidence < lowConfidenceCutoff) tips.unshift("置信度偏低，先补齐季节基线、供给增速、成本或风险字段。");
+      if (row.riskScore > riskThreshold) tips.unshift("风险分超过阈值，先排查合规、供应链、季节性或竞争风险。");
+      if (row.saturation > 1) tips.unshift("饱和度大于 1，供给增速快于需求增速，需要谨慎进入。");
+      if (row.marginSpace < 0.2) tips.unshift("毛利空间偏低，先复核售价、成本、平台扣点和物流成本。");
+      if (row.adjustedRatio >= 3) tips.unshift("修正供需很高，先核验数据源，排除季节性或异常搜索。");
+      if (row.trendMetric >= 40) tips.unshift("趋势分很高，优先确认趋势是否持续超过 2 周。");
       if (row.competition >= 60) tips.unshift("竞争强度偏高，需要找材质、功能或场景差异化。");
       if (row.conversion < 3.5) tips.unshift("转化率偏低，先检查用户是否只是在搜信息而非准备购买。");
       return [...new Set(tips)].slice(0, 4);
@@ -1771,6 +1929,11 @@
 
     function gradeBadge(grade) {
       return `<span class="grade grade-${String(grade).toLowerCase()}">${grade}</span>`;
+    }
+
+    function confidenceBadge(row) {
+      if (!row || row.confidence >= lowConfidenceCutoff) return "";
+      return `<span class="badge warn">低置信</span>`;
     }
 
     function shortActionForGrade(grade) {
@@ -1796,11 +1959,12 @@
         return acc;
       }, {});
       const topText = rows.slice(0, 3).map((row, index) =>
-        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，供需比 ${formatNumber(row.ratio, 2)}，7天增长 ${formatNumber(row.growth7, 1)}%`
+        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，机会强度 ${formatNumber(row.opportunityStrength, 1)}，修正供需 ${formatNumber(row.adjustedRatio, 2)}，风险 ${formatNumber(row.riskScore, 0)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
       ).join("\n");
       return [
         "AI 选品机会摘要",
         `主推机会：${best.keyword}`,
+        `核心指标：综合分 ${formatNumber(best.score, 1)}，可行性 ${formatNumber(best.feasibility, 2)}，毛利空间 ${formatNumber(best.marginSpace * 100, 1)}%，饱和度 ${formatNumber(best.saturation, 2)}。`,
         `推荐动作：${shortActionForGrade(best.grade)}，${actionForGrade(best.grade)}`,
         `机会分布：S ${counts.S || 0} 个，A ${counts.A || 0} 个，B ${counts.B || 0} 个，C ${counts.C || 0} 个。`,
         "TOP 3：",
@@ -1844,11 +2008,11 @@
         return;
       }
       const headers = state.view === "product"
-        ? ["价格带", "词数", "平均综合分", "平均供需比", "平均转化率", "代表关键词", "最高等级", "平台", "建议动作"]
-        : ["等级", "关键词", "综合分", "供需比", "搜索量", "在售商品数", "近7天增长", "近4周增长", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
+        ? ["价格带", "词数", "平均综合分", "平均修正供需", "平均转化率", "平均置信度", "代表关键词", "最高等级", "平台", "建议动作"]
+        : ["等级", "关键词", "综合分", "机会强度", "修正供需", "真实热度", "趋势分", "饱和度", "毛利空间", "可行性系数", "风险分", "置信度", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
       const body = rows.map(row => state.view === "product"
-        ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
-        : [row.grade, row.keyword, row.score, row.ratio, row.search, row.listings, row.growth7, row.growth4, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
+        ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, `${row.avgConfidence}%`, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
+        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.adjustedRatio, row.trueHeat, row.trendMetric, row.saturation, row.marginSpace, row.feasibility, row.riskScore, row.confidence, row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
       );
       const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
