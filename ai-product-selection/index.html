@@ -966,7 +966,7 @@
         <h2>数据导入</h2>
         <div class="field">
           <label for="fileInput">Excel / CSV / TSV 文件</label>
-          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt">
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/tab-separated-values">
         </div>
         <div class="field">
           <label for="dataInput">关键词数据</label>
@@ -1042,7 +1042,7 @@
         <div class="start-empty-inner">
           <span>等待数据</span>
           <h2>上传词表后生成机会榜</h2>
-          <p>页面初始不展示样例结果。上传 CSV / TSV，或粘贴关键词数据后，系统会自动生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
+          <p>页面初始不展示样例结果。上传 Excel / CSV / TSV，或粘贴关键词数据后，系统会自动生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
         </div>
       </section>
 
@@ -1159,7 +1159,7 @@
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="xlsx.full.min.js"></script>
   <script>
     const state = {
       rows: [],
