@@ -335,6 +335,61 @@
       font-size: 14px;
     }
 
+    .processing-panel {
+      display: none;
+      gap: 10px;
+      border: 1px solid #9fc3ff;
+      border-radius: 8px;
+      background: #f5f9ff;
+      box-shadow: 0 14px 36px rgba(40, 102, 199, 0.12);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    body.is-processing .processing-panel {
+      display: grid;
+    }
+
+    body.is-processing .start-empty {
+      display: none;
+    }
+
+    .processing-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .processing-head strong {
+      color: var(--blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #dceaff;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #0ea5e9);
+      transition: width 0.22s ease;
+    }
+
+    .processing-detail {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     body:not(.has-data) .toolbar,
     body:not(.has-data) .result-stage,
     body:not(.has-data) .metrics,
@@ -1231,6 +1286,17 @@
         </div>
       </section>
 
+      <section class="processing-panel" id="processingPanel" aria-live="polite" aria-hidden="true">
+        <div class="processing-head">
+          <span id="processingTitle">正在处理数据</span>
+          <strong id="processingPercent">0%</strong>
+        </div>
+        <div class="progress-track" id="processingTrack" role="progressbar" aria-label="数据分析进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-bar" id="processingBar"></div>
+        </div>
+        <div class="processing-detail" id="processingDetail">文件已接收，正在准备分析。</div>
+      </section>
+
       <div class="toolbar">
         <div class="tabs" aria-label="分析视角">
           <button class="tab active" id="keywordTab" type="button" data-view="keyword">关键词逻辑</button>
@@ -1405,6 +1471,12 @@
       exportBtn: document.getElementById("exportBtn"),
       copySummaryBtn: document.getElementById("copySummaryBtn"),
       statusText: document.getElementById("statusText"),
+      processingPanel: document.getElementById("processingPanel"),
+      processingTitle: document.getElementById("processingTitle"),
+      processingPercent: document.getElementById("processingPercent"),
+      processingTrack: document.getElementById("processingTrack"),
+      processingBar: document.getElementById("processingBar"),
+      processingDetail: document.getElementById("processingDetail"),
       searchInput: document.getElementById("searchInput"),
       tableWrap: document.getElementById("tableWrap"),
       tableTitle: document.getElementById("tableTitle"),
@@ -1440,6 +1512,8 @@
     };
 
     let pasteTimer = 0;
+    let processingToken = 0;
+    let processingHideTimer = 0;
 
     const presets = {
       loose: {
@@ -1529,6 +1603,66 @@
     function updatePresetButtons(activeKey) {
       document.querySelectorAll("[data-preset]").forEach(button => {
         button.classList.toggle("active", button.dataset.preset === activeKey);
+      });
+    }
+
+    function beginProcessing(label) {
+      processingToken += 1;
+      clearTimeout(processingHideTimer);
+      state.rows = [];
+      state.scored = [];
+      state.query = "";
+      els.searchInput.value = "";
+      render();
+      setProcessingStage(8, "文件已接收", `${label} 上传成功，正在读取内容。`);
+      els.statusText.textContent = `${label} 已上传，正在分析...`;
+      return processingToken;
+    }
+
+    function isCurrentProcessing(token) {
+      return !token || token === processingToken;
+    }
+
+    function setProcessingStage(percent, title, detail) {
+      const safePercent = Math.round(clamp(percent, 0, 100));
+      document.body.classList.add("is-processing");
+      els.processingPanel.setAttribute("aria-hidden", "false");
+      els.processingTitle.textContent = title;
+      els.processingPercent.textContent = `${safePercent}%`;
+      els.processingTrack.setAttribute("aria-valuenow", String(safePercent));
+      els.processingBar.style.width = `${safePercent}%`;
+      els.processingDetail.textContent = detail;
+    }
+
+    function finishProcessing(token, detail) {
+      if (!isCurrentProcessing(token)) return;
+      setProcessingStage(100, "分析完成", detail);
+      clearTimeout(processingHideTimer);
+      processingHideTimer = setTimeout(() => {
+        if (!isCurrentProcessing(token)) return;
+        document.body.classList.remove("is-processing");
+        els.processingPanel.setAttribute("aria-hidden", "true");
+      }, 900);
+    }
+
+    function failProcessing(token, message) {
+      if (!isCurrentProcessing(token)) return;
+      state.rows = [];
+      state.scored = [];
+      render();
+      setProcessingStage(100, "处理未完成", message);
+      els.statusText.textContent = message;
+      clearTimeout(processingHideTimer);
+      processingHideTimer = setTimeout(() => {
+        if (!isCurrentProcessing(token)) return;
+        document.body.classList.remove("is-processing");
+        els.processingPanel.setAttribute("aria-hidden", "true");
+      }, 1800);
+    }
+
+    function waitForPaint() {
+      return new Promise(resolve => {
+        requestAnimationFrame(() => setTimeout(resolve, 0));
       });
     }
 
@@ -2308,20 +2442,25 @@
         .join("\n");
     }
 
-    function loadExcelFile(file) {
+    function loadExcelFile(file, token = beginProcessing(file.name || "Excel 文件")) {
       if (!window.XLSX) {
-        els.statusText.textContent = "Excel 解析器没有加载成功，请刷新页面后再上传。";
+        failProcessing(token, "Excel 解析器没有加载成功，请刷新页面后再上传。");
         return;
       }
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
+        if (!isCurrentProcessing(token)) return;
+        setProcessingStage(24, "文件读取完成", "正在解析 Excel 工作表。");
+        await waitForPaint();
         try {
           const workbook = XLSX.read(reader.result, { type: "array" });
           const sheetName = workbook.SheetNames[0];
           if (!sheetName) {
-            els.statusText.textContent = "这个 Excel 文件里没有可读取的工作表。";
+            failProcessing(token, "这个 Excel 文件里没有可读取的工作表。");
             return;
           }
+          setProcessingStage(38, "正在转换表格", `已找到「${sheetName}」，正在识别表头和字段。`);
+          await waitForPaint();
           const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
             header: 1,
             raw: false,
@@ -2330,31 +2469,59 @@
           });
           const text = rowsToDelimited(rows);
           if (!text.trim()) {
-            els.statusText.textContent = "这个 Excel 工作表没有识别到有效数据。";
+            failProcessing(token, "这个 Excel 工作表没有识别到有效数据。");
             return;
           }
-          loadText(text, { echoInput: false });
+          await loadText(text, { echoInput: false, sourceName: file.name || "Excel 文件", processingToken: token });
         } catch {
-          els.statusText.textContent = "Excel 文件解析失败，请确认第一张工作表是标准表格。";
+          failProcessing(token, "Excel 文件解析失败，请确认第一张工作表是标准表格。");
         }
       };
       reader.onerror = () => {
-        els.statusText.textContent = "Excel 文件读取失败，请重新选择文件。";
+        failProcessing(token, "Excel 文件读取失败，请重新选择文件。");
       };
       reader.readAsArrayBuffer(file);
     }
 
-    function loadText(text, options = {}) {
+    async function loadText(text, options = {}) {
+      const showProgress = options.showProgress !== false;
+      const token = options.processingToken || (showProgress ? beginProcessing(options.sourceName || "数据") : 0);
+      if (showProgress) {
+        setProcessingStage(48, "正在解析数据", "正在识别关键词、搜索量、在售数和评分字段。");
+        await waitForPaint();
+        if (!isCurrentProcessing(token)) return;
+      }
       const shouldEchoInput = options.echoInput !== false || text.length < 250000;
       els.dataInput.value = shouldEchoInput ? text : "";
       els.dataInput.placeholder = shouldEchoInput ? "" : "已读取大文件，未在文本框中展开，以保持页面流畅。";
-      state.rows = parseDelimited(text);
+      const rows = parseDelimited(text);
+      if (!rows.length) {
+        if (showProgress) {
+          failProcessing(token, "没有识别到有效数据。");
+        } else {
+          state.rows = [];
+          state.scored = [];
+          els.statusText.textContent = "没有识别到有效数据。";
+          render();
+        }
+        return;
+      }
+      state.rows = rows;
       state.sortKey = "score";
       state.sortDir = "desc";
+      if (showProgress) {
+        setProcessingStage(72, "正在计算评分", `已识别 ${formatNumber(state.rows.length, 0)} 条关键词，正在生成机会榜。`);
+        await waitForPaint();
+        if (!isCurrentProcessing(token)) return;
+      }
       els.statusText.textContent = state.rows.length
         ? `已读取 ${formatNumber(state.rows.length, 0)} 条关键词。${shouldEchoInput ? "" : "大文件已进入分析，文本框不展开原文。"}`
         : "没有识别到有效数据。";
       runCurrent();
+      if (showProgress) {
+        const passed = state.scored.filter(row => row.pass).length;
+        finishProcessing(token, `已完成 ${formatNumber(state.rows.length, 0)} 条关键词分析，${formatNumber(passed, 0)} 条通过当前筛选。`);
+      }
     }
 
     function avg(values) {
@@ -2521,18 +2688,34 @@
     els.fileInput.addEventListener("change", event => {
       const file = event.target.files[0];
       if (!file) return;
+      const token = beginProcessing(file.name || "数据文件");
       if (isExcelFile(file)) {
-        loadExcelFile(file);
+        loadExcelFile(file, token);
         return;
       }
       const reader = new FileReader();
-      reader.onload = () => loadText(String(reader.result || ""), { echoInput: false });
+      reader.onload = async () => {
+        if (!isCurrentProcessing(token)) return;
+        setProcessingStage(24, "文件读取完成", "正在准备解析文本数据。");
+        await waitForPaint();
+        await loadText(String(reader.result || ""), {
+          echoInput: false,
+          sourceName: file.name || "数据文件",
+          processingToken: token
+        });
+      };
+      reader.onerror = () => {
+        failProcessing(token, "文件读取失败，请重新选择文件。");
+      };
       reader.readAsText(file);
     });
 
     els.dataInput.addEventListener("input", () => {
       clearTimeout(pasteTimer);
-      pasteTimer = setTimeout(() => loadText(els.dataInput.value), 350);
+      pasteTimer = setTimeout(() => {
+        const text = els.dataInput.value;
+        loadText(text, { sourceName: "粘贴数据", showProgress: text.length > 20000 });
+      }, 350);
     });
     els.exportBtn.addEventListener("click", exportCsv);
     els.copySummaryBtn.addEventListener("click", copySummary);
