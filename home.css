@@ -171,6 +171,7 @@ a {
 }
 
 .announcement-meta,
+.announcement-actions,
 .announcement-route,
 .announcement-info,
 .announcement-fees,
@@ -182,6 +183,7 @@ a {
 
 .announcement-date,
 .announcement-tag,
+.announcement-actions span,
 .announcement-route span,
 .announcement-info div,
 .announcement-fees div,
@@ -204,6 +206,29 @@ a {
   background: var(--accent-soft);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: 0.06em;
+}
+
+.announcement-actions {
+  align-items: center;
+  margin-top: 2px;
+}
+
+.announcement-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 31px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.announcement-link:hover {
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .announcement-title {
