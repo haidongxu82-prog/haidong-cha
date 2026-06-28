@@ -287,6 +287,65 @@
       width: min(300px, 100%);
     }
 
+    .start-empty {
+      display: none;
+      min-height: calc(100vh - 40px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .start-empty-inner {
+      width: min(680px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 46px);
+      text-align: center;
+    }
+
+    .start-empty-inner span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 650;
+      margin-bottom: 14px;
+    }
+
+    .start-empty-inner h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+
+    .start-empty-inner p {
+      margin: 14px auto 0;
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    body:not(.has-data) .toolbar,
+    body:not(.has-data) .result-stage,
+    body:not(.has-data) .metrics,
+    body:not(.has-data) .workspace {
+      display: none;
+    }
+
+    body:not(.has-data) .start-empty {
+      display: flex;
+    }
+
     .result-stage {
       display: grid;
       grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.35fr);
@@ -951,6 +1010,14 @@
     </aside>
 
     <main>
+      <section class="start-empty" aria-label="等待数据">
+        <div class="start-empty-inner">
+          <span>等待数据</span>
+          <h2>上传词表后生成机会榜</h2>
+          <p>页面初始不展示样例结果。上传 CSV / TSV，或粘贴关键词数据后点击运行，系统会生成最终推荐、TOP 3 机会榜、淘汰原因和验证清单。</p>
+        </div>
+      </section>
+
       <div class="toolbar">
         <div class="tabs" aria-label="分析视角">
           <button class="tab active" id="keywordTab" type="button" data-view="keyword">关键词逻辑</button>
@@ -1403,6 +1470,7 @@
       const visibleRows = getVisibleRows();
       const passed = state.scored.filter(row => row.pass);
       const top = passed.filter(row => row.grade === "S" || row.grade === "A");
+      document.body.classList.toggle("has-data", state.rows.length > 0);
       els.metricTotal.textContent = formatNumber(state.rows.length, 0);
       els.metricPassed.textContent = formatNumber(passed.length, 0);
       els.metricTop.textContent = formatNumber(top.length, 0);
@@ -1876,7 +1944,7 @@
     });
 
     syncControls();
-    loadText(sampleData);
+    render();
   </script>
 </body>
 </html>
