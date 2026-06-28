@@ -910,7 +910,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
-      min-width: 1740px;
+      min-width: 2100px;
     }
 
     th,
@@ -1105,6 +1105,46 @@
       grid-template-columns: 18px minmax(0, 1fr);
       gap: 8px;
       align-items: start;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 76px repeat(4, minmax(46px, 1fr));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .matrix-cell {
+      min-height: 32px;
+      padding: 7px 6px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .matrix-cell:nth-child(5n) {
+      border-right: 0;
+    }
+
+    .matrix-cell.head {
+      background: #f8fafc;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .matrix-cell.warn {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .matrix-cell.pass {
+      background: var(--green-soft);
+      color: var(--green);
     }
 
     .check-dot {
@@ -1794,6 +1834,17 @@
 
           <section class="panel">
             <div class="panel-head">
+              <h2>信号相关性</h2>
+              <span>去重检查</span>
+            </div>
+            <div class="panel-body">
+              <div class="matrix-grid" id="correlationMatrix"></div>
+              <p>相关性偏高时，说明多个指标可能在重复表达同一类信号。</p>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
               <h2>验证清单</h2>
               <span id="nextStepMeta">下一步</span>
             </div>
@@ -1883,7 +1934,10 @@
       supplyGrowth: ["供给增速", "供给增长", "supplyGrowth", "supply_growth"],
       estimatedPrice: ["预估售价", "售价", "销售价", "estimatedPrice", "priceEstimate", "salePrice"],
       cost: ["成本", "预估成本", "cost", "unitCost"],
-      risk: ["风险", "风险分", "风险评分", "risk", "riskScore"]
+      risk: ["风险", "风险分", "风险评分", "risk", "riskScore"],
+      sellerCount: ["卖家数", "商家数", "sellerCount", "sellers"],
+      topSellerShare: ["头部卖家份额", "最大卖家份额", "topSellerShare", "topSeller"],
+      cr3: ["CR3", "前三卖家份额", "头部3卖家份额", "cr3"]
     };
 
     const fieldLabels = {
@@ -1903,11 +1957,15 @@
       estimatedPrice: "预估售价",
       cost: "成本",
       risk: "风险分",
-      marginSpace: "毛利空间"
+      marginSpace: "毛利空间",
+      concentration: "供给集中度",
+      sellerCount: "卖家数",
+      topSellerShare: "头部卖家份额",
+      cr3: "CR3"
     };
 
     const requiredFieldKeys = ["keyword", "search", "listings", "growth7", "growth4", "conversion"];
-    const optionalFieldKeys = ["price", "platform", "competition", "market", "seasonBaseline", "demandGrowth", "supplyGrowth", "estimatedPrice", "cost", "risk"];
+    const optionalFieldKeys = ["price", "platform", "competition", "market", "seasonBaseline", "demandGrowth", "supplyGrowth", "estimatedPrice", "cost", "risk", "sellerCount", "topSellerShare", "cr3"];
     const templateHeaders = requiredFieldKeys.concat(optionalFieldKeys).map(key => fieldLabels[key]);
 
     const els = {
@@ -1936,6 +1994,7 @@
       tableMeta: document.getElementById("tableMeta"),
       gradeChart: document.getElementById("gradeChart"),
       insights: document.getElementById("insights"),
+      correlationMatrix: document.getElementById("correlationMatrix"),
       rejectReasons: document.getElementById("rejectReasons"),
       rejectMeta: document.getElementById("rejectMeta"),
       nextSteps: document.getElementById("nextSteps"),
@@ -1979,20 +2038,72 @@
     let processingToken = 0;
     let processingHideTimer = 0;
 
-    const presets = {
-      loose: {
-        label: "宽松探索",
-        settings: { minSearch: 1000, minGrowth7: -5, minGrowth4: -10, maxListings: 120000, minRatio: 0.05 }
+    const modelConfig = {
+      presets: {
+        loose: {
+          label: "宽松探索",
+          settings: { minSearch: 1000, minGrowth7: -5, minGrowth4: -10, maxListings: 120000, minRatio: 0.05 }
+        },
+        balanced: {
+          label: "均衡推荐",
+          settings: { minSearch: 3000, minGrowth7: 5, minGrowth4: 0, maxListings: 60000, minRatio: 0.2 }
+        },
+        strict: {
+          label: "严格机会",
+          settings: { minSearch: 8000, minGrowth7: 15, minGrowth4: 20, maxListings: 30000, minRatio: 0.6 }
+        }
       },
-      balanced: {
-        label: "均衡推荐",
-        settings: { minSearch: 3000, minGrowth7: 5, minGrowth4: 0, maxListings: 60000, minRatio: 0.2 }
+      opportunityWeights: { ratio: 0.35, trend: 0.25, heat: 0.2, conversion: 0.2 },
+      trend: {
+        growth7Weight: 0.4,
+        growth4Weight: 0.6,
+        growth7WinsorPercentile: 0.95
       },
-      strict: {
-        label: "严格机会",
-        settings: { minSearch: 8000, minGrowth7: 15, minGrowth4: 20, maxListings: 30000, minRatio: 0.6 }
-      }
+      shrink: { searchK: 5000 },
+      confidence: {
+        low: 0.45,
+        high: 0.7,
+        sampleWeight: 0.65,
+        dataWeight: 0.35,
+        inferredFieldWeight: 0
+      },
+      completeness: {
+        requiredWeight: 0.7,
+        optionalWeight: 0.3
+      },
+      feasibility: {
+        marginExponent: 0.65,
+        saturationExponent: 0.65,
+        concentrationExponent: 0.45,
+        scoreAlpha: 1,
+        scoreBeta: 0.75
+      },
+      risk: {
+        gateMode: "soft",
+        hardThreshold: 60,
+        softThreshold: 60,
+        softSteepness: 0.16,
+        reviewThreshold: 48,
+        competitionWeight: 0.7,
+        competitionMax: 70
+      },
+      niche: {
+        minSearchFloor: 500,
+        ratioPercentile: 99,
+        backupRatioPercentile: 95,
+        trendPercentile: 80,
+        absoluteRatio: 1,
+        absoluteTrendPercentile: 70
+      },
+      gradeThresholds: { s: 72, a: 55, b: 35 },
+      referenceDistribution: [0, 8, 15, 22, 30, 35, 45, 55, 63, 72, 82, 100],
+      ui: { tableRenderLimit: 1000 },
+      notes: "经验默认值，后续可用真实成交/投放结果回测标定。"
     };
+
+    window.haidongModelConfig = modelConfig;
+
+    const presets = modelConfig.presets;
 
     const controlMap = {
       minSearch: "minSearch",
@@ -2010,17 +2121,9 @@
       ["minRatio", "minRatioNumber", "minRatioValue", "", 1]
     ];
 
-    const scoreWeights = {
-      ratio: 0.35,
-      trend: 0.25,
-      heat: 0.2,
-      conversion: 0.2
-    };
-
-    const shrinkSearchK = 5000;
-    const lowConfidenceCutoff = 0.45;
-    const riskThreshold = 75;
-    const tableRenderLimit = 1000;
+    const lowConfidenceCutoff = modelConfig.confidence.low;
+    const highConfidenceCutoff = modelConfig.confidence.high;
+    const tableRenderLimit = modelConfig.ui.tableRenderLimit;
     const feedbackEndpoint = "https://formsubmit.co/ajax/xu-haidong@qq.com";
     const feedbackStorageKey = "haidong-ai-product-selection-feedback-v1";
 
@@ -2244,6 +2347,9 @@
       const estimatedPriceValue = findValue(row, headers, "estimatedPrice");
       const costValue = findValue(row, headers, "cost");
       const riskValue = findValue(row, headers, "risk");
+      const sellerCountValue = findValue(row, headers, "sellerCount");
+      const topSellerShareValue = findValue(row, headers, "topSellerShare");
+      const cr3Value = findValue(row, headers, "cr3");
       const search = toNumber(searchValue);
       const listings = toNumber(listingsValue);
       const growth4 = toNumber(growth4Value);
@@ -2252,17 +2358,20 @@
       const estimatedPrice = toNumber(estimatedPriceValue);
       const cost = toNumber(costValue);
       const requiredValues = [keywordValue, searchValue, listingsValue, growth7Value, growth4Value, conversionValue];
-      const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue];
+      const optionalValues = [priceValue, platformValue, competitionValue, marketValue, seasonBaselineValue, demandGrowthValue, supplyGrowthValue, estimatedPriceValue, costValue, riskValue, sellerCountValue, topSellerShareValue, cr3Value];
       const requiredCompleteness = requiredValues.filter(hasValue).length / requiredValues.length;
       const optionalCompleteness = optionalValues.filter(hasValue).length / optionalValues.length;
+      const hasSeasonBaseline = hasValue(seasonBaselineValue) && toNumber(seasonBaselineValue) > 0;
+      const hasMarginInputs = hasValue(estimatedPriceValue) && hasValue(costValue) && estimatedPrice > 0;
       const inferredFields = [];
       if (!hasValue(competitionValue)) inferredFields.push("competition");
       if (!hasValue(marketValue)) inferredFields.push("market");
-      if (!hasValue(seasonBaselineValue)) inferredFields.push("seasonBaseline");
+      if (!hasSeasonBaseline) inferredFields.push("seasonBaseline");
       if (!hasDemandGrowth) inferredFields.push("demandGrowth");
       if (!hasSupplyGrowth) inferredFields.push("supplyGrowth");
-      if (!hasValue(estimatedPriceValue) || !hasValue(costValue) || estimatedPrice <= 0) inferredFields.push("marginSpace");
+      if (!hasMarginInputs) inferredFields.push("marginSpace");
       if (!hasValue(riskValue)) inferredFields.push("risk");
+      if (!hasValue(sellerCountValue) && !hasValue(topSellerShareValue) && !hasValue(cr3Value)) inferredFields.push("concentration");
       return {
         keyword: keywordValue,
         search,
@@ -2274,15 +2383,25 @@
         platform: platformValue || "未标注",
         competition: competitionValue === "" ? Math.min(100, Math.sqrt(Math.max(listings, 0)) / 4) : toNumber(competitionValue),
         market: marketValue === "" ? search : toNumber(marketValue),
-        seasonBaseline: hasValue(seasonBaselineValue) ? Math.max(1, toNumber(seasonBaselineValue)) : Math.max(1, search),
+        seasonBaseline: hasSeasonBaseline ? Math.max(1, toNumber(seasonBaselineValue)) : Math.max(1, search),
         demandGrowth: hasDemandGrowth ? toNumber(demandGrowthValue) : growth4,
         supplyGrowth: hasSupplyGrowth ? toNumber(supplyGrowthValue) : (hasDemandGrowth ? toNumber(demandGrowthValue) : growth4),
         estimatedPrice,
         cost,
-        marginSpace: hasValue(estimatedPriceValue) && hasValue(costValue) && estimatedPrice > 0 ? (estimatedPrice - cost) / estimatedPrice : 0.35,
+        marginSpace: hasMarginInputs ? (estimatedPrice - cost) / estimatedPrice : 0.35,
         riskInput: hasValue(riskValue) ? toNumber(riskValue) : null,
+        sellerCount: hasValue(sellerCountValue) ? toNumber(sellerCountValue) : null,
+        topSellerShare: hasValue(topSellerShareValue) ? toNumber(topSellerShareValue) : null,
+        cr3: hasValue(cr3Value) ? toNumber(cr3Value) : null,
+        fieldFlags: {
+          seasonBaselineInferred: !hasSeasonBaseline,
+          marginInferred: !hasMarginInputs,
+          conversionMissing: !hasValue(conversionValue) || toNumber(conversionValue) <= 0,
+          riskInferred: !hasValue(riskValue),
+          concentrationMissing: !hasValue(sellerCountValue) && !hasValue(topSellerShareValue) && !hasValue(cr3Value)
+        },
         inferredFields,
-        dataCompleteness: round((requiredCompleteness * 0.7) + (optionalCompleteness * 0.3), 3),
+        dataCompleteness: round((requiredCompleteness * modelConfig.completeness.requiredWeight) + (optionalCompleteness * modelConfig.completeness.optionalWeight), 3),
         rawIndex: row.rawIndex
       };
     }
@@ -2345,22 +2464,48 @@
         return;
       }
       const settings = getSettings();
-      const enriched = state.rows.map(row => {
+      const growth7Cap = quantile(state.rows.map(row => row.growth7), modelConfig.trend.growth7WinsorPercentile);
+      const baseRows = state.rows.map(row => {
         const ratio = row.listings > 0 ? row.search / row.listings : row.search;
         const logRatio = Math.log((row.search + 1) / (row.listings + 1));
-        const trueHeat = row.seasonBaseline > 0 ? row.search / row.seasonBaseline : 1;
-        const trendMetric = (0.5 * row.growth7) + (0.3 * row.growth4) + (0.2 * (row.growth7 - row.growth4));
+        const cappedGrowth7 = Number.isFinite(growth7Cap) ? Math.min(row.growth7, growth7Cap) : row.growth7;
+        const trueHeat = row.fieldFlags?.seasonBaselineInferred ? 1 : row.search / row.seasonBaseline;
+        const trendMetric = (modelConfig.trend.growth7Weight * cappedGrowth7) + (modelConfig.trend.growth4Weight * row.growth4);
         const saturation = saturationFor(row.supplyGrowth, row.demandGrowth);
         const marginSpace = clamp(row.marginSpace, -1, 1);
-        const rejectReasons = getRejectReasons(row, ratio, settings);
+        const concentrationFit = concentrationFitFor(row);
+        return { ...row, ratio, logRatio, growth7Cap, cappedGrowth7, trueHeat, trendMetric, saturation, marginSpace, concentrationFit };
+      });
+
+      const globalLogRatio = median(baseRows.map(row => row.logRatio));
+      const adjustedRows = baseRows.map(row => {
+        const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
+        return { ...row, adjustedLogRatio, adjustedRatio: Math.exp(adjustedLogRatio) };
+      });
+      const preFilterPercentiles = {
+        ratio: makePercentile(adjustedRows.map(row => row.adjustedLogRatio)),
+        trend: makePercentile(adjustedRows.map(row => row.trendMetric))
+      };
+      const enriched = adjustedRows.map(row => {
+        const preFilterRatioScore = preFilterPercentiles.ratio(row.adjustedLogRatio);
+        const preFilterTrendScore = preFilterPercentiles.trend(row.trendMetric);
+        const nichePotential = isNichePotential({ ...row, preFilterRatioScore, preFilterTrendScore }, settings);
+        const rejectReasons = getRejectReasons({ ...row, preFilterRatioScore, preFilterTrendScore, nichePotential }, settings);
         const pass = rejectReasons.length === 0;
-        return { ...row, ratio, logRatio, trueHeat, trendMetric, saturation, marginSpace, pass, rejectReasons, rejectReason: rejectReasons[0] || "通过" };
+        return {
+          ...row,
+          preFilterRatioScore,
+          preFilterTrendScore,
+          nichePotential,
+          pass,
+          rejectReasons,
+          rejectReason: rejectReasons[0] || (nichePotential ? "小众潜力" : "通过")
+        };
       });
 
       const passed = enriched.filter(row => row.pass);
-      const globalLogRatio = median(enriched.map(row => row.logRatio));
       const pools = {
-        ratio: passed.map(row => shrinkLogRatio(row.logRatio, row.search, globalLogRatio)),
+        ratio: passed.map(row => row.adjustedLogRatio),
         trend: passed.map(row => row.trendMetric),
         trueHeat: passed.map(row => row.trueHeat),
         conversion: passed.map(row => row.conversion),
@@ -2377,51 +2522,60 @@
       };
 
       const scoredPassed = passed.map(row => {
-        const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
-        const adjustedRatio = Math.exp(adjustedLogRatio);
-        const ratioScore = percentiles.ratio(adjustedLogRatio);
+        const ratioScore = percentiles.ratio(row.adjustedLogRatio);
         const trendScore = percentiles.trend(row.trendMetric);
         const heatScore = percentiles.trueHeat(row.trueHeat);
         const conversionScore = percentiles.conversion(row.conversion);
+        const opportunityContrib = {
+          ratio: ratioScore * modelConfig.opportunityWeights.ratio,
+          trend: trendScore * modelConfig.opportunityWeights.trend,
+          heat: heatScore * modelConfig.opportunityWeights.heat,
+          conversion: conversionScore * modelConfig.opportunityWeights.conversion
+        };
         const opportunityStrength =
-          (ratioScore * scoreWeights.ratio) +
-          (trendScore * scoreWeights.trend) +
-          (heatScore * scoreWeights.heat) +
-          (conversionScore * scoreWeights.conversion);
-        const feasibility = feasibilityCoefficient(row, percentiles);
+          opportunityContrib.ratio +
+          opportunityContrib.trend +
+          opportunityContrib.heat +
+          opportunityContrib.conversion;
+        const feasibilityParts = feasibilityCoefficient(row, percentiles);
         const confidence = confidenceFor(row);
-        const riskScore = riskScoreFor(row);
-        const riskGate = riskGateFor(riskScore);
-        const score = opportunityStrength * feasibility * riskGate;
+        const risk = riskAssessmentFor(row);
+        const riskGate = riskGateFor(risk.score);
+        const score = compositeScore(opportunityStrength, feasibilityParts.value, riskGate);
         return {
           ...row,
-          adjustedLogRatio,
-          adjustedRatio,
           ratioScore: round(ratioScore, 1),
           trendScore: round(trendScore, 1),
           heatScore: round(heatScore, 1),
           conversionScore: round(conversionScore, 1),
+          opportunityContrib: roundObject(opportunityContrib, 1),
           opportunityStrength: round(opportunityStrength, 1),
-          feasibility,
-          riskScore,
+          feasibility: feasibilityParts.value,
+          feasibilityParts,
+          riskScore: risk.score,
+          riskReasons: risk.reasons,
+          riskReview: risk.review,
+          riskDataFlags: risk.dataFlags,
           riskGate,
           confidence,
           score: round(score, 1)
         };
       });
 
-      const cutoffs = getQuantileCutoffs(scoredPassed.map(row => row.score).filter(score => score > 0));
       const scoredByIndex = new Map(scoredPassed.map(row => [row.rawIndex, row]));
       const scored = enriched.map(row => {
         if (!row.pass) {
-          const adjustedLogRatio = shrinkLogRatio(row.logRatio, row.search, globalLogRatio);
+          const risk = riskAssessmentFor(row);
           return {
             ...row,
-            adjustedLogRatio,
-            adjustedRatio: Math.exp(adjustedLogRatio),
             opportunityStrength: 0,
+            opportunityContrib: { ratio: 0, trend: 0, heat: 0, conversion: 0 },
             feasibility: 0,
-            riskScore: riskScoreFor(row),
+            feasibilityParts: { value: 0, marginFit: 0, saturationFit: 0, concentrationFit: row.concentrationFit || 1 },
+            riskScore: risk.score,
+            riskReasons: risk.reasons,
+            riskReview: risk.review,
+            riskDataFlags: risk.dataFlags,
             riskGate: 0,
             confidence: confidenceFor(row),
             score: 0,
@@ -2429,8 +2583,7 @@
           };
         }
         const scoredRow = scoredByIndex.get(row.rawIndex);
-        const grade = gradeFor(scoredRow.score, cutoffs);
-        return { ...scoredRow, grade: grade === "S" && scoredRow.confidence < lowConfidenceCutoff ? "A" : grade };
+        return { ...scoredRow, grade: gradeWithConfidence(gradeFor(scoredRow.score), scoredRow.confidence) };
       });
 
       state.scored = scored;
@@ -2438,7 +2591,7 @@
     }
 
     function shrinkLogRatio(logRatio, search, globalLogRatio) {
-      const sampleWeight = Math.max(0, search) / (Math.max(0, search) + shrinkSearchK);
+      const sampleWeight = Math.max(0, search) / (Math.max(0, search) + modelConfig.shrink.searchK);
       return globalLogRatio + (sampleWeight * (logRatio - globalLogRatio));
     }
 
@@ -2483,6 +2636,13 @@
       return low;
     }
 
+    function quantile(values, q) {
+      const nums = values.filter(Number.isFinite).sort((a, b) => a - b);
+      if (!nums.length) return 0;
+      const index = Math.min(nums.length - 1, Math.max(0, Math.floor((nums.length - 1) * q)));
+      return nums[index];
+    }
+
     function saturationFor(supplyGrowth, demandGrowth) {
       if (!Number.isFinite(supplyGrowth) || !Number.isFinite(demandGrowth)) return 1;
       if (Math.abs(demandGrowth) < 1) return supplyGrowth > 0 ? 2 : 1;
@@ -2493,27 +2653,90 @@
     function feasibilityCoefficient(row, percentiles) {
       const marginFit = percentiles.margin(row.marginSpace) / 100;
       const saturationFit = percentiles.saturationFit(1 - row.saturation) / 100;
-      return round(clamp(marginFit * saturationFit, 0, 1), 2);
+      const concentrationFit = row.concentrationFit ?? 1;
+      const value = clamp(
+        boundedPower(marginFit, modelConfig.feasibility.marginExponent) *
+        boundedPower(saturationFit, modelConfig.feasibility.saturationExponent) *
+        boundedPower(concentrationFit, modelConfig.feasibility.concentrationExponent),
+        0,
+        1
+      );
+      return {
+        marginFit: round(marginFit, 2),
+        saturationFit: round(saturationFit, 2),
+        concentrationFit: round(concentrationFit, 2),
+        value: round(value, 2)
+      };
     }
 
-    function riskScoreFor(row) {
-      if (row.search <= 0 || row.listings <= 0) return 100;
-      if (row.riskInput !== null && Number.isFinite(row.riskInput)) return round(clamp(row.riskInput, 0, 100), 1);
-      const competitionRisk = clamp(row.competition * 0.45, 0, 45);
-      const saturationRisk = clamp((row.saturation - 1) * 45, 0, 45);
-      const trendRisk = row.trendMetric < 0 ? clamp(Math.abs(row.trendMetric) * 1.2, 0, 20) : 0;
-      const marginRisk = row.marginSpace < 0.15 ? 15 : 0;
-      const conversionRisk = row.conversion <= 0 ? 30 : 0;
-      return round(clamp(competitionRisk + saturationRisk + trendRisk + marginRisk + conversionRisk, 0, 100), 1);
+    function boundedPower(value, exponent) {
+      return Math.pow(clamp(value, 0, 1), exponent);
+    }
+
+    function concentrationFitFor(row) {
+      const shares = [row.topSellerShare, row.cr3]
+        .filter(value => Number.isFinite(value))
+        .map(value => value > 1 ? value / 100 : value)
+        .map(value => clamp(value, 0, 1));
+      const sellerRisk = Number.isFinite(row.sellerCount) && row.sellerCount > 0
+        ? clamp(1 - (row.sellerCount / 50), 0, 0.8)
+        : 0;
+      const concentrationRisk = Math.max(0, sellerRisk, ...shares);
+      if (!concentrationRisk) return 1;
+      return round(clamp(1 - concentrationRisk, 0.2, 1), 2);
+    }
+
+    function riskAssessmentFor(row) {
+      const reasons = [];
+      const dataFlags = [];
+      if (row.search <= 0 || row.listings <= 0) {
+        return {
+          score: 100,
+          reasons: ["搜索量或在售数缺失，先复核数据源"],
+          review: true,
+          dataFlags: ["核心数据缺失"]
+        };
+      }
+      if (row.fieldFlags?.conversionMissing) dataFlags.push("转化率缺失或为 0");
+      if (row.riskInput !== null && Number.isFinite(row.riskInput)) {
+        const score = round(clamp(row.riskInput, 0, 100), 1);
+        if (score >= modelConfig.risk.hardThreshold) reasons.push("上传风险分超过阈值");
+        else if (score >= modelConfig.risk.reviewThreshold) reasons.push("上传风险分接近阈值");
+        return {
+          score,
+          reasons: reasons.length ? reasons : ["使用上传风险分"],
+          review: score >= modelConfig.risk.reviewThreshold,
+          dataFlags
+        };
+      }
+      const competitionRisk = clamp(row.competition * modelConfig.risk.competitionWeight, 0, modelConfig.risk.competitionMax);
+      if (competitionRisk >= modelConfig.risk.reviewThreshold) reasons.push("竞争强度偏高，需要人工复核同质化");
+      else reasons.push("未提供风险分，使用竞争强度近似");
+      return {
+        score: round(clamp(competitionRisk, 0, 100), 1),
+        reasons,
+        review: competitionRisk >= modelConfig.risk.reviewThreshold,
+        dataFlags
+      };
     }
 
     function riskGateFor(riskScore) {
-      return riskScore <= riskThreshold ? 1 : 0;
+      if (modelConfig.risk.gateMode === "hard") return riskScore <= modelConfig.risk.hardThreshold ? 1 : 0;
+      return round(1 / (1 + Math.exp(modelConfig.risk.softSteepness * (riskScore - modelConfig.risk.softThreshold))), 2);
+    }
+
+    function compositeScore(opportunityStrength, feasibility, riskGate) {
+      return Math.pow(Math.max(0, opportunityStrength), modelConfig.feasibility.scoreAlpha) *
+        boundedPower(feasibility, modelConfig.feasibility.scoreBeta) *
+        riskGate;
     }
 
     function confidenceFor(row) {
-      const sampleConfidence = Math.max(0, row.search) / (Math.max(0, row.search) + shrinkSearchK);
-      return round(clamp((sampleConfidence * 0.65) + (row.dataCompleteness * 0.35), 0, 1), 2);
+      const sampleConfidence = Math.max(0, row.search) / (Math.max(0, row.search) + modelConfig.shrink.searchK);
+      const inferredCount = (row.inferredFields || []).length;
+      const inferredPenalty = inferredCount * (1 - modelConfig.confidence.inferredFieldWeight) * 0.015;
+      const dataCompleteness = clamp(row.dataCompleteness - inferredPenalty, 0, 1);
+      return round(clamp((sampleConfidence * modelConfig.confidence.sampleWeight) + (dataCompleteness * modelConfig.confidence.dataWeight), 0, 1), 2);
     }
 
     function median(values) {
@@ -2527,22 +2750,34 @@
       return Math.min(max, Math.max(min, Number(value) || 0));
     }
 
-    function getQuantileCutoffs(scores) {
-      if (!scores.length) return { s: 80, a: 65, b: 50 };
-      const sorted = [...scores].sort((a, b) => b - a);
-      return {
-        s: sorted[Math.max(0, Math.ceil(sorted.length * 0.05) - 1)] ?? 80,
-        a: sorted[Math.max(0, Math.ceil(sorted.length * 0.20) - 1)] ?? 65,
-        b: sorted[Math.max(0, Math.ceil(sorted.length * 0.50) - 1)] ?? 50
-      };
+    function referencePositionFor(score) {
+      return percentileScore(score, modelConfig.referenceDistribution);
     }
 
-    function gradeFor(score, cutoffs) {
+    function gradeFor(score) {
       if (score <= 0) return "C";
-      if (score >= cutoffs.s) return "S";
-      if (score >= cutoffs.a) return "A";
-      if (score >= cutoffs.b) return "B";
+      if (score >= modelConfig.gradeThresholds.s) return "S";
+      if (score >= modelConfig.gradeThresholds.a) return "A";
+      if (score >= modelConfig.gradeThresholds.b) return "B";
       return "C";
+    }
+
+    function gradeWithConfidence(grade, confidence) {
+      if (confidence >= lowConfidenceCutoff) return grade;
+      if (grade === "S" || grade === "A") return "B";
+      return grade;
+    }
+
+    function isNichePotential(row, settings) {
+      if (row.search >= settings.minSearch || row.search < modelConfig.niche.minSearchFloor) return false;
+      if (row.preFilterRatioScore >= modelConfig.niche.ratioPercentile) return true;
+      if (row.adjustedRatio >= modelConfig.niche.absoluteRatio && row.preFilterTrendScore >= modelConfig.niche.absoluteTrendPercentile) return true;
+      return row.preFilterRatioScore >= modelConfig.niche.backupRatioPercentile &&
+        row.preFilterTrendScore >= modelConfig.niche.trendPercentile;
+    }
+
+    function roundObject(obj, digits) {
+      return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, round(value, digits)]));
     }
 
     function render() {
@@ -2566,6 +2801,7 @@
       renderRejectReasons(state.scored);
       renderTrustPanel(passed);
       renderInsights(passed);
+      renderCorrelationMatrix(passed);
       renderNextSteps(passed);
       syncOpenDetail();
       bindDetailTriggers();
@@ -2630,29 +2866,34 @@
     }
 
     function renderTrustPanel(rows) {
-      const high = rows.filter(row => row.confidence >= 0.7).length;
-      const mid = rows.filter(row => row.confidence >= lowConfidenceCutoff && row.confidence < 0.7).length;
+      const high = rows.filter(row => row.confidence >= highConfidenceCutoff).length;
+      const mid = rows.filter(row => row.confidence >= lowConfidenceCutoff && row.confidence < highConfidenceCutoff).length;
       const low = rows.filter(row => row.confidence < lowConfidenceCutoff).length;
-      const riskBlocked = state.scored.filter(row => row.pass && row.riskGate === 0).length;
+      const riskBlocked = state.scored.filter(row => row.pass && row.riskGate <= 0.15).length;
+      const riskReview = state.scored.filter(row => row.pass && row.riskReview);
       els.trustMeta.textContent = rows.length ? `${formatNumber(rows.length, 0)} 个通过词` : "实时";
       const items = [];
       if (!state.rows.length) {
         items.push({ level: "", text: "导入数据后显示可信度和风险分布。" });
       } else {
         items.push({ level: high ? "pass" : "", text: `高置信机会 ${formatNumber(high, 0)} 个，中置信 ${formatNumber(mid, 0)} 个，低置信 ${formatNumber(low, 0)} 个。` });
-        if (low) items.push({ level: "warn", text: "低置信结果已灰显，且不会进入 S 级。建议补齐搜索量、季节基线、供给增速、成本或风险字段。" });
-        if (riskBlocked) items.push({ level: "fail", text: `${formatNumber(riskBlocked, 0)} 个词被风险闸门拦截，先排查合规、供应链或竞争风险。` });
-        if (!low && !riskBlocked) items.push({ level: "pass", text: "当前通过词没有明显低置信或风险闸门问题。" });
+        if (low) items.push({ level: "warn", text: "低置信结果已灰显，且不会进入 S/A。建议补齐搜索量、季节基线、供给增速、成本或风险字段。" });
+        if (riskBlocked) items.push({ level: "fail", text: `${formatNumber(riskBlocked, 0)} 个词被风险闸门拦截，先排查合规、侵权、同质化或竞争风险。` });
+        if (riskReview.length) {
+          const preview = riskReview.slice(0, 3).map(row => `${row.keyword}(${formatNumber(row.riskScore, 0)})`).join("、");
+          items.push({ level: "warn", text: `风险待复核 ${formatNumber(riskReview.length, 0)} 个：${preview}。` });
+        }
+        if (!low && !riskBlocked && !riskReview.length) items.push({ level: "pass", text: "当前通过词没有明显低置信或风险待复核问题。" });
       }
       els.trustList.innerHTML = items.map(item => `<div class="trust-item ${item.level}">${escapeHtml(item.text)}</div>`).join("");
     }
 
-    function getRejectReasons(row, ratio, settings) {
+    function getRejectReasons(row, settings) {
       const reasons = [];
-      if (row.search < settings.minSearch) reasons.push("搜索量低");
-      if (row.growth7 < settings.minGrowth7 || row.growth4 < settings.minGrowth4) reasons.push("趋势不足");
+      if (row.search < settings.minSearch && !row.nichePotential) reasons.push("搜索量低");
+      if (row.cappedGrowth7 < settings.minGrowth7 || row.growth4 < settings.minGrowth4) reasons.push("趋势不足");
       if (row.listings > settings.maxListings) reasons.push("在售过多");
-      if (ratio < settings.minRatio) reasons.push("供需比低");
+      if (row.adjustedRatio < settings.minRatio) reasons.push("修正供需低");
       return reasons;
     }
 
@@ -2661,8 +2902,11 @@
       const best = sorted[0];
       const topThree = sorted.slice(0, 3);
       const topCount = rows.filter(row => row.grade === "S" || row.grade === "A").length;
+      const water = batchWatermark(rows);
 
-      els.topListMeta.textContent = rows.length ? `${topCount} 个 S/A 机会` : "按综合分排序";
+      els.topListMeta.textContent = rows.length
+        ? `${topCount} 个 S/A · 中位 ${formatNumber(water.medianScore, 1)} · 基准水位 ${formatNumber(water.referencePercentile, 0)}%`
+        : "按综合分排序";
 
       if (!best) {
         els.headlineKeyword.textContent = state.rows.length ? "暂无通过筛选的机会" : "等待数据";
@@ -2708,10 +2952,19 @@
               <dd>${formatNumber(row.confidence * 100, 0)}%</dd>
             </div>
           </dl>
-          <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · 风险 ${formatNumber(row.riskScore, 0)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
+          <div class="top-card-action">${escapeHtml(row.price)} · ${escapeHtml(row.platform)} · 风险 ${formatNumber(row.riskScore, 0)} · 闸门 ${formatNumber(row.riskGate, 2)} · ${escapeHtml(shortActionForGrade(row.grade))}</div>
           <div class="top-card-risk">${escapeHtml(validationTips(row)[0])}</div>
         </article>
       `).join("");
+    }
+
+    function batchWatermark(rows) {
+      const scores = rows.map(row => row.score).filter(score => score > 0);
+      const medianScore = median(scores);
+      return {
+        medianScore,
+        referencePercentile: referencePositionFor(medianScore)
+      };
     }
 
     function getVisibleRows() {
@@ -2820,7 +3073,9 @@
               ${th("marginSpace", "毛利空间", "num")}
               ${th("feasibility", "可行性", "num")}
               ${th("riskScore", "风险", "num")}
+              ${th("riskGate", "闸门", "num")}
               ${th("confidence", "置信度", "num")}
+              <th>标签</th>
               <th>推荐理由</th>
               ${th("search", "搜索量", "num")}
               ${th("listings", "在售数", "num")}
@@ -2843,7 +3098,9 @@
                 <td class="num">${formatNumber(row.marginSpace * 100, 1)}%</td>
                 <td class="num">${formatNumber(row.feasibility, 2)}</td>
                 <td class="num">${formatNumber(row.riskScore, 0)}</td>
+                <td class="num">${formatNumber(row.riskGate, 2)}</td>
                 <td class="num">${formatNumber(row.confidence * 100, 0)}%</td>
+                <td>${escapeHtml(rowLabels(row))}</td>
                 <td class="reason-cell">${escapeHtml(recommendationReason(row))}</td>
                 <td class="num">${formatNumber(row.search, 0)}</td>
                 <td class="num">${formatNumber(row.listings, 0)}</td>
@@ -2925,13 +3182,51 @@
       const bestRatio = [...rows].sort((a, b) => b.adjustedRatio - a.adjustedRatio)[0];
       const bestTrend = [...rows].sort((a, b) => b.trendMetric - a.trendMetric)[0];
       const lowConfidenceRows = rows.filter(row => row.confidence < lowConfidenceCutoff);
+      const water = batchWatermark(rows);
       const items = [];
       if (best) items.push(`综合分最高：${best.keyword}，${best.grade} 级，分数 ${formatNumber(best.score, 1)}，风险 ${formatNumber(best.riskScore, 0)}。`);
       if (bestRatio) items.push(`修正供需最高：${bestRatio.keyword}，修正供需 ${formatNumber(bestRatio.adjustedRatio, 2)}。`);
       if (bestTrend) items.push(`趋势最强：${bestTrend.keyword}，趋势分 ${formatNumber(bestTrend.trendMetric, 1)}。`);
       if (lowConfidenceRows.length) items.push(`低置信结果 ${lowConfidenceRows.length} 个，已灰显且不会进入 S 级。`);
+      if (rows.length) items.push(`本批综合分中位数 ${formatNumber(water.medianScore, 1)}，位于基准分布约 ${formatNumber(water.referencePercentile, 0)}% 水位。`);
       items.push(`当前 S 级 ${sRows.length} 个，A 级 ${aRows.length} 个，通过率 ${formatNumber(percent(rows.length, state.rows.length), 1)}%。`);
       els.insights.innerHTML = items.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function renderCorrelationMatrix(rows) {
+      if (!els.correlationMatrix) return;
+      if (!rows.length) {
+        els.correlationMatrix.innerHTML = `<div class="matrix-cell head">等待</div><div class="matrix-cell">导入数据</div>`;
+        return;
+      }
+      const signals = [
+        ["供需", row => row.ratioScore],
+        ["趋势", row => row.trendScore],
+        ["热度", row => row.heatScore],
+        ["转化", row => row.conversionScore]
+      ];
+      const cells = [`<div class="matrix-cell head">信号</div>`]
+        .concat(signals.map(([label]) => `<div class="matrix-cell head">${escapeHtml(label)}</div>`));
+      signals.forEach(([rowLabel, rowGetter]) => {
+        cells.push(`<div class="matrix-cell head">${escapeHtml(rowLabel)}</div>`);
+        signals.forEach(([, colGetter]) => {
+          const value = pearson(rows.map(rowGetter), rows.map(colGetter));
+          const className = Math.abs(value) >= 0.75 && Math.abs(value) < 0.999 ? " warn" : " pass";
+          cells.push(`<div class="matrix-cell${className}">${formatNumber(value, 2)}</div>`);
+        });
+      });
+      els.correlationMatrix.innerHTML = cells.join("");
+    }
+
+    function pearson(xs, ys) {
+      const pairs = xs.map((x, index) => [x, ys[index]]).filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
+      if (pairs.length < 2) return 0;
+      const xAvg = avg(pairs.map(([x]) => x));
+      const yAvg = avg(pairs.map(([, y]) => y));
+      const numerator = pairs.reduce((sum, [x, y]) => sum + ((x - xAvg) * (y - yAvg)), 0);
+      const xDen = Math.sqrt(pairs.reduce((sum, [x]) => sum + ((x - xAvg) ** 2), 0));
+      const yDen = Math.sqrt(pairs.reduce((sum, [, y]) => sum + ((y - yAvg) ** 2), 0));
+      return xDen && yDen ? clamp(numerator / (xDen * yDen), -1, 1) : 0;
     }
 
     function renderNextSteps(rows) {
@@ -2955,14 +3250,15 @@
       if (row.marginSpace >= 0.3) pieces.push("毛利空间较足");
       else if (row.marginSpace < 0.15) pieces.push("毛利偏低");
       if (row.saturation > 1) pieces.push("供给增速偏快");
-      if (row.riskGate === 0) pieces.push("风险闸门拦截");
+      if (row.riskGate < 0.5) pieces.push("风险闸门压分");
       if (row.confidence < lowConfidenceCutoff) pieces.push("置信度偏低");
+      if (row.nichePotential) pieces.push("小众潜力");
       return `${pieces.slice(0, 4).join("，")}。`;
     }
 
     function confidenceLevel(row) {
       if (!row || row.confidence < lowConfidenceCutoff) return { label: "低置信", className: "warn" };
-      if (row.confidence < 0.7) return { label: "中置信", className: "info" };
+      if (row.confidence < highConfidenceCutoff) return { label: "中置信", className: "info" };
       return { label: "高置信", className: "pass" };
     }
 
@@ -2973,8 +3269,9 @@
         `测算 ${row.price} 价格带下的毛利、起订量和物流成本。`,
         "用 3 张主图方向做小样测试，先验证点击和收藏。"
       ];
+      if (row.nichePotential) tips.unshift("小众潜力：搜索量未达默认线，但修正供需或趋势处在本批高位，适合小规模验证。");
       if (row.confidence < lowConfidenceCutoff) tips.unshift("置信度偏低，先补齐季节基线、供给增速、成本或风险字段。");
-      if (row.riskScore > riskThreshold) tips.unshift("风险分超过阈值，先排查合规、供应链、季节性或竞争风险。");
+      if (row.riskScore >= modelConfig.risk.reviewThreshold) tips.unshift("风险进入复核区，先排查合规、侵权、同质化或竞争风险。");
       if (row.saturation > 1) tips.unshift("饱和度大于 1，供给增速快于需求增速，需要谨慎进入。");
       if (row.marginSpace < 0.2) tips.unshift("毛利空间偏低，先复核售价、成本、平台扣点和物流成本。");
       if (row.adjustedRatio >= 3) tips.unshift("修正供需很高，先核验数据源，排除季节性或异常搜索。");
@@ -2992,6 +3289,17 @@
       if (!row) return "";
       const level = confidenceLevel(row);
       return `<span class="badge ${level.className}">${level.label}</span>`;
+    }
+
+    function rowLabels(row) {
+      const labels = [];
+      if (row.nichePotential) labels.push("小众潜力");
+      if (row.riskReview) labels.push("风险待复核");
+      if (row.confidence < lowConfidenceCutoff) labels.push("低置信");
+      if (row.fieldFlags?.seasonBaselineInferred) labels.push("热度中性回退");
+      if (row.fieldFlags?.marginInferred) labels.push("毛利推算");
+      if (row.fieldFlags?.concentrationMissing) labels.push("集中度缺失");
+      return labels.join(" / ");
     }
 
     function bindDetailTriggers() {
@@ -3034,6 +3342,9 @@
     function renderDetail(row) {
       els.detailTitle.textContent = row.keyword;
       const tips = validationTips(row);
+      const feasibility = row.feasibilityParts || {};
+      const riskReasons = row.riskReasons?.length ? row.riskReasons : ["无明显风险复核项"];
+      const dataFlags = row.riskDataFlags?.length ? row.riskDataFlags : ["无明显数据缺失标记"];
       els.detailContent.innerHTML = `
         <div class="detail-score-grid">
           ${detailScore("等级", row.grade)}
@@ -3041,18 +3352,35 @@
           ${detailScore("机会强度", formatNumber(row.opportunityStrength, 1))}
           ${detailScore("置信度", `${formatNumber(row.confidence * 100, 0)}%`)}
           ${detailScore("风险分", formatNumber(row.riskScore, 0))}
-          ${detailScore("可行性", formatNumber(row.feasibility, 2))}
+          ${detailScore("风险闸门", formatNumber(row.riskGate, 2))}
         </div>
         <section class="detail-section">
           <h3>为什么推荐</h3>
           <div class="issue-item">${escapeHtml(recommendationReason(row))}</div>
         </section>
         <section class="detail-section">
+          <h3>分数分解</h3>
+          <ul class="detail-list">
+            <li class="issue-item">综合分 = 机会强度 ${formatNumber(row.opportunityStrength, 1)} × 可行性 ${formatNumber(row.feasibility, 2)}^${modelConfig.feasibility.scoreBeta} × 风险闸门 ${formatNumber(row.riskGate, 2)}。</li>
+            <li class="issue-item">机会贡献：供需 ${formatNumber(row.opportunityContrib?.ratio || 0, 1)}，趋势 ${formatNumber(row.opportunityContrib?.trend || 0, 1)}，热度 ${formatNumber(row.opportunityContrib?.heat || 0, 1)}，转化 ${formatNumber(row.opportunityContrib?.conversion || 0, 1)}。</li>
+            <li class="issue-item">可行性：毛利适配 ${formatNumber(feasibility.marginFit || 0, 2)}，饱和适配 ${formatNumber(feasibility.saturationFit || 0, 2)}，集中度适配 ${formatNumber(feasibility.concentrationFit ?? 1, 2)}，最终 ${formatNumber(row.feasibility, 2)}。</li>
+            <li class="issue-item">置信度：搜索量样本 + 字段完整度共同计算；低置信结果不能进入 S/A。</li>
+          </ul>
+        </section>
+        <section class="detail-section">
           <h3>核心数据</h3>
           <ul class="detail-list">
             <li class="issue-item">搜索量 ${formatNumber(row.search, 0)}，在售数 ${formatNumber(row.listings, 0)}，修正供需 ${formatNumber(row.adjustedRatio, 2)}。</li>
-            <li class="issue-item">真实热度 ${formatNumber(row.trueHeat, 2)} 倍，趋势分 ${formatNumber(row.trendMetric, 1)}，饱和度 ${formatNumber(row.saturation, 2)}。</li>
-            <li class="issue-item">毛利空间 ${formatNumber(row.marginSpace * 100, 1)}%，转化率 ${formatNumber(row.conversion, 1)}%，价格带 ${escapeHtml(row.price)}。</li>
+            <li class="issue-item">真实热度 ${formatNumber(row.trueHeat, 2)} 倍，趋势分 ${formatNumber(row.trendMetric, 1)}，7 天增长截断值 ${formatNumber(row.cappedGrowth7, 1)}。</li>
+            <li class="issue-item">饱和度 ${formatNumber(row.saturation, 2)}，毛利空间 ${formatNumber(row.marginSpace * 100, 1)}%，转化率 ${formatNumber(row.conversion, 1)}%。</li>
+            <li class="issue-item">价格带 ${escapeHtml(row.price)}，平台 ${escapeHtml(row.platform)}，标签 ${escapeHtml(rowLabels(row) || "无")}。</li>
+          </ul>
+        </section>
+        <section class="detail-section">
+          <h3>风险与数据标记</h3>
+          <ul class="detail-list">
+            ${riskReasons.map(reason => `<li class="issue-item">${escapeHtml(reason)}</li>`).join("")}
+            ${dataFlags.map(flag => `<li class="issue-item warn">${escapeHtml(flag)}</li>`).join("")}
           </ul>
         </section>
         <section class="detail-section">
@@ -3095,13 +3423,15 @@
         acc[row.grade] = (acc[row.grade] || 0) + 1;
         return acc;
       }, {});
+      const water = batchWatermark(rows);
       const topText = rows.slice(0, 3).map((row, index) =>
-        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，${recommendationReason(row)}风险 ${formatNumber(row.riskScore, 0)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
+        `${index + 1}. ${row.keyword}：${row.grade} 级，综合分 ${formatNumber(row.score, 1)}，${recommendationReason(row)}风险 ${formatNumber(row.riskScore, 0)}，闸门 ${formatNumber(row.riskGate, 2)}，置信度 ${formatNumber(row.confidence * 100, 0)}%`
       ).join("\n");
       return [
         "AI 选品机会摘要",
         `主推机会：${best.keyword}`,
         `核心指标：综合分 ${formatNumber(best.score, 1)}，可行性 ${formatNumber(best.feasibility, 2)}，毛利空间 ${formatNumber(best.marginSpace * 100, 1)}%，饱和度 ${formatNumber(best.saturation, 2)}。`,
+        `本批水位：中位数 ${formatNumber(water.medianScore, 1)}，基准位置 ${formatNumber(water.referencePercentile, 0)}%。`,
         `推荐动作：${shortActionForGrade(best.grade)}，${actionForGrade(best.grade)}`,
         `机会分布：S ${counts.S || 0} 个，A ${counts.A || 0} 个，B ${counts.B || 0} 个，C ${counts.C || 0} 个。`,
         "TOP 3：",
@@ -3141,8 +3471,8 @@
     function downloadTemplate() {
       const sampleRows = [
         templateHeaders,
-        ["防晒冰袖", 26000, 18000, 28, 35, 6.8, "20-39", "抖音", 42, 26000, 19000, 34, 18, 39, 16, 28],
-        ["宠物除毛刷", 18000, 12000, 16, 22, 5.4, "30-59", "天猫", 36, 18000, 15000, 24, 15, 59, 24, 32]
+        ["防晒冰袖", 26000, 18000, 28, 35, 6.8, "20-39", "抖音", 42, 26000, 19000, 34, 18, 39, 16, 28, 120, 18, 42],
+        ["宠物除毛刷", 18000, 12000, 16, 22, 5.4, "30-59", "天猫", 36, 18000, 15000, 24, 15, 59, 24, 32, 86, 22, 48]
       ];
       if (window.XLSX) {
         const workbook = XLSX.utils.book_new();
@@ -3165,6 +3495,8 @@
       }
       const audit = state.dataAudit;
       const failed = state.scored.filter(row => !row.pass);
+      const water = batchWatermark(rows);
+      const riskReview = rows.filter(row => row.riskReview);
       const reasonCounts = failed.reduce((acc, row) => {
         acc[row.rejectReason || "其他"] = (acc[row.rejectReason || "其他"] || 0) + 1;
         return acc;
@@ -3191,10 +3523,17 @@
         "二、TOP 10 机会",
         ...(topLines.length ? topLines : ["当前阈值下暂无通过筛选的机会。"]),
         "",
-        "三、淘汰原因",
+        "三、本批水位",
+        `综合分中位数：${formatNumber(water.medianScore, 1)}`,
+        `基准分布位置：${formatNumber(water.referencePercentile, 0)}%`,
+        "",
+        "四、风险待复核",
+        ...(riskReview.length ? riskReview.slice(0, 10).map(row => `${row.keyword}：风险 ${formatNumber(row.riskScore, 0)}，${(row.riskReasons || []).join("、")}`) : ["当前无风险待复核项。"]),
+        "",
+        "五、淘汰原因",
         ...(rejectLines.length ? rejectLines : ["当前阈值下没有淘汰项。"]),
         "",
-        "四、下一步验证",
+        "六、下一步验证",
         ...(best ? validationTips(best).map((tip, index) => `${index + 1}. ${tip}`) : ["先放宽筛选阈值或补齐关键字段。"]),
         "",
         "说明：本报告由浏览器本地计算生成，建议结合竞品、供应链、合规和真实投放数据复核。"
@@ -3211,10 +3550,10 @@
       }
       const headers = state.view === "product"
         ? ["价格带", "词数", "平均综合分", "平均修正供需", "平均转化率", "平均置信度", "代表关键词", "最高等级", "平台", "建议动作"]
-        : ["等级", "关键词", "综合分", "机会强度", "修正供需", "真实热度", "趋势分", "饱和度", "毛利空间", "可行性系数", "风险分", "置信度", "推荐理由", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
+        : ["等级", "关键词", "综合分", "机会强度", "供需贡献", "趋势贡献", "热度贡献", "转化贡献", "修正供需", "真实热度", "趋势分", "7天截断值", "饱和度", "毛利空间", "可行性系数", "毛利适配", "饱和适配", "集中度适配", "风险分", "风险闸门", "风险原因", "置信度", "标签", "推荐理由", "搜索量", "在售商品数", "转化率", "价格带", "平台", "推荐动作", "验证重点"];
       const body = rows.map(row => state.view === "product"
         ? [row.price, row.count, row.avgScore, row.avgRatio, row.avgConversion, `${row.avgConfidence}%`, row.topKeyword, row.topGrade, row.platforms, shortActionForGrade(row.topGrade)]
-        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.adjustedRatio, row.trueHeat, row.trendMetric, row.saturation, row.marginSpace, row.feasibility, row.riskScore, row.confidence, recommendationReason(row), row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
+        : [row.grade, row.keyword, row.score, row.opportunityStrength, row.opportunityContrib?.ratio, row.opportunityContrib?.trend, row.opportunityContrib?.heat, row.opportunityContrib?.conversion, row.adjustedRatio, row.trueHeat, row.trendMetric, row.cappedGrowth7, row.saturation, row.marginSpace, row.feasibility, row.feasibilityParts?.marginFit, row.feasibilityParts?.saturationFit, row.feasibilityParts?.concentrationFit, row.riskScore, row.riskGate, (row.riskReasons || []).join(" / "), row.confidence, rowLabels(row), recommendationReason(row), row.search, row.listings, row.conversion, row.price, row.platform, shortActionForGrade(row.grade), validationTips(row)[0]]
       );
       const csv = [headers, ...body].map(line => line.map(csvEscape).join(",")).join("\n");
       downloadBlob(state.view === "product" ? "产品逻辑聚合.csv" : "AI选品机会清单.csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
