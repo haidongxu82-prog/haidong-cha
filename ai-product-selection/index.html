@@ -657,6 +657,36 @@
       overflow-wrap: anywhere;
     }
 
+    .stage-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stage-actions .btn {
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      min-height: 36px;
+    }
+
+    .stage-actions .btn:hover {
+      border-color: rgba(255, 255, 255, 0.72);
+      color: #fff;
+    }
+
+    .stage-actions .btn.primary {
+      background: #fff;
+      border-color: #fff;
+      color: #172231;
+    }
+
+    .stage-actions .btn.primary:hover {
+      background: #eef4ff;
+      border-color: #eef4ff;
+      color: #172231;
+    }
+
     .stage-board {
       background: #fbfcff;
       color: var(--text);
@@ -1489,8 +1519,13 @@
       }
 
       .stage-stats,
+      .stage-actions,
       .top-cards {
         grid-template-columns: 1fr;
+      }
+
+      .stage-actions {
+        display: grid;
       }
 
       .actions {
@@ -1646,6 +1681,11 @@
               <label>推荐动作</label>
               <strong id="headlineAction">待计算</strong>
             </div>
+          </div>
+          <div class="stage-actions" aria-label="结果操作">
+            <button class="btn primary" id="jumpTableBtn" type="button">查看明细</button>
+            <button class="btn" id="stageCopyBtn" type="button">复制摘要</button>
+            <button class="btn" id="stageReportBtn" type="button">导出报告</button>
           </div>
         </div>
 
@@ -1871,12 +1911,18 @@
     const templateHeaders = requiredFieldKeys.concat(optionalFieldKeys).map(key => fieldLabels[key]);
 
     const els = {
+      main: document.querySelector("main"),
+      resultStage: document.querySelector(".result-stage"),
+      workspace: document.querySelector(".workspace"),
       fileInput: document.getElementById("fileInput"),
       dataInput: document.getElementById("dataInput"),
       templateBtn: document.getElementById("templateBtn"),
       exportBtn: document.getElementById("exportBtn"),
       reportBtn: document.getElementById("reportBtn"),
       copySummaryBtn: document.getElementById("copySummaryBtn"),
+      jumpTableBtn: document.getElementById("jumpTableBtn"),
+      stageCopyBtn: document.getElementById("stageCopyBtn"),
+      stageReportBtn: document.getElementById("stageReportBtn"),
       statusText: document.getElementById("statusText"),
       processingPanel: document.getElementById("processingPanel"),
       processingTitle: document.getElementById("processingTitle"),
@@ -2041,6 +2087,25 @@
       }, {});
     }
 
+    function scrollMainTo(target, behavior = "smooth") {
+      const scroller = els.main;
+      if (!scroller) return;
+      const top = target ? Math.max(0, target.offsetTop - 8) : 0;
+      scroller.scrollTo({ top, behavior });
+    }
+
+    function showResultTop(behavior = "smooth") {
+      requestAnimationFrame(() => scrollMainTo(els.resultStage, behavior));
+    }
+
+    function jumpToDetails() {
+      if (!state.rows.length) {
+        els.statusText.textContent = "请先上传数据。";
+        return;
+      }
+      scrollMainTo(els.workspace, "smooth");
+    }
+
     function beginProcessing(label) {
       processingToken += 1;
       clearTimeout(processingHideTimer);
@@ -2053,6 +2118,7 @@
       closeDetail();
       setProcessingStage(8, "文件已接收", `${label} 上传成功，正在读取内容。`);
       render();
+      scrollMainTo(null, "auto");
       els.statusText.textContent = `${label} 已上传，正在分析...`;
       return processingToken;
     }
@@ -2080,6 +2146,7 @@
         if (!isCurrentProcessing(token)) return;
         document.body.classList.remove("is-processing");
         els.processingPanel.setAttribute("aria-hidden", "true");
+        showResultTop("smooth");
       }, 900);
     }
 
@@ -3468,6 +3535,9 @@
     els.exportBtn.addEventListener("click", exportCsv);
     els.reportBtn.addEventListener("click", exportReport);
     els.copySummaryBtn.addEventListener("click", copySummary);
+    els.jumpTableBtn.addEventListener("click", jumpToDetails);
+    els.stageCopyBtn.addEventListener("click", copySummary);
+    els.stageReportBtn.addEventListener("click", exportReport);
     els.feedbackOpenBtn.addEventListener("click", () => setFeedbackOpen(true));
     els.feedbackCloseBtn.addEventListener("click", () => setFeedbackOpen(false));
     els.feedbackCtaBtn.addEventListener("click", () => setFeedbackOpen(true));
