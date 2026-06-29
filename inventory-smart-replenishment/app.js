@@ -9,7 +9,7 @@ const DEFAULT_WAREHOUSES = [
   "济南仓",
 ];
 
-const TEMPLATE_CSV = `SKU ID,SKU 名称,品类,季节款标记,主图文件,当前库龄分级,在途库存,历史累计销量,历史销售额,单日峰值销量,下单排期,工厂生产,物流运输,仓库上架,整装单位,起发量,近7天销量,近30天销量,北京仓当前库存,北京仓近28天出库量,北京仓近28天有货天数,北京仓历史销售占比,上海仓当前库存,上海仓近28天出库量,上海仓近28天有货天数,上海仓历史销售占比,广州仓当前库存,广州仓近28天出库量,广州仓近28天有货天数,广州仓历史销售占比,成都仓当前库存,成都仓近28天出库量,成都仓近28天有货天数,成都仓历史销售占比,武汉仓当前库存,武汉仓近28天出库量,武汉仓近28天有货天数,武汉仓历史销售占比,西安仓当前库存,西安仓近28天出库量,西安仓近28天有货天数,西安仓历史销售占比,沈阳仓当前库存,沈阳仓近28天出库量,沈阳仓近28天有货天数,沈阳仓历史销售占比,济南仓当前库存,济南仓近28天出库量,济南仓近28天有货天数,济南仓历史销售占比`;
+const TEMPLATE_CSV = `SKU ID,SKU 名称,品类,季节款标记,主图文件,当前库龄分级,在途库存,缺货量,历史累计销量,历史销售额,单日峰值销量,日需求标准差,下单排期,工厂生产,物流运输,仓库上架,整装单位,起发量,近7天销量,近30天销量,北京仓当前库存,北京仓近28天出库量,北京仓近28天有货天数,北京仓日需求标准差,北京仓在途库存,北京仓缺货量,北京仓历史销售占比,上海仓当前库存,上海仓近28天出库量,上海仓近28天有货天数,上海仓日需求标准差,上海仓在途库存,上海仓缺货量,上海仓历史销售占比,广州仓当前库存,广州仓近28天出库量,广州仓近28天有货天数,广州仓日需求标准差,广州仓在途库存,广州仓缺货量,广州仓历史销售占比,成都仓当前库存,成都仓近28天出库量,成都仓近28天有货天数,成都仓日需求标准差,成都仓在途库存,成都仓缺货量,成都仓历史销售占比,武汉仓当前库存,武汉仓近28天出库量,武汉仓近28天有货天数,武汉仓日需求标准差,武汉仓在途库存,武汉仓缺货量,武汉仓历史销售占比,西安仓当前库存,西安仓近28天出库量,西安仓近28天有货天数,西安仓日需求标准差,西安仓在途库存,西安仓缺货量,西安仓历史销售占比,沈阳仓当前库存,沈阳仓近28天出库量,沈阳仓近28天有货天数,沈阳仓日需求标准差,沈阳仓在途库存,沈阳仓缺货量,沈阳仓历史销售占比,济南仓当前库存,济南仓近28天出库量,济南仓近28天有货天数,济南仓日需求标准差,济南仓在途库存,济南仓缺货量,济南仓历史销售占比`;
 
 const FIELD_ALIASES = {
   skuId: ["SKU ID", "SKU_ID", "SKU编号", "SKU 编号", "SKU编码", "商品编码", "货号", "sku"],
@@ -20,14 +20,16 @@ const FIELD_ALIASES = {
   ageGrade: ["库龄分级", "当前库龄分级", "库龄等级", "库存等级"],
   ageDays: ["库龄天数", "最大库龄天数", "最长库龄", "入库天数"],
   transit: ["在途库存", "在途数量", "在途"],
+  backorder: ["缺货量", "欠交量", "未满足需求", "缺口订单", "缺货订单"],
   historicalSales: ["历史累计销量", "累计销量", "历史销量"],
   historicalRevenue: ["历史销售额", "累计销售额", "销售额"],
   peakDailySales: ["单日峰值销量", "峰值销量", "单日最高销量", "单日爆发销量"],
+  demandStd: ["日需求标准差", "日销量标准差", "需求标准差", "销量标准差", "日出库标准差", "标准差"],
   leadOrder: ["下单排期", "下单天数", "排期天数"],
   leadProduction: ["工厂生产", "生产天数", "工厂生产天数"],
   leadLogistics: ["物流运输", "运输天数", "物流天数"],
   leadInbound: ["仓库上架", "上架天数", "入仓上架天数"],
-  safetyDays: ["安全周期", "目标天数", "目标库存天数", "补货目标天数"],
+  safetyDays: ["提前期", "总提前期", "补货提前期", "安全周期", "目标天数", "目标库存天数", "补货目标天数", "lead time"],
   packUnit: ["整装单位", "装箱单位", "整装数量"],
   minShipment: ["起发量", "最低起发量", "最小发货量"],
   sales7: ["近7天销量", "近7日销量", "7天销量"],
@@ -38,16 +40,20 @@ const WH_KEYWORDS = {
   stock: ["当前库存", "可售库存", "现货库存", "库存数量", "库存"],
   sales28: ["近28天出库量", "近28日出库量", "28天出库量", "28日出库量", "近28天销量", "近28日销量", "28天销量"],
   availableDays: ["近28天有货天数", "近28日有货天数", "有货天数"],
+  demandStd: ["日需求标准差", "日销量标准差", "需求标准差", "销量标准差", "日出库标准差", "标准差"],
   share: ["历史销售占比", "销售占比", "占比"],
   transit: ["在途库存", "在途数量", "在途"],
+  backorder: ["缺货量", "欠交量", "未满足需求", "缺口订单", "缺货订单"],
 };
 
 const WH_EXCLUDES = {
   stock: ["库存天数", "库龄", "在途", "占比"],
   sales28: ["有货天数", "库存", "库存天数", "占比"],
   availableDays: ["出库", "销量", "库存"],
+  demandStd: ["库存", "有货", "占比"],
   share: ["库存", "出库", "销量", "有货"],
   transit: ["库存天数", "占比"],
+  backorder: ["库存天数", "占比"],
 };
 
 const state = {
@@ -113,14 +119,17 @@ function bindEvents() {
   });
 
   [
-    "thresholdDays",
+    "reviewCycleDays",
     "defaultSafetyDays",
+    "serviceLevelA",
+    "serviceLevelB",
+    "serviceLevelC",
     "hotThreshold",
     "potentialThreshold",
     "peakThreshold",
     "defaultPackUnit",
     "useAvailableDays",
-    "subtractTransit",
+    "includeTransit",
     "warehouses",
   ].forEach((id) => {
     $(id).addEventListener("input", () => {
@@ -217,27 +226,33 @@ function readSettings() {
 
   return {
     warehouses: warehouses.length ? warehouses : DEFAULT_WAREHOUSES,
-    thresholdDays: positiveNumber($("thresholdDays").value, 15),
+    reviewCycleDays: positiveNumber($("reviewCycleDays").value, 7),
     defaultSafetyDays: positiveNumber($("defaultSafetyDays").value, 60),
+    serviceLevelA: clampNumber(positiveNumber($("serviceLevelA").value, 95), 80, 99),
+    serviceLevelB: clampNumber(positiveNumber($("serviceLevelB").value, 90), 80, 99),
+    serviceLevelC: clampNumber(positiveNumber($("serviceLevelC").value, 85), 70, 99),
     hotThreshold: positiveNumber($("hotThreshold").value, 1000),
     potentialThreshold: positiveNumber($("potentialThreshold").value, 500),
     peakThreshold: positiveNumber($("peakThreshold").value, 100),
     defaultPackUnit: positiveNumber($("defaultPackUnit").value, 200),
     useAvailableDays: $("useAvailableDays").checked,
-    subtractTransit: $("subtractTransit").checked,
+    includeTransit: $("includeTransit").checked,
   };
 }
 
 function persistSettings() {
   const settings = {
-    thresholdDays: $("thresholdDays").value,
+    reviewCycleDays: $("reviewCycleDays").value,
     defaultSafetyDays: $("defaultSafetyDays").value,
+    serviceLevelA: $("serviceLevelA").value,
+    serviceLevelB: $("serviceLevelB").value,
+    serviceLevelC: $("serviceLevelC").value,
     hotThreshold: $("hotThreshold").value,
     potentialThreshold: $("potentialThreshold").value,
     peakThreshold: $("peakThreshold").value,
     defaultPackUnit: $("defaultPackUnit").value,
     useAvailableDays: $("useAvailableDays").checked,
-    subtractTransit: $("subtractTransit").checked,
+    includeTransit: $("includeTransit").checked,
     warehouses: $("warehouses").value,
   };
   localStorage.setItem("replenishment.settings", JSON.stringify(settings));
@@ -270,9 +285,11 @@ function normalizeRecord(row, index, settings) {
   const ageGrade = textValue(pick(row, FIELD_ALIASES.ageGrade));
   const ageDays = toNumber(pick(row, FIELD_ALIASES.ageDays));
   const totalTransit = toNumber(pick(row, FIELD_ALIASES.transit));
+  const totalBackorder = toNumber(pick(row, FIELD_ALIASES.backorder));
   const historicalSales = toNumber(pick(row, FIELD_ALIASES.historicalSales));
   const historicalRevenue = toNumber(pick(row, FIELD_ALIASES.historicalRevenue));
   const peakDailySales = toNumber(pick(row, FIELD_ALIASES.peakDailySales));
+  const globalDemandStd = toNumber(pick(row, FIELD_ALIASES.demandStd));
   const leadDays = [
     toNumber(pick(row, FIELD_ALIASES.leadOrder)),
     toNumber(pick(row, FIELD_ALIASES.leadProduction)),
@@ -281,7 +298,8 @@ function normalizeRecord(row, index, settings) {
   ];
   const safetyFromRow = toNumber(pick(row, FIELD_ALIASES.safetyDays));
   const leadSum = leadDays.reduce((sum, value) => sum + value, 0);
-  const safetyDays = safetyFromRow || leadSum || settings.defaultSafetyDays;
+  const leadTimeDays = leadSum || safetyFromRow || settings.defaultSafetyDays;
+  const protectionPeriodDays = settings.reviewCycleDays + leadTimeDays;
   const packUnit = toNumber(pick(row, FIELD_ALIASES.packUnit)) || toNumber(pick(row, FIELD_ALIASES.minShipment)) || settings.defaultPackUnit;
   const sales7 = toNumber(pick(row, FIELD_ALIASES.sales7));
   const sales30 = toNumber(pick(row, FIELD_ALIASES.sales30));
@@ -294,41 +312,72 @@ function normalizeRecord(row, index, settings) {
     const stock = toNumber(pickWarehouse(row, name, "stock"));
     const sales28 = toNumber(pickWarehouse(row, name, "sales28"));
     const availableDays = toNumber(pickWarehouse(row, name, "availableDays"));
+    const demandStdRaw = toNumber(pickWarehouse(row, name, "demandStd"));
     const shareRaw = toRatio(pickWarehouse(row, name, "share"));
     const transit = toNumber(pickWarehouse(row, name, "transit"));
-    return { name, stock, sales28, availableDays, shareRaw, transit };
+    const backorder = toNumber(pickWarehouse(row, name, "backorder"));
+    const daysBase = settings.useAvailableDays && availableDays > 0 ? availableDays : 28;
+    const dailyAvg = sales28 > 0 ? sales28 / daysBase : 0;
+    const censoredDailyAvg = sales28 > 0 ? sales28 / 28 : 0;
+    return { name, stock, sales28, availableDays, demandStdRaw, shareRaw, transit, backorder, dailyAvg, censoredDailyAvg };
   });
 
   const shareSum = initialWarehouses.reduce((sum, item) => sum + item.shareRaw, 0);
-  const salesSum = initialWarehouses.reduce((sum, item) => sum + item.sales28, 0);
+  const demandShareSum = initialWarehouses.reduce((sum, item) => sum + item.dailyAvg, 0);
+  const totalDailyAvgBase = demandShareSum;
+  const totalEstimatedStd = estimateDemandStd(totalDailyAvgBase, sales7, sales30, 28);
+  const abcClass = historicalSales >= settings.hotThreshold ? "A" : historicalSales >= settings.potentialThreshold ? "B" : "C";
+  const totalDemandStd = globalDemandStd || totalEstimatedStd;
+  const totalCv = totalDailyAvgBase > 0 ? totalDemandStd / totalDailyAvgBase : 0;
+  const xyzClass = classifyXyz(totalCv);
+  const servicePolicy = servicePolicyFor(abcClass, xyzClass, settings);
 
   const warehouses = initialWarehouses.map((item) => {
-    const share = shareSum > 0 ? item.shareRaw / shareSum : salesSum > 0 ? item.sales28 / salesSum : 1 / initialWarehouses.length;
-    const daysBase = settings.useAvailableDays && item.availableDays > 0 ? item.availableDays : 28;
-    const dailyAvg = item.sales28 > 0 ? item.sales28 / daysBase : 0;
+    const share =
+      demandShareSum > 0 ? item.dailyAvg / demandShareSum : shareSum > 0 ? item.shareRaw / shareSum : 1 / initialWarehouses.length;
+    const dailyAvg = item.dailyAvg;
     const stockDays = dailyAvg > 0 ? item.stock / dailyAvg : item.stock > 0 ? 999 : 0;
-    const transitDeduction = settings.subtractTransit ? item.transit || totalTransit * share : 0;
-    const targetStock = safetyDays * dailyAvg;
-    const rawNeed = !excluded && stockDays < settings.thresholdDays ? Math.max(0, targetStock - item.stock - transitDeduction) : 0;
+    const demandStd = item.demandStdRaw || (globalDemandStd ? globalDemandStd * Math.sqrt(share) : estimateDemandStd(dailyAvg, sales7, sales30, item.availableDays));
+    const safetyStock = servicePolicy.z * demandStd * Math.sqrt(protectionPeriodDays);
+    const rop = dailyAvg * leadTimeDays + safetyStock;
+    const allocatedTransit = item.transit || totalTransit * share;
+    const allocatedBackorder = item.backorder || totalBackorder * share;
+    const inventoryPosition = item.stock + (settings.includeTransit ? allocatedTransit : 0) - allocatedBackorder;
+    const orderUpTo = dailyAvg * protectionPeriodDays + safetyStock;
+    const rawNeed = !excluded && inventoryPosition <= rop ? Math.max(0, orderUpTo - inventoryPosition) : 0;
     const roundedNeed = roundToPack(rawNeed, packUnit);
+    const demandRealism = item.censoredDailyAvg > 0 && dailyAvg > 0 ? dailyAvg / item.censoredDailyAvg : 1;
     return {
       ...item,
       share,
       dailyAvg,
+      demandStd,
+      safetyStock,
+      rop,
+      allocatedTransit,
+      allocatedBackorder,
+      inventoryPosition,
+      orderUpTo,
       stockDays,
-      transitDeduction,
       rawNeed,
       roundedNeed,
+      demandRealism,
+      serviceLevel: servicePolicy.level,
+      serviceZ: servicePolicy.z,
     };
   });
 
   const totalStock = warehouses.reduce((sum, item) => sum + item.stock, 0);
   const totalSales28 = warehouses.reduce((sum, item) => sum + item.sales28, 0);
   const totalDailyAvg = warehouses.reduce((sum, item) => sum + item.dailyAvg, 0);
+  const totalSafetyStock = warehouses.reduce((sum, item) => sum + item.safetyStock, 0);
+  const totalInventoryPosition = warehouses.reduce((sum, item) => sum + item.inventoryPosition, 0);
+  const totalRop = warehouses.reduce((sum, item) => sum + item.rop, 0);
   const nationalStockDays = totalDailyAvg > 0 ? totalStock / totalDailyAvg : totalStock > 0 ? 999 : 0;
   const totalRecommended = warehouses.reduce((sum, item) => sum + item.roundedNeed, 0);
   const triggeredWarehouses = warehouses.filter((item) => item.roundedNeed > 0);
   const layer = historicalSales >= settings.hotThreshold ? "爆款" : historicalSales >= settings.potentialThreshold ? "潜力款" : "观察款";
+  const strategyLabel = buildStrategyLabel(abcClass, xyzClass);
   const trend = buildTrend(sales7, sales30);
   const wake = buildWakeSignal({
     warehouses,
@@ -354,10 +403,14 @@ function normalizeRecord(row, index, settings) {
     ageDays,
     isC1,
     totalTransit,
+    totalBackorder,
     historicalSales,
     historicalRevenue,
     peakDailySales,
-    safetyDays,
+    safetyDays: leadTimeDays,
+    leadTimeDays,
+    reviewCycleDays: settings.reviewCycleDays,
+    protectionPeriodDays,
     packUnit,
     sales7,
     sales30,
@@ -366,11 +419,21 @@ function normalizeRecord(row, index, settings) {
     totalStock,
     totalSales28,
     totalDailyAvg,
+    totalDemandStd,
+    totalCv,
+    totalSafetyStock,
+    totalInventoryPosition,
+    totalRop,
     nationalStockDays,
     totalRecommended,
     triggered: triggeredWarehouses.length > 0,
     triggeredWarehouses,
     layer,
+    abcClass,
+    xyzClass,
+    serviceLevel: servicePolicy.level,
+    serviceZ: servicePolicy.z,
+    strategyLabel,
     wake,
   };
 }
@@ -386,6 +449,50 @@ function buildTrend(sales7, sales30) {
   if (ratio >= 1.15) return { label: "上升", className: "green", ratio };
   if (ratio <= 0.85) return { label: "下降", className: "amber", ratio };
   return { label: "平稳", className: "blue", ratio };
+}
+
+function estimateDemandStd(dailyAvg, sales7, sales30, availableDays) {
+  if (dailyAvg <= 0) return 0;
+  const weeklyDaily = sales7 > 0 ? sales7 / 7 : 0;
+  const monthlyDaily = sales30 > 0 ? sales30 / 30 : 0;
+  const trendSwing = weeklyDaily > 0 && monthlyDaily > 0 ? Math.abs(weeklyDaily - monthlyDaily) : 0;
+  const baseline = dailyAvg * 0.35;
+  const stockoutMultiplier = availableDays > 0 && availableDays < 28 ? 1.25 : 1;
+  return Math.max(baseline, trendSwing) * stockoutMultiplier;
+}
+
+function classifyXyz(cv) {
+  if (cv <= 0.5) return "X";
+  if (cv <= 1) return "Y";
+  return "Z";
+}
+
+function servicePolicyFor(abcClass, xyzClass, settings) {
+  let level = abcClass === "A" ? settings.serviceLevelA : abcClass === "B" ? settings.serviceLevelB : settings.serviceLevelC;
+  if (abcClass === "A" && xyzClass === "Z") level = Math.max(level, 95);
+  if (abcClass === "C" && xyzClass === "Z") level = Math.min(level, 80);
+  return { level, z: zForServiceLevel(level) };
+}
+
+function zForServiceLevel(level) {
+  const table = [
+    [70, 0.52],
+    [75, 0.67],
+    [80, 0.84],
+    [85, 1.04],
+    [90, 1.28],
+    [95, 1.65],
+    [97, 1.88],
+    [99, 2.33],
+  ];
+  return table.reduce((best, item) => (Math.abs(item[0] - level) < Math.abs(best[0] - level) ? item : best), table[0])[1];
+}
+
+function buildStrategyLabel(abcClass, xyzClass) {
+  if (abcClass === "A" && xyzClass === "X") return "A-X 爆款稳定";
+  if (abcClass === "A" && xyzClass === "Z") return "A-Z 爆款波动";
+  if (abcClass === "C" && xyzClass === "Z") return "C-Z 长尾波动";
+  return `${abcClass}-${xyzClass}`;
 }
 
 function buildWakeSignal(input) {
@@ -463,7 +570,7 @@ function renderKpis() {
 
   $("dataStatus").textContent = records.length ? `${records.length} 条` : "等待导入";
   $("runSummary").textContent = records.length
-    ? `当前有 ${triggered.length} 个 SKU 需要补货，建议补 ${formatNumber(totalNeed)} 双；请优先处理页面上方的补货提醒。`
+    ? `当前有 ${triggered.length} 个 SKU 库存位低于 ROP，建议补 ${formatNumber(totalNeed)} 双；请优先处理页面上方的补货提醒。`
     : "导入底表后，最需要补货的 SKU 会优先显示在页面上方。";
 }
 
@@ -492,7 +599,7 @@ function renderUrgentPanel() {
     panel.innerHTML = `
       <div class="urgent-empty good">
         <strong>暂无需要立即补货的 SKU</strong>
-        <span>当前底表没有低于触发阈值的仓库，继续按日/周更新底表观察。</span>
+        <span>当前底表没有库存位低于 ROP 的仓库，继续按日/周更新底表观察。</span>
       </div>
     `;
     return;
@@ -504,7 +611,7 @@ function renderUrgentPanel() {
       <div>
         <span class="urgent-eyebrow">补货提醒</span>
         <h3>${formatNumber(urgentRecords.length)} 个 SKU 需要补货</h3>
-        <p>建议补货 ${formatNumber(totalNeed)} 双，按库存天数最短的 SKU 优先处理。</p>
+        <p>建议补货 ${formatNumber(totalNeed)} 双，按库存位低于 ROP 的紧急程度优先处理。</p>
       </div>
       <button id="viewUrgentRows" class="primary-button" type="button">
         <i data-lucide="bell-ring"></i>
@@ -536,14 +643,16 @@ function getUrgentRecords() {
     .sort((a, b) => {
       const aMinDays = Math.min(...a.triggeredWarehouses.map((item) => item.stockDays));
       const bMinDays = Math.min(...b.triggeredWarehouses.map((item) => item.stockDays));
-      return aMinDays - bMinDays || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales;
+      const aGap = Math.min(...a.triggeredWarehouses.map((item) => item.inventoryPosition - item.rop));
+      const bGap = Math.min(...b.triggeredWarehouses.map((item) => item.inventoryPosition - item.rop));
+      return aGap - bGap || aMinDays - bMinDays || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales;
     });
 }
 
 function urgentCard(record) {
   const mostUrgent = record.triggeredWarehouses
     .slice()
-    .sort((a, b) => a.stockDays - b.stockDays || b.roundedNeed - a.roundedNeed)[0];
+    .sort((a, b) => a.inventoryPosition - a.rop - (b.inventoryPosition - b.rop) || b.roundedNeed - a.roundedNeed)[0];
   const warehouseText = record.triggeredWarehouses
     .slice(0, 3)
     .map((item) => `${item.name} ${formatNumber(item.roundedNeed)}双`)
@@ -565,12 +674,12 @@ function urgentCard(record) {
           <strong>${formatNumber(record.totalRecommended)} 双</strong>
         </div>
         <div>
-          <small>最短库存</small>
-          <strong>${formatDays(mostUrgent?.stockDays || 0)}</strong>
+          <small>库存位 / ROP</small>
+          <strong>${formatNumber(mostUrgent?.inventoryPosition || 0)} / ${formatNumber(mostUrgent?.rop || 0)}</strong>
         </div>
       </div>
       <div class="urgent-warehouses">
-        <span>${escapeHtml(mostUrgent?.name || "-")} 最急</span>
+        <span>${escapeHtml(mostUrgent?.name || "-")} 最急 · 安全库存 ${formatNumber(mostUrgent?.safetyStock || 0)} 双</span>
         <p>${escapeHtml(warehouseText || "-")}</p>
       </div>
     </article>
@@ -624,13 +733,14 @@ function filteredRecords() {
 
 function buildReplenishmentTable() {
   const records = filteredRecords().sort((a, b) => Number(b.triggered) - Number(a.triggered) || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales);
-  const headers = ["SKU", "层级", "当前库存", "全国库存天数", "销量趋势", "补货标识", "建议补货", "重点仓", "库龄"];
+  const headers = ["SKU", "分级", "当前库存", "库存位", "ROP", "安全库存", "补货标识", "建议补货", "重点仓", "库龄"];
   const rows = records.map((record) => [
     `${record.skuName} (${record.skuId})`,
-    record.layer,
+    `${record.layer} / ${record.strategyLabel}`,
     `${formatNumber(record.totalStock)} 双`,
-    formatDays(record.nationalStockDays),
-    record.trend.label,
+    `${formatNumber(record.totalInventoryPosition)} 双`,
+    `${formatNumber(record.totalRop)} 双`,
+    `${formatNumber(record.totalSafetyStock)} 双`,
     record.excluded ? "季节款排除" : record.triggered ? "触发" : "未触发",
     `${formatNumber(record.totalRecommended)} 双`,
     record.triggeredWarehouses.map((item) => `${item.name}${formatNumber(item.roundedNeed)}`).join(" / ") || "-",
@@ -639,11 +749,12 @@ function buildReplenishmentTable() {
   const htmlRows = records.map((record) => `
     <tr>
       <td>${skuCell(record)}</td>
-      <td>${pill(record.layer, record.layer === "爆款" ? "green" : record.layer === "潜力款" ? "blue" : "gray")}</td>
+      <td>${pill(record.strategyLabel, record.abcClass === "A" ? "green" : record.abcClass === "B" ? "blue" : "gray")}</td>
       <td>${formatNumber(record.totalStock)} 双</td>
-      <td>${formatDays(record.nationalStockDays)}</td>
-      <td>${pill(record.trend.label, record.trend.className)}</td>
-      <td>${record.excluded ? pill("季节款排除", "gray") : record.triggered ? pill("触发补货", "amber") : pill("未触发", "green")}</td>
+      <td>${formatNumber(record.totalInventoryPosition)} 双</td>
+      <td>${formatNumber(record.totalRop)} 双</td>
+      <td>${formatNumber(record.totalSafetyStock)} 双</td>
+      <td>${record.excluded ? pill("季节款排除", "gray") : record.triggered ? pill("库存位≤ROP", "amber") : pill("未触发", "green")}</td>
       <td class="num-strong">${formatNumber(record.totalRecommended)} 双</td>
       <td>${escapeHtml(record.triggeredWarehouses.slice(0, 4).map((item) => `${item.name} ${formatNumber(item.roundedNeed)}双`).join("，") || "-")}</td>
       <td>${record.isC1 ? pill("C1", "red") : escapeHtml(record.ageGrade || "-")}</td>
@@ -711,18 +822,23 @@ function buildOpsTable() {
         .map((wh) => ({ record, wh }))
     )
     .sort((a, b) => b.wh.roundedNeed - a.wh.roundedNeed);
-  const headers = ["SKU ID", "款名", "仓库", "当前库存", "近28天出库", "日均出库", "库存天数", "原始缺口", "整装建议", "安全周期"];
+  const headers = ["SKU ID", "款名", "仓库", "当前库存", "在途", "缺货量", "库存位", "ROP", "安全库存", "Order-up-to S", "去截断日均", "需求标准差", "原始缺口", "整装建议", "提前期"];
   const rows = details.map(({ record, wh }) => [
     record.skuId,
     record.skuName,
     wh.name,
     formatNumber(wh.stock),
-    formatNumber(wh.sales28),
+    formatNumber(wh.allocatedTransit),
+    formatNumber(wh.allocatedBackorder),
+    formatNumber(wh.inventoryPosition),
+    formatNumber(wh.rop),
+    formatNumber(wh.safetyStock),
+    formatNumber(wh.orderUpTo),
     formatDecimal(wh.dailyAvg),
-    formatDays(wh.stockDays),
+    formatDecimal(wh.demandStd),
     formatNumber(Math.ceil(wh.rawNeed)),
     formatNumber(wh.roundedNeed),
-    `${formatNumber(record.safetyDays)} 天`,
+    `${formatNumber(record.leadTimeDays)} 天`,
   ]);
   const htmlRows = details.map(({ record, wh }) => `
     <tr>
@@ -730,12 +846,17 @@ function buildOpsTable() {
       <td>${escapeHtml(record.skuName)}</td>
       <td>${escapeHtml(wh.name)}</td>
       <td>${formatNumber(wh.stock)}</td>
-      <td>${formatNumber(wh.sales28)}</td>
+      <td>${formatNumber(wh.allocatedTransit)}</td>
+      <td>${formatNumber(wh.allocatedBackorder)}</td>
+      <td>${formatNumber(wh.inventoryPosition)}</td>
+      <td>${formatNumber(wh.rop)}</td>
+      <td>${formatNumber(wh.safetyStock)}</td>
+      <td>${formatNumber(wh.orderUpTo)}</td>
       <td>${formatDecimal(wh.dailyAvg)}</td>
-      <td>${formatDays(wh.stockDays)}</td>
+      <td>${formatDecimal(wh.demandStd)}</td>
       <td>${formatNumber(Math.ceil(wh.rawNeed))}</td>
       <td class="num-strong">${formatNumber(wh.roundedNeed)}</td>
-      <td>${formatNumber(record.safetyDays)} 天</td>
+      <td>${formatNumber(record.leadTimeDays)} 天</td>
     </tr>
   `);
   return { filename: "运营分仓明细.csv", headers, rows, htmlRows };
@@ -825,7 +946,7 @@ async function drawBossReport() {
   ctx.fillText("补货拍板清单", 60, 122);
   ctx.fillStyle = "#bdd6d1";
   ctx.font = "400 22px PingFang SC, Microsoft YaHei, sans-serif";
-  ctx.fillText(`触发阈值 ${settings.thresholdDays} 天 · 安全周期按 SKU 参数/默认 ${settings.defaultSafetyDays} 天 · ${formatDate(now)}`, 60, 155);
+  ctx.fillText(`ROP 触发 · 评审周期 ${settings.reviewCycleDays} 天 · 默认提前期 ${settings.defaultSafetyDays} 天 · ${formatDate(now)}`, 60, 155);
 
   drawReportMetric(ctx, 60, 210, "触发 SKU", `${state.records.filter((item) => item.triggered).length}`);
   drawReportMetric(ctx, 330, 210, "建议补货", `${formatNumber(state.records.reduce((sum, item) => sum + item.totalRecommended, 0))} 双`);
@@ -849,7 +970,7 @@ async function drawBossReport() {
     wrapCanvasText(ctx, record.skuName, 174, y + 4, 390, 30, 1);
     ctx.fillStyle = "#61716e";
     ctx.font = "500 18px PingFang SC, Microsoft YaHei, sans-serif";
-    ctx.fillText(`${record.skuId} · ${record.layer} · ${formatDays(record.nationalStockDays)}`, 174, y + 42);
+    ctx.fillText(`${record.skuId} · ${record.strategyLabel} · 库存位 ${formatNumber(record.totalInventoryPosition)} / ROP ${formatNumber(record.totalRop)}`, 174, y + 42);
 
     ctx.fillStyle = "#0b5f58";
     ctx.font = "900 34px PingFang SC, Microsoft YaHei, sans-serif";
@@ -876,7 +997,7 @@ async function drawBossReport() {
 
   ctx.fillStyle = "#61716e";
   ctx.font = "400 18px PingFang SC, Microsoft YaHei, sans-serif";
-  ctx.fillText("口径：库存天数 = 当前库存 ÷ 近28天日均出库；建议补货按安全周期补足并按起发量取整。", 60, 1540);
+  ctx.fillText("口径：触发补货 = 库存位 ≤ ROP；建议补货 = Order-up-to S − 库存位，并按起发量取整。", 60, 1540);
 }
 
 function drawReportMetric(ctx, x, y, label, value) {
@@ -1167,6 +1288,10 @@ function toRatio(value) {
 function positiveNumber(value, fallback) {
   const number = toNumber(value);
   return number > 0 ? number : fallback;
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
 
 function textValue(value) {

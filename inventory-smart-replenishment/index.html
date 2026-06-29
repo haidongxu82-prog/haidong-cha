@@ -60,14 +60,29 @@
             <small>可按周调整</small>
           </div>
           <label class="field-row">
-            <span>触发阈值</span>
-            <input id="thresholdDays" type="number" min="1" step="1" value="15" />
+            <span>评审周期</span>
+            <input id="reviewCycleDays" type="number" min="1" step="1" value="7" />
             <em>天</em>
           </label>
           <label class="field-row">
-            <span>默认安全周期</span>
+            <span>默认提前期</span>
             <input id="defaultSafetyDays" type="number" min="1" step="1" value="60" />
             <em>天</em>
+          </label>
+          <label class="field-row">
+            <span>A 类服务水平</span>
+            <input id="serviceLevelA" type="number" min="80" max="99" step="1" value="95" />
+            <em>%</em>
+          </label>
+          <label class="field-row">
+            <span>B 类服务水平</span>
+            <input id="serviceLevelB" type="number" min="80" max="99" step="1" value="90" />
+            <em>%</em>
+          </label>
+          <label class="field-row">
+            <span>C 类服务水平</span>
+            <input id="serviceLevelC" type="number" min="70" max="99" step="1" value="85" />
+            <em>%</em>
           </label>
           <label class="field-row">
             <span>爆款阈值</span>
@@ -94,8 +109,8 @@
             <span>售罄修正：有货天数口径</span>
           </label>
           <label class="switch-row">
-            <input id="subtractTransit" type="checkbox" />
-            <span>补货量扣减在途库存</span>
+            <input id="includeTransit" type="checkbox" checked />
+            <span>库存位计入在途库存</span>
           </label>
         </section>
 
