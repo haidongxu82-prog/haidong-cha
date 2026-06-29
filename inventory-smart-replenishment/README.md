@@ -1,39 +1,41 @@
-# Inventory Smart Replenishment System
+# 智能补货系统
 
-Smart inventory replenishment MVP.
+这是按 `智能补货系统-PRD-MVP一页版` 落地的本地浏览器 MVP。系统只做一件事：导入京东八大仓库存和出库底表后，自动生成「哪些款要补、补到哪个仓、补多少双」。
 
-## What it does
+## 使用方式
 
-- Aggregate 14-day sales
-- Calculate available stock and days cover
-- Detect stockout risk
-- Generate replenishment suggestions
-- Create draft purchase orders
-- Export structured JSON
-- Provide FastAPI endpoints for n8n
-- Provide PostgreSQL schema and n8n workflow skeleton
+1. 打开 `index.html`。
+2. 上传京东原生导出的 Excel / CSV / TSV 底表，不需要人工二次加工。
+3. 可选：批量上传 SKU 主图，图片文件名使用 `SKU ID` 命名，例如 `SLP-1001.jpg`。
+4. 按需要调整左侧参数：预警天数、目标天数、历史累计销量分层、整装单位、八大仓名称。
+5. 查看表 A 老板补货总览、表 B 运营分仓明细，并导出 CSV / Excel / PNG 图片报表。
 
-## Run local MVP
+## MVP 口径
 
-```bash
-pip install -r requirements.txt
-python pipeline/run_replenishment.py
-```
+- 日均出库量：`近28天出库量 ÷ 近28天有货天数`。
+- 库存天数：`当前库存 ÷ 日均出库量`，按 `SKU × 仓` 计算。
+- 触发预警：某个 SKU 在某仓 `库存天数 < 预警天数`，默认 `15 天`。
+- 建议补货量：`(目标天数 - 当前库存天数) × 日均出库量`。
+- 目标天数：默认 `60 天`，也可由底表里的 `目标天数/安全周期` 覆盖。
+- 在途库存：底表有在途时，默认从建议补货量里扣减，避免重复下单。
+- 整装取整：建议补货量按整装单位向上取整，默认 `200 双`。
+- 季节款排除：棉拖、凉拖或标记为排除的 SKU 不进入补货预警。
 
-Outputs:
+## 输出
 
-- `output/replenishment_suggestions.json`
-- `output/purchase_orders.json`
+- 表 A 老板补货总览：SKU 主图、款名、全国总库存天数、近 7 / 30 天销量、是否补货、建议补货量。
+- 表 B 运营分仓明细：每个待补 SKU 在八大仓的当前库存、近 28 天出库、有货天数、库存天数、缺口数量、在途库存、建议补货量。
+- 老板图片报表：把最需要拍板的 SKU 自动排到图片报表里，一键下载 PNG。
 
-## API
+## 底表字段建议
 
-```bash
-uvicorn app.api.main:app --reload
-```
+页面支持字段别名自动识别，可点击页面左侧“底表模板”下载空模板表头。核心字段包括：
 
-Endpoints:
+- `SKU ID`、`SKU 名称`、`品类`、`季节款标记`、`主图文件`
+- `历史累计销量`、`目标天数/安全周期`、`整装单位`、`在途库存`
+- `近7天销量`、`近30天销量`
+- 每个仓的 `当前库存`、`近28天出库量`、`近28天有货天数`、`历史销售占比`、`在途库存`
 
-- `GET /replenishment/run`
-- `POST /purchase/create`
+## 不做
 
-The system only creates suggestions and draft purchase orders. It does not submit orders to suppliers automatically.
+本 MVP 不做 ABC/XYZ 正式分级、服务水平 Z 值安全库存、报童模型、多仓优化、机器学习去截断、ERP 直连和自动下单。
