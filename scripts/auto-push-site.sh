@@ -47,6 +47,7 @@ fi
   assets \
   posts \
   ai-product-selection \
+  inventory-smart-replenishment \
   ai-chat \
   chat-screenshot-helper \
   deploy \

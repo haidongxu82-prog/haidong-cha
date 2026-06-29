@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>智能补货系统</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./xlsx.full.min.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-panel" aria-label="导入与参数">
+        <div class="brand-block">
+          <div class="brand-mark">补</div>
+          <div>
+            <h1>智能补货系统</h1>
+            <p>鞋类商家 · 补货预警与库龄治理</p>
+          </div>
+        </div>
+
+        <section class="control-group">
+          <div class="group-title">
+            <span>数据导入</span>
+            <small id="dataStatus">等待导入</small>
+          </div>
+          <label class="file-drop">
+            <input id="dataFile" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" />
+            <i data-lucide="upload-cloud"></i>
+            <span>上传京东原始底表</span>
+            <small>支持 Excel / CSV / TSV</small>
+          </label>
+          <label class="file-drop compact">
+            <input id="imageFiles" type="file" accept="image/*" multiple />
+            <i data-lucide="image-plus"></i>
+            <span>批量上传 SKU 主图</span>
+            <small>文件名需匹配 SKU ID</small>
+          </label>
+          <div class="button-row">
+            <button id="loadSample" class="secondary-button" type="button">
+              <i data-lucide="database"></i>
+              示例数据
+            </button>
+            <button id="downloadTemplate" class="secondary-button" type="button">
+              <i data-lucide="file-down"></i>
+              底表模板
+            </button>
+          </div>
+        </section>
+
+        <section class="control-group">
+          <div class="group-title">
+            <span>业务参数</span>
+            <small>可按周调整</small>
+          </div>
+          <label class="field-row">
+            <span>触发阈值</span>
+            <input id="thresholdDays" type="number" min="1" step="1" value="15" />
+            <em>天</em>
+          </label>
+          <label class="field-row">
+            <span>默认安全周期</span>
+            <input id="defaultSafetyDays" type="number" min="1" step="1" value="60" />
+            <em>天</em>
+          </label>
+          <label class="field-row">
+            <span>爆款阈值</span>
+            <input id="hotThreshold" type="number" min="0" step="50" value="1000" />
+            <em>双</em>
+          </label>
+          <label class="field-row">
+            <span>潜力款阈值</span>
+            <input id="potentialThreshold" type="number" min="0" step="50" value="500" />
+            <em>双</em>
+          </label>
+          <label class="field-row">
+            <span>单日峰值</span>
+            <input id="peakThreshold" type="number" min="0" step="10" value="100" />
+            <em>双</em>
+          </label>
+          <label class="field-row">
+            <span>起发/整装</span>
+            <input id="defaultPackUnit" type="number" min="1" step="1" value="200" />
+            <em>双</em>
+          </label>
+          <label class="switch-row">
+            <input id="useAvailableDays" type="checkbox" checked />
+            <span>售罄修正：有货天数口径</span>
+          </label>
+          <label class="switch-row">
+            <input id="subtractTransit" type="checkbox" />
+            <span>补货量扣减在途库存</span>
+          </label>
+        </section>
+
+        <section class="control-group">
+          <div class="group-title">
+            <span>八大仓</span>
+            <small>每行一个仓名</small>
+          </div>
+          <textarea id="warehouses" rows="8">北京仓
+上海仓
+广州仓
+成都仓
+武汉仓
+西安仓
+沈阳仓
+济南仓</textarea>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="top-bar">
+          <div>
+            <h2>补货决策台</h2>
+            <p id="runSummary">导入底表后自动生成补货清单、滞销唤醒、八仓配比和运营明细。</p>
+          </div>
+          <div class="top-actions">
+            <button id="exportCsv" class="secondary-button" type="button">
+              <i data-lucide="download"></i>
+              导出当前表
+            </button>
+            <button id="exportWorkbook" class="primary-button" type="button">
+              <i data-lucide="table"></i>
+              导出 Excel
+            </button>
+          </div>
+        </header>
+
+        <section id="kpiStrip" class="kpi-strip" aria-label="关键指标"></section>
+
+        <section class="report-section">
+          <div class="section-head">
+            <div>
+              <h3>老板图片报表</h3>
+              <p>自动展示最需要拍板的 SKU：补哪些款、补多少、补到哪些仓。</p>
+            </div>
+            <button id="downloadReport" class="primary-button" type="button">
+              <i data-lucide="image-down"></i>
+              下载 PNG
+            </button>
+          </div>
+          <div class="canvas-frame">
+            <canvas id="bossCanvas" width="1200" height="1600"></canvas>
+          </div>
+        </section>
+
+        <section class="workspace-section">
+          <div class="tabs" role="tablist" aria-label="结果表">
+            <button class="tab-button active" data-tab="replenishment" type="button">补货清单</button>
+            <button class="tab-button" data-tab="wake" type="button">滞销唤醒</button>
+            <button class="tab-button" data-tab="allocation" type="button">八仓配比</button>
+            <button class="tab-button" data-tab="ops" type="button">运营明细</button>
+            <button class="tab-button" data-tab="aging" type="button">长库龄治理</button>
+          </div>
+          <div class="table-toolbar">
+            <label>
+              层级
+              <select id="layerFilter">
+                <option value="all">全部</option>
+                <option value="爆款">爆款</option>
+                <option value="潜力款">潜力款</option>
+                <option value="观察款">观察款</option>
+              </select>
+            </label>
+            <label>
+              状态
+              <select id="statusFilter">
+                <option value="all">全部</option>
+                <option value="triggered">仅触发补货</option>
+                <option value="excluded">仅排除款</option>
+                <option value="c1">仅 C1</option>
+              </select>
+            </label>
+            <div id="tableCount" class="table-count">0 条</div>
+          </div>
+          <div id="tableWrap" class="table-wrap"></div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
