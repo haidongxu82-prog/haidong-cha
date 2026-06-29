@@ -93,9 +93,16 @@ function bindEvents() {
     recompute();
   });
 
-  $("loadSample").addEventListener("click", () => {
+  $("loadSample").addEventListener("click", async () => {
+    setProgress(10, "载入示例数据");
+    await nextFrame();
+    setProgress(45, "解析示例底表");
     const rows = parseDelimitedText(SAMPLE_CSV);
-    setRows(rows, "示例数据");
+    await nextFrame();
+    setProgress(75, "计算补货建议");
+    setRows(rows, "示例数据", { skipProgress: true });
+    await nextFrame();
+    setProgress(100, "示例数据已生成结果");
   });
 
   $("downloadTemplate").addEventListener("click", () => {
@@ -144,36 +151,80 @@ function bindEvents() {
 async function handleDataFile(file) {
   const lowerName = file.name.toLowerCase();
   try {
+    setProgress(8, "开始读取文件");
+    $("dataStatus").textContent = "导入中";
     if (/\.(xlsx|xls)$/.test(lowerName)) {
       if (!window.XLSX) {
         throw new Error("Excel 解析组件未加载，请检查网络后重试，或先导出 CSV 上传。");
       }
+      setProgress(24, "读取 Excel 文件");
       const buffer = await file.arrayBuffer();
+      setProgress(45, "解析 Excel 表格");
       const workbook = window.XLSX.read(buffer, { type: "array" });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = window.XLSX.utils.sheet_to_json(firstSheet, { defval: "", raw: false });
-      setRows(rows, file.name);
+      setProgress(70, "计算补货建议");
+      await nextFrame();
+      setRows(rows, file.name, { skipProgress: true });
+      setProgress(100, "导入完成，已生成结果");
       return;
     }
 
+    setProgress(28, "读取文本底表");
     const text = await file.text();
-    setRows(parseDelimitedText(text), file.name);
+    setProgress(52, "解析 CSV/TSV 数据");
+    const rows = parseDelimitedText(text);
+    setProgress(70, "计算补货建议");
+    await nextFrame();
+    setRows(rows, file.name, { skipProgress: true });
+    setProgress(100, "导入完成，已生成结果");
   } catch (error) {
+    setProgress(0, "导入失败，请检查文件");
+    $("dataStatus").textContent = "导入失败";
     alert(error.message || "文件解析失败，请检查底表格式。");
   }
 }
 
-function setRows(rows, sourceName) {
+function setRows(rows, sourceName, options = {}) {
+  if (!options.skipProgress) {
+    setProgress(72, "计算补货建议");
+  }
   state.rawRows = rows.filter((row) => Object.values(row).some((value) => String(value ?? "").trim() !== ""));
   state.headers = collectHeaders(state.rawRows);
   state.sourceName = sourceName;
+  if (!options.skipProgress) {
+    setProgress(88, "生成补货提醒");
+  }
   recompute();
+  if (!options.skipProgress) {
+    setProgress(100, "已生成结果");
+  }
 }
 
 function recompute() {
   const settings = readSettings();
   state.records = state.rawRows.map((row, index) => normalizeRecord(row, index, settings));
   renderAll();
+}
+
+function setProgress(percent, label) {
+  const progress = $("uploadProgress");
+  const bar = $("progressBar");
+  const percentText = $("progressPercent");
+  const labelText = $("progressLabel");
+  const track = document.querySelector(".progress-track");
+  if (!progress || !bar || !percentText || !labelText || !track) return;
+
+  const value = Math.max(0, Math.min(100, Math.round(percent)));
+  progress.hidden = false;
+  bar.style.width = `${value}%`;
+  percentText.textContent = `${value}%`;
+  labelText.textContent = label;
+  track.setAttribute("aria-valuenow", String(value));
+}
+
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function readSettings() {

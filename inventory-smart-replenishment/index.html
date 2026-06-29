@@ -37,6 +37,15 @@
             <span>批量上传 SKU 主图</span>
             <small>文件名需匹配 SKU ID</small>
           </label>
+          <div id="uploadProgress" class="upload-progress" aria-live="polite" hidden>
+            <div class="progress-copy">
+              <span id="progressLabel">准备导入</span>
+              <strong id="progressPercent">0%</strong>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+          </div>
           <div class="button-row">
             <button id="loadSample" class="secondary-button" type="button">
               <i data-lucide="database"></i>
