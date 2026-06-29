@@ -115,7 +115,8 @@ function bindEvents() {
   });
 
   ["layerFilter", "statusFilter"].forEach((id) => {
-    $(id).addEventListener("change", renderTable);
+    const input = $(id);
+    if (input) input.addEventListener("change", renderTable);
   });
 
   [
@@ -132,7 +133,9 @@ function bindEvents() {
     "includeTransit",
     "warehouses",
   ].forEach((id) => {
-    $(id).addEventListener("input", () => {
+    const input = $(id);
+    if (!input) return;
+    input.addEventListener("input", () => {
       persistSettings();
       recompute();
     });
@@ -219,41 +222,41 @@ function nextFrame() {
 }
 
 function readSettings() {
-  const warehouses = $("warehouses").value
+  const warehouses = inputValue("warehouses", DEFAULT_WAREHOUSES.join("\n"))
     .split(/\n|,|，/)
     .map((item) => item.trim())
     .filter(Boolean);
 
   return {
     warehouses: warehouses.length ? warehouses : DEFAULT_WAREHOUSES,
-    reviewCycleDays: positiveNumber($("reviewCycleDays").value, 7),
-    defaultSafetyDays: positiveNumber($("defaultSafetyDays").value, 60),
-    serviceLevelA: clampNumber(positiveNumber($("serviceLevelA").value, 95), 80, 99),
-    serviceLevelB: clampNumber(positiveNumber($("serviceLevelB").value, 90), 80, 99),
-    serviceLevelC: clampNumber(positiveNumber($("serviceLevelC").value, 85), 70, 99),
-    hotThreshold: positiveNumber($("hotThreshold").value, 1000),
-    potentialThreshold: positiveNumber($("potentialThreshold").value, 500),
-    peakThreshold: positiveNumber($("peakThreshold").value, 100),
-    defaultPackUnit: positiveNumber($("defaultPackUnit").value, 200),
-    useAvailableDays: $("useAvailableDays").checked,
-    includeTransit: $("includeTransit").checked,
+    reviewCycleDays: positiveNumber(inputValue("reviewCycleDays", inputValue("thresholdDays", 7)), 7),
+    defaultSafetyDays: positiveNumber(inputValue("defaultSafetyDays", 60), 60),
+    serviceLevelA: clampNumber(positiveNumber(inputValue("serviceLevelA", 95), 95), 80, 99),
+    serviceLevelB: clampNumber(positiveNumber(inputValue("serviceLevelB", 90), 90), 80, 99),
+    serviceLevelC: clampNumber(positiveNumber(inputValue("serviceLevelC", 85), 85), 70, 99),
+    hotThreshold: positiveNumber(inputValue("hotThreshold", 1000), 1000),
+    potentialThreshold: positiveNumber(inputValue("potentialThreshold", 500), 500),
+    peakThreshold: positiveNumber(inputValue("peakThreshold", 100), 100),
+    defaultPackUnit: positiveNumber(inputValue("defaultPackUnit", 200), 200),
+    useAvailableDays: inputChecked("useAvailableDays", true),
+    includeTransit: inputChecked("includeTransit", !inputChecked("subtractTransit", false)),
   };
 }
 
 function persistSettings() {
   const settings = {
-    reviewCycleDays: $("reviewCycleDays").value,
-    defaultSafetyDays: $("defaultSafetyDays").value,
-    serviceLevelA: $("serviceLevelA").value,
-    serviceLevelB: $("serviceLevelB").value,
-    serviceLevelC: $("serviceLevelC").value,
-    hotThreshold: $("hotThreshold").value,
-    potentialThreshold: $("potentialThreshold").value,
-    peakThreshold: $("peakThreshold").value,
-    defaultPackUnit: $("defaultPackUnit").value,
-    useAvailableDays: $("useAvailableDays").checked,
-    includeTransit: $("includeTransit").checked,
-    warehouses: $("warehouses").value,
+    reviewCycleDays: inputValue("reviewCycleDays", inputValue("thresholdDays", 7)),
+    defaultSafetyDays: inputValue("defaultSafetyDays", 60),
+    serviceLevelA: inputValue("serviceLevelA", 95),
+    serviceLevelB: inputValue("serviceLevelB", 90),
+    serviceLevelC: inputValue("serviceLevelC", 85),
+    hotThreshold: inputValue("hotThreshold", 1000),
+    potentialThreshold: inputValue("potentialThreshold", 500),
+    peakThreshold: inputValue("peakThreshold", 100),
+    defaultPackUnit: inputValue("defaultPackUnit", 200),
+    useAvailableDays: inputChecked("useAvailableDays", true),
+    includeTransit: inputChecked("includeTransit", !inputChecked("subtractTransit", false)),
+    warehouses: inputValue("warehouses", DEFAULT_WAREHOUSES.join("\n")),
   };
   localStorage.setItem("replenishment.settings", JSON.stringify(settings));
 }
@@ -1292,6 +1295,16 @@ function positiveNumber(value, fallback) {
 
 function clampNumber(value, min, max) {
   return Math.min(max, Math.max(min, value));
+}
+
+function inputValue(id, fallback = "") {
+  const input = $(id);
+  return input ? input.value : fallback;
+}
+
+function inputChecked(id, fallback = false) {
+  const input = $(id);
+  return input ? input.checked : fallback;
 }
 
 function textValue(value) {
