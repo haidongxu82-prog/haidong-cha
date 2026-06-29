@@ -114,7 +114,7 @@
         <header class="top-bar">
           <div>
             <h2>补货决策台</h2>
-            <p id="runSummary">导入底表后自动生成补货清单、滞销唤醒、八仓配比和运营明细。</p>
+            <p id="runSummary">导入底表后，最需要补货的 SKU 会优先显示在页面上方。</p>
           </div>
           <div class="top-actions">
             <button id="exportCsv" class="secondary-button" type="button">
@@ -129,6 +129,8 @@
         </header>
 
         <section id="kpiStrip" class="kpi-strip" aria-label="关键指标"></section>
+
+        <section id="urgentPanel" class="urgent-section" aria-label="补货提醒"></section>
 
         <section class="report-section">
           <div class="section-head">

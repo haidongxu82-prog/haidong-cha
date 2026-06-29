@@ -404,6 +404,7 @@ function buildWakeSignal(input) {
 
 function renderAll() {
   renderKpis();
+  renderUrgentPanel();
   renderTable();
   drawBossReport();
   refreshIcons();
@@ -429,12 +430,118 @@ function renderKpis() {
 
   $("dataStatus").textContent = records.length ? `${records.length} 条` : "等待导入";
   $("runSummary").textContent = records.length
-    ? `已按 ${readSettings().thresholdDays} 天阈值生成结果：${triggered.length} 个 SKU 触发补货，${wakeCount} 个 SKU 进入唤醒清单。`
-    : "导入底表后自动生成补货清单、滞销唤醒、八仓配比和运营明细。";
+    ? `当前有 ${triggered.length} 个 SKU 需要补货，建议补 ${formatNumber(totalNeed)} 双；请优先处理页面上方的补货提醒。`
+    : "导入底表后，最需要补货的 SKU 会优先显示在页面上方。";
 }
 
 function metricCard(label, value, note) {
   return `<article class="metric-card"><small>${escapeHtml(label)}</small><strong>${escapeHtml(value)}</strong><span>${escapeHtml(note)}</span></article>`;
+}
+
+function renderUrgentPanel() {
+  const panel = $("urgentPanel");
+  if (!panel) return;
+
+  if (!state.records.length) {
+    panel.innerHTML = `
+      <div class="urgent-empty">
+        <strong>补货提醒</strong>
+        <span>导入底表后，这里会直接显示需要补货的 SKU、当前库存和建议补货量。</span>
+      </div>
+    `;
+    return;
+  }
+
+  const urgentRecords = getUrgentRecords();
+  const totalNeed = urgentRecords.reduce((sum, record) => sum + record.totalRecommended, 0);
+
+  if (!urgentRecords.length) {
+    panel.innerHTML = `
+      <div class="urgent-empty good">
+        <strong>暂无需要立即补货的 SKU</strong>
+        <span>当前底表没有低于触发阈值的仓库，继续按日/周更新底表观察。</span>
+      </div>
+    `;
+    return;
+  }
+
+  const topRecords = urgentRecords.slice(0, 6);
+  panel.innerHTML = `
+    <div class="urgent-head">
+      <div>
+        <span class="urgent-eyebrow">补货提醒</span>
+        <h3>${formatNumber(urgentRecords.length)} 个 SKU 需要补货</h3>
+        <p>建议补货 ${formatNumber(totalNeed)} 双，按库存天数最短的 SKU 优先处理。</p>
+      </div>
+      <button id="viewUrgentRows" class="primary-button" type="button">
+        <i data-lucide="bell-ring"></i>
+        只看补货清单
+      </button>
+    </div>
+    <div class="urgent-grid">
+      ${topRecords.map(urgentCard).join("")}
+    </div>
+  `;
+
+  const viewButton = $("viewUrgentRows");
+  if (viewButton) {
+    viewButton.addEventListener("click", () => {
+      state.activeTab = "replenishment";
+      document.querySelectorAll(".tab-button").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.tab === "replenishment");
+      });
+      $("statusFilter").value = "triggered";
+      renderTable();
+      document.querySelector(".workspace-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+}
+
+function getUrgentRecords() {
+  return state.records
+    .filter((record) => record.triggered)
+    .sort((a, b) => {
+      const aMinDays = Math.min(...a.triggeredWarehouses.map((item) => item.stockDays));
+      const bMinDays = Math.min(...b.triggeredWarehouses.map((item) => item.stockDays));
+      return aMinDays - bMinDays || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales;
+    });
+}
+
+function urgentCard(record) {
+  const mostUrgent = record.triggeredWarehouses
+    .slice()
+    .sort((a, b) => a.stockDays - b.stockDays || b.roundedNeed - a.roundedNeed)[0];
+  const warehouseText = record.triggeredWarehouses
+    .slice(0, 3)
+    .map((item) => `${item.name} ${formatNumber(item.roundedNeed)}双`)
+    .join("，");
+
+  return `
+    <article class="urgent-card">
+      <div class="urgent-card-top">
+        ${skuCell(record)}
+        <span class="urgent-tag">${escapeHtml(record.layer)}</span>
+      </div>
+      <div class="urgent-numbers">
+        <div>
+          <small>当前库存</small>
+          <strong>${formatNumber(record.totalStock)} 双</strong>
+        </div>
+        <div>
+          <small>建议补货</small>
+          <strong>${formatNumber(record.totalRecommended)} 双</strong>
+        </div>
+        <div>
+          <small>最短库存</small>
+          <strong>${formatDays(mostUrgent?.stockDays || 0)}</strong>
+        </div>
+      </div>
+      <div class="urgent-warehouses">
+        <span>${escapeHtml(mostUrgent?.name || "-")} 最急</span>
+        <p>${escapeHtml(warehouseText || "-")}</p>
+      </div>
+    </article>
+  `;
 }
 
 function renderTable() {
@@ -484,10 +591,11 @@ function filteredRecords() {
 
 function buildReplenishmentTable() {
   const records = filteredRecords().sort((a, b) => Number(b.triggered) - Number(a.triggered) || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales);
-  const headers = ["SKU", "层级", "全国库存天数", "销量趋势", "补货标识", "建议补货", "重点仓", "库龄"];
+  const headers = ["SKU", "层级", "当前库存", "全国库存天数", "销量趋势", "补货标识", "建议补货", "重点仓", "库龄"];
   const rows = records.map((record) => [
     `${record.skuName} (${record.skuId})`,
     record.layer,
+    `${formatNumber(record.totalStock)} 双`,
     formatDays(record.nationalStockDays),
     record.trend.label,
     record.excluded ? "季节款排除" : record.triggered ? "触发" : "未触发",
@@ -499,6 +607,7 @@ function buildReplenishmentTable() {
     <tr>
       <td>${skuCell(record)}</td>
       <td>${pill(record.layer, record.layer === "爆款" ? "green" : record.layer === "潜力款" ? "blue" : "gray")}</td>
+      <td>${formatNumber(record.totalStock)} 双</td>
       <td>${formatDays(record.nationalStockDays)}</td>
       <td>${pill(record.trend.label, record.trend.className)}</td>
       <td>${record.excluded ? pill("季节款排除", "gray") : record.triggered ? pill("触发补货", "amber") : pill("未触发", "green")}</td>
