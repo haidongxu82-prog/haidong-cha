@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>团队利润目标驾驶舱 | 海东 AI</title>
+    <meta
+      name="description"
+      content="电商团队利润目标驾驶舱，支持团队目标、Excel/CSV 上传、字段映射、利润进度和日报生成。"
+    />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="./xlsx.full.min.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="../index.html" aria-label="返回海东 AI 首页">
+          <img src="../assets/logo-hd-minimal.svg" alt="" />
+          <span>海东 AI</span>
+        </a>
+        <nav class="nav" aria-label="驾驶舱导航">
+          <button data-view="dashboard" class="active">经营总览</button>
+          <button data-view="teams">团队管理</button>
+          <button data-view="targets">目标设置</button>
+          <button data-view="upload">数据上传</button>
+          <button data-view="report">日报生成</button>
+        </nav>
+      </header>
+
+      <main class="main">
+        <section class="hero">
+          <div>
+            <p class="kicker">TEAM PROFIT DASHBOARD</p>
+            <h1>团队利润目标驾驶舱</h1>
+            <p>手动上传抖音后台 Excel / CSV，自动计算经营利润、目标进度、时间进度和日报文案。</p>
+          </div>
+          <div class="hero-actions">
+            <a href="../index.html">主站首页</a>
+            <button data-reset>恢复演示数据</button>
+          </div>
+        </section>
+
+        <section id="view-dashboard" class="view active">
+          <div class="toolbar">
+            <label>
+              月份
+              <input id="dashboard-month" type="month" />
+            </label>
+            <label>
+              团队
+              <select id="dashboard-team"></select>
+            </label>
+          </div>
+          <div id="metric-grid" class="metric-grid"></div>
+          <div class="dashboard-grid">
+            <section class="panel gauge-panel">
+              <div class="gauge" id="gauge">
+                <div class="gauge-inner">
+                  <strong id="gauge-rate">0.0%</strong>
+                  <span>整体利润目标完成率</span>
+                  <em id="gauge-status">正常</em>
+                </div>
+              </div>
+              <div class="progress-row">
+                <span>时间进度</span>
+                <strong id="time-progress">0.0%</strong>
+              </div>
+              <div class="bar"><i id="time-bar"></i></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <h2>团队目标排行榜</h2>
+                  <p>同一天、同团队、同店铺重复导入时可选择覆盖。</p>
+                </div>
+                <select id="sort-key">
+                  <option value="completionRate">按完成率</option>
+                  <option value="currentProfit">按当前利润</option>
+                  <option value="progressDelta">按进度差</option>
+                </select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>排名</th>
+                      <th>团队</th>
+                      <th>目标</th>
+                      <th>当前利润</th>
+                      <th>完成率</th>
+                      <th>时间进度</th>
+                      <th>进度差</th>
+                      <th>剩余目标</th>
+                      <th>状态</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ranking-body"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          <div class="chart-grid">
+            <section class="panel"><h2>每日利润趋势</h2><canvas id="profit-chart" height="220"></canvas></section>
+            <section class="panel"><h2>每日业绩趋势</h2><canvas id="sales-chart" height="220"></canvas></section>
+            <section class="panel"><h2>每日退款率趋势</h2><canvas id="refund-chart" height="220"></canvas></section>
+            <section class="panel"><h2>目标完成进度曲线</h2><canvas id="target-chart" height="220"></canvas></section>
+          </div>
+          <section class="panel" id="team-detail"></section>
+        </section>
+
+        <section id="view-teams" class="view">
+          <div class="panel form-panel">
+            <h2>新增团队</h2>
+            <form id="team-form" class="form-grid">
+              <label>团队名称<input name="name" required placeholder="例如：增长一组" /></label>
+              <label>负责人<input name="leaderName" placeholder="例如：林佳" /></label>
+              <button type="submit">新增团队</button>
+            </form>
+          </div>
+          <section class="panel">
+            <h2>团队列表</h2>
+            <div id="teams-list" class="card-list"></div>
+          </section>
+        </section>
+
+        <section id="view-targets" class="view">
+          <div class="toolbar">
+            <label>目标月份<input id="target-month" type="month" /></label>
+            <button id="save-targets">保存目标</button>
+          </div>
+          <section class="panel">
+            <div class="section-head">
+              <h2>月度利润目标</h2>
+              <strong id="target-total">¥0</strong>
+            </div>
+            <div id="targets-list" class="card-list"></div>
+          </section>
+        </section>
+
+        <section id="view-upload" class="view">
+          <section class="panel upload-panel">
+            <h2>上传 Excel / CSV</h2>
+            <p>上传后先预览数据并确认字段映射，再导入本地数据。</p>
+            <input id="file-input" type="file" accept=".xlsx,.xls,.csv" />
+          </section>
+          <section id="mapping-panel" class="panel hidden">
+            <div class="section-head">
+              <div>
+                <h2 id="file-title">字段映射</h2>
+                <p id="file-summary"></p>
+              </div>
+              <button id="import-data">开始导入</button>
+            </div>
+            <div id="mapping-grid" class="mapping-grid"></div>
+            <div class="import-options">
+              <label><input type="radio" name="duplicate-mode" value="overwrite" checked /> 覆盖重复记录</label>
+              <label><input type="radio" name="duplicate-mode" value="append" /> 追加为新记录</label>
+            </div>
+            <div id="upload-errors" class="error-list"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>团队</th>
+                    <th>店铺</th>
+                    <th>成交金额</th>
+                    <th>退款金额</th>
+                    <th>经营利润</th>
+                  </tr>
+                </thead>
+                <tbody id="preview-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="view-report" class="view">
+          <div class="toolbar">
+            <label>目标月份<input id="report-month" type="month" /></label>
+            <label>日报日期<input id="report-date" type="date" /></label>
+            <button id="copy-report">复制日报</button>
+          </div>
+          <textarea id="report-output" readonly></textarea>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

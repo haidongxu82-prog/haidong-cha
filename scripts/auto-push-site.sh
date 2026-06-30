@@ -49,6 +49,7 @@ fi
   ai-product-selection \
   inventory-smart-replenishment \
   store-link-promotion-value \
+  team-profit-dashboard \
   ai-chat \
   chat-screenshot-helper \
   deploy \
