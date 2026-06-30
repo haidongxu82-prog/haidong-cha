@@ -5,3 +5,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.bundle
+
+# 历史备份与根目录临时脚本，避免误提交
+*.bak
+*.bak_*
+/README.md
+/ai-chat-*.py
