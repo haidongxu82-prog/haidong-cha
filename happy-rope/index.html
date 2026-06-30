@@ -251,7 +251,7 @@
     </div>
     <div class="cam-toggle" id="camToggle">
       <span style="font-size:24px">📷</span>
-      <span class="cam-label">摄像头自动数数<small>对着人，AI 帮忙数（需联网加载一次）</small></span>
+      <span class="cam-label">摄像头自动数数<small>手机立稳·全身入镜·离 1.5~2 米（需联网加载一次）</small></span>
       <span class="switch"></span>
     </div>
     <button class="start-btn" id="startBtn">开始跳绳 <span class="go">GO!</span></button>
@@ -418,7 +418,7 @@
   }
 
   function stopCamera(){
-    poseRunning = false;
+    poseRunning = false; counting = false;
     cancelAnimationFrame(poseRAF);
     if(camStream){ camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
     var video = $("camVideo");
@@ -428,34 +428,52 @@
     $("liveCount").classList.remove("show");
   }
 
-  /* --- 跳跃计数算法：跟踪髋部垂直起伏，自适应阈值 --- */
+  /* --- 跳跃计数算法（模仿「天天跳绳」思路）---
+     跟踪身体中心点(肩+髋平均)的垂直位置 y：
+     1) 准备阶段先采集“站立基线” standY；
+     2) 双阈值迟滞：起跳越过高阈值才算腾空，落回低阈值才计一次，防抖动误数；
+     3) 动态基线：每次落地把 standY 往落地位置微调，人站着飘也不怕；
+     4) 最小幅度门槛 + 时间间隔，过滤识别抖动。               */
   var jumpCount = 0;
-  var fastY = null, baseY = null, ampEMA = 0, jumpPhase = "ground", lastJumpAt = 0;
+  var smoothY = null, standY = null, ampMax = 0, jumpPhase = "ground", lastJumpAt = 0;
+  var counting = false;          // 准备阶段先校准、不计数；GO 后才计数
+  var calSamples = [];           // 站立基线采样
 
   function resetJumpCounter(){
-    jumpCount = 0; fastY = null; baseY = null; ampEMA = 0; jumpPhase = "ground"; lastJumpAt = 0;
+    jumpCount = 0; smoothY = null; standY = null; ampMax = 0; jumpPhase = "ground"; lastJumpAt = 0;
     lastSeenAt = performance.now();
     $("liveCountNum").textContent = "0";
     var label = $("liveCount").querySelector(".lc-label"); if(label) label.textContent = "个";
   }
 
+  function median(arr){
+    if(!arr.length) return null;
+    var a = arr.slice().sort(function(x,y){return x-y;});
+    return a[(a.length/2)|0];
+  }
+
+  // 准备阶段：采集站立基线
+  function calibrate(yNorm){ calSamples.push(yNorm); if(calSamples.length>40) calSamples.shift(); }
+  function finishCalibration(){ standY = median(calSamples); }
+
   function feedY(yNorm, now){
     // yNorm: 0(顶) ~ 1(底)。人腾空时 y 变小。
-    if(fastY === null){ fastY = baseY = yNorm; return; }
-    fastY = fastY*0.5 + yNorm*0.5;           // 快速跟随
-    baseY = baseY*0.985 + yNorm*0.015;        // 慢速基线≈平均站立位置（放慢，少漏数）
-    var dev = baseY - fastY;                   // >0 表示比平均更高（腾空）
-    ampEMA = ampEMA*0.9 + Math.abs(dev)*0.1;
-    var thr = Math.min(0.18, Math.max(0.02, ampEMA*0.6)); // 触发阈值
-    if(jumpPhase === "ground" && dev > thr){
+    smoothY = (smoothY===null) ? yNorm : smoothY*0.55 + yNorm*0.45;  // 轻平滑去抖
+    if(standY===null) standY = smoothY;
+    var up = standY - smoothY;                 // >0 表示比站立更高（腾空）
+    if(up > ampMax) ampMax = up; else ampMax = ampMax*0.997;          // 观测到的跳跃幅度（缓慢衰减）
+    var amp = Math.max(0.035, ampMax);         // 最小幅度门槛≈3.5% 画面高
+    var upThr = amp*0.45, downThr = amp*0.18;  // 双阈值（迟滞带）
+    if(jumpPhase === "ground" && up > upThr){
       jumpPhase = "air";
-    }else if(jumpPhase === "air" && dev < thr*0.4){
+    }else if(jumpPhase === "air" && up < downThr){
       jumpPhase = "ground";
-      if(now - lastJumpAt > 220){            // 最快约 4.5 次/秒，防抖
+      standY = standY*0.85 + smoothY*0.15;     // 动态基线：落地处重新锚定
+      if(now - lastJumpAt > 200 && ampMax > 0.04){   // 间隔+幅度双保险，防误数
         lastJumpAt = now;
         jumpCount++;
         $("liveCountNum").textContent = jumpCount;
-        beep(900, 0.05, "sine", 0.12);       // 轻微计数反馈
+        beep(900, 0.05, "sine", 0.12);
       }
     }
   }
@@ -467,6 +485,15 @@
     else if(now - lastSeenAt > 1200 && label){ label.textContent = "个 · 没看到人，往后站站"; }
   }
 
+  // 身体中心点 = 肩、髋中可信关键点的平均 y（比单点稳）
+  function bodyCenterY(kp){
+    var ids = [5,6,11,12], sum = 0, n = 0;
+    for(var i=0;i<ids.length;i++){ var p = kp[ids[i]]; if(p && p.score>0.3){ sum += p.y; n++; } }
+    if(n>=2) return sum/n;
+    if(kp[0] && kp[0].score>0.3) return kp[0].y;   // 兜底用鼻子
+    return null;
+  }
+
   function poseLoop(){
     if(!poseRunning) return;
     var video = $("camVideo");
@@ -475,13 +502,12 @@
         var now = performance.now();
         var y = null;
         if(poseRunning && poses && poses.length){
-          var kp = poses[0].keypoints;
-          // MoveNet: 11 左髋 12 右髋 5 左肩 6 右肩 0 鼻
-          var hipL = kp[11], hipR = kp[12], shL = kp[5], shR = kp[6];
-          if(hipL && hipR && hipL.score>0.3 && hipR.score>0.3) y = (hipL.y+hipR.y)/2;
-          else if(shL && shR && shL.score>0.3 && shR.score>0.3) y = (shL.y+shR.y)/2;
-          else if(kp[0] && kp[0].score>0.3) y = kp[0].y;
-          if(y !== null) feedY(y/video.videoHeight, now);
+          y = bodyCenterY(poses[0].keypoints);
+          if(y !== null){
+            var yNorm = y/video.videoHeight;
+            if(counting) feedY(yNorm, now);   // 正式计数
+            else calibrate(yNorm);            // 准备阶段：采集站立基线
+          }
         }
         setTracking(y !== null, now);
         if(poseRunning) poseRAF = requestAnimationFrame(poseLoop);
@@ -615,12 +641,16 @@
     ringFg.style.strokeDashoffset = 0;
     bigNum.style.color = "var(--ink)";
 
-    // 摄像头在准备阶段就亮起来，让孩子先照镜子站好位（此时还不计数）
+    // 摄像头在准备阶段就亮起来：让孩子站好位，同时悄悄采集“站立基线”做校准（此时不计数）
     if(camActive){
       $("camVideo").classList.add("show");
       $("camDim").classList.add("show");
       $("liveCount").classList.remove("show");
       resetJumpCounter();
+      counting = false; calSamples = [];
+      poseRunning = true;
+      cancelAnimationFrame(poseRAF);
+      poseRAF = requestAnimationFrame(poseLoop);
     }
 
     // 先来 5 秒准备倒计时
@@ -629,10 +659,10 @@
 
   function runReady(n, done){
     var count = n;
-    subLabel.textContent = "准备好，站到镜头里～";
+    subLabel.textContent = camActive ? "站好别动，让全身进画面～" : "准备好，马上开始～";
     bigNum.textContent = count;
     beep(440, 0.12, "sine", 0.22);
-    speak("准备，" + count);
+    speak(camActive ? "站好，准备，" + count : "准备，" + count);
     clearInterval(readyTimer);
     readyTimer = setInterval(function(){
       count--;
@@ -662,10 +692,13 @@
     subLabel.textContent = "加油！";
 
     if(camActive){
+      finishCalibration();             // 用准备阶段的采样定下“站立基线”
       $("liveCount").classList.add("show");
-      resetJumpCounter();              // 正式开始才清零计数
-      poseRunning = true;
-      poseRAF = requestAnimationFrame(poseLoop);
+      // 只清零计数相关，保留刚校准好的 standY
+      jumpCount = 0; $("liveCountNum").textContent = "0";
+      smoothY = null; ampMax = 0; jumpPhase = "ground"; lastJumpAt = 0; lastSeenAt = performance.now();
+      counting = true;                 // GO 之后才正式计数
+      if(!poseRunning){ poseRunning = true; cancelAnimationFrame(poseRAF); poseRAF = requestAnimationFrame(poseLoop); }
     }
 
     beep(660, 0.18, "triangle", 0.3);
