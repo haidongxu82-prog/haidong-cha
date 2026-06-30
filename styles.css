@@ -2516,3 +2516,232 @@ body::before {
   font-weight: 700;
   color: var(--ink);
 }
+
+/* ==========================================
+   Layer 8: Warm paper light skin (posts pages)
+   覆盖前面所有深色/玻璃层，使文章页对齐首页浅纸风
+   仅作用于 posts 列表页与文章详情页（body.inner-page）
+   =========================================== */
+
+/* 1. 浅色 token，对齐 home.css */
+:root {
+  color-scheme: light;
+  --bg: #f7f5ef;
+  --paper: #fbfaf6;
+  --paper-strong: #f0eee7;
+  --line: #ded9cd;
+  --line-strong: #bdb6a8;
+  --ink: #171817;
+  --text: #272925;
+  --muted: #74776f;
+  --soft: #474a44;
+  --faint: #a6a79f;
+  --accent: #8d641d;
+  --accent-soft: #efe3cb;
+  /* 同步早期主题里被深色层改写的别名变量，避免残留发光色 */
+  --line-soft: #e7e3da;
+  --green: #8d641d;
+  --gold: #8d641d;
+  --blue: #8d641d;
+  --purple: #8d641d;
+  --white: #ffffff;
+}
+
+/* 2. body 浅纸背景 + Inter sans 字体（覆盖 jade 层的渐变/serif/mono） */
+body.inner-page {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
+    #f7f5ef !important;
+  color: #272925 !important;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+}
+
+/* 3. 关闭所有深色/玻璃装饰与发光层 */
+body.inner-page .liquid-sky,
+body.inner-page .liquid-sky::after,
+body.inner-page .bubble-field,
+body.inner-page .bubble-field span,
+body.inner-page .matrix-rain,
+body.inner-page .scanline-layer,
+body.inner-page::after {
+  display: none !important;
+}
+
+/* 浅色细网格底纹，替换深色 body::before */
+body.inner-page::before {
+  background-image:
+    linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 23, 0.018) 1px, transparent 1px) !important;
+  background-size: 36px 36px !important;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 62%) !important;
+  opacity: 1 !important;
+}
+
+/* 去掉 inner-page 顶部深色色带，回到纯浅纸 */
+body.inner-page {
+  background-attachment: scroll;
+}
+
+.inner-page {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
+    #f7f5ef;
+}
+
+/* 4. 顶栏：深底玻璃 → 浅纸毛玻璃 */
+body.inner-page .site-header,
+body.inner-page .inner-header {
+  color: var(--ink) !important;
+  background: rgba(247, 245, 239, 0.86) !important;
+  border-bottom: 1px solid var(--line) !important;
+  box-shadow: 0 1px 0 rgba(40, 32, 20, 0.04), 0 10px 30px rgba(40, 32, 20, 0.05) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+body.inner-page .brand {
+  color: var(--ink) !important;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "PingFang SC", sans-serif !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .brand-mark {
+  border: 1px solid var(--line) !important;
+  background: var(--paper) !important;
+  box-shadow: 0 10px 34px rgba(40, 32, 20, 0.08) !important;
+  filter: none !important;
+}
+
+body.inner-page .nav a {
+  color: var(--muted) !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .nav a:hover {
+  background: transparent !important;
+  color: var(--ink) !important;
+}
+
+/* 5. 正文容器与排版浅色化 */
+body.inner-page .article-shell {
+  filter: none !important;
+}
+
+body.inner-page .article-page,
+body.inner-page .archive-page {
+  color: var(--text) !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 18px 50px rgba(40, 32, 20, 0.07) !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+body.inner-page .section-kicker {
+  color: var(--accent) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-page h1,
+body.inner-page .archive-page h1 {
+  color: var(--ink) !important;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-page time,
+body.inner-page .archive-row time {
+  color: var(--muted) !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-body {
+  color: var(--text) !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-body h2,
+body.inner-page .article-body h3 {
+  color: var(--ink) !important;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "PingFang SC", sans-serif !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-body p,
+body.inner-page .article-body li {
+  color: var(--text) !important;
+  line-height: 1.8 !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .article-body strong {
+  color: var(--ink) !important;
+}
+
+body.inner-page .article-body blockquote {
+  border-left: 2px solid var(--accent) !important;
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+/* 表格 */
+body.inner-page .article-body table {
+  color: var(--text) !important;
+}
+
+body.inner-page .article-body th,
+body.inner-page .article-body td {
+  border: 1px solid var(--line) !important;
+  color: var(--text) !important;
+}
+
+body.inner-page .article-body th {
+  background: var(--paper-strong) !important;
+  color: var(--ink) !important;
+}
+
+body.inner-page .back-link {
+  color: var(--accent) !important;
+  text-shadow: none !important;
+}
+
+/* 6. 列表页 */
+body.inner-page .archive-list {
+  border-top: 1px solid var(--line) !important;
+}
+
+body.inner-page .archive-row {
+  border-bottom: 1px solid var(--line) !important;
+  background: transparent !important;
+  text-shadow: none !important;
+}
+
+body.inner-page .archive-row:hover {
+  color: var(--accent) !important;
+}
+
+body.inner-page .archive-row span {
+  color: var(--ink) !important;
+}
+
+body.inner-page .archive-row:hover span {
+  color: var(--accent) !important;
+}
+
+/* 7. .post-views 已用 var(--muted)/var(--ink)，随上方 token 自动适配，可读 */
+
