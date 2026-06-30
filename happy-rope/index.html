@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="theme-color" content="#fff7ec" />
+<title>快乐跳绳</title>
+<style>
+  :root{
+    --bg:#fff7ec;            /* 暖阳奶白 */
+    --bg2:#fff0db;
+    --ink:#3a3026;           /* 暖深棕文字 */
+    --ink-soft:#9a8c79;
+    --blue:#2bb3c0;          /* 活力青蓝 */
+    --orange:#ff9f1c;        /* 阳光橙 */
+    --red:#ff5a5f;           /* 警示红 */
+    --green:#52c41a;         /* 草绿 */
+    --card:#ffffff;
+    --shadow:0 8px 24px rgba(180,140,80,.18);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Baloo 2","Noto Sans SC","PingFang SC","Hiragino Sans GB",
+                "Segoe UI Rounded",system-ui,-apple-system,"Microsoft YaHei",sans-serif;
+    background:radial-gradient(120% 90% at 50% 0%,var(--bg) 0%,var(--bg2) 70%,#ffe9c7 100%);
+    color:var(--ink);
+    min-height:100%;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    user-select:none;
+  }
+  #app{
+    max-width:520px;margin:0 auto;
+    padding:max(14px,env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;min-height:100vh;
+  }
+
+  /* 顶部今日统计 */
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .logo{font-size:26px;font-weight:800;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+  .logo .sun{font-size:24px;}
+  .today{
+    margin-left:auto;display:flex;gap:8px;
+  }
+  .pill{
+    background:var(--card);border-radius:999px;padding:7px 13px;box-shadow:var(--shadow);
+    font-size:13px;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;line-height:1.15;
+  }
+  .pill b{font-size:18px;color:var(--orange);}
+  .pill.sets b{color:var(--blue);}
+
+  /* 卡片 */
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+
+  /* 设置面板 */
+  .panel{display:flex;flex-direction:column;gap:16px;flex:1;justify-content:center;}
+  .section-title{font-size:15px;color:var(--ink-soft);margin:0 0 10px;font-weight:700;}
+  .durations{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .dur{
+    border:none;cursor:pointer;border-radius:16px;padding:16px 0;font-size:18px;font-weight:800;
+    background:#fff3e0;color:var(--ink);box-shadow:inset 0 0 0 2px #ffe2b8;transition:transform .12s,box-shadow .12s;
+  }
+  .dur:active{transform:scale(.94);}
+  .dur.active{background:linear-gradient(180deg,#3fc6d3,#2bb3c0);color:#fff;box-shadow:0 6px 14px rgba(43,179,192,.4);}
+  .dur small{display:block;font-size:12px;font-weight:600;opacity:.8;margin-top:2px;}
+
+  .goal-row{display:flex;align-items:center;gap:12px;}
+  .goal-input{
+    flex:1;border:none;background:#fff3e0;box-shadow:inset 0 0 0 2px #ffe2b8;
+    border-radius:14px;padding:14px 16px;font-size:18px;font-weight:700;color:var(--ink);
+    font-family:inherit;text-align:center;
+  }
+  .goal-input::placeholder{color:#c9b89e;font-weight:600;}
+
+  .start-btn{
+    border:none;cursor:pointer;border-radius:20px;padding:20px;font-size:24px;font-weight:800;color:#fff;
+    background:linear-gradient(180deg,#ffb13d,#ff9f1c);box-shadow:0 10px 22px rgba(255,159,28,.45);
+    letter-spacing:2px;transition:transform .12s;
+  }
+  .start-btn:active{transform:scale(.96);}
+  .start-btn .go{font-size:18px;opacity:.9;}
+
+  /* 计时界面 */
+  .timer-screen{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+  .ring-wrap{position:relative;width:min(78vw,320px);height:min(78vw,320px);}
+  .ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .ring-bg{fill:none;stroke:#ffe9cf;stroke-width:18;}
+  .ring-fg{fill:none;stroke:var(--blue);stroke-width:18;stroke-linecap:round;transition:stroke .4s;}
+  .ring-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .big-num{font-size:clamp(56px,17vw,90px);font-weight:800;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .sub-label{font-size:15px;color:var(--ink-soft);margin-top:8px;font-weight:700;}
+  .check-mark{font-size:clamp(70px,22vw,120px);line-height:1;}
+
+  .ring-wrap.flash{animation:flash .5s ease;}
+  @keyframes flash{0%,100%{filter:none;}40%{filter:brightness(1.5) saturate(1.3);}}
+  .ring-wrap.pulse{animation:pulse .5s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  .big-num.jump{animation:jump .5s ease;}
+  @keyframes jump{0%,100%{transform:scale(1);}30%{transform:scale(1.22);}}
+
+  .stop-btn{
+    border:none;cursor:pointer;background:#fff;color:var(--ink-soft);border-radius:999px;
+    padding:12px 28px;font-size:15px;font-weight:700;box-shadow:var(--shadow);font-family:inherit;
+  }
+  .stop-btn:active{transform:scale(.95);}
+
+  /* 底部记录 */
+  .records{margin-top:16px;}
+  .records h3{font-size:15px;color:var(--ink-soft);margin:0 0 10px;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .best{
+    background:linear-gradient(180deg,#fff6e0,#ffedc4);border-radius:16px;padding:12px 16px;margin-bottom:10px;
+    display:flex;align-items:center;gap:10px;font-weight:700;box-shadow:inset 0 0 0 2px #ffe0a3;
+  }
+  .best .medal{font-size:26px;}
+  .best b{color:var(--orange);font-size:20px;}
+  .rec-list{display:flex;flex-direction:column;gap:8px;}
+  .rec-item{
+    display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:10px 14px;
+    box-shadow:var(--shadow);font-size:14px;
+  }
+  .rec-item .icon{font-size:18px;}
+  .rec-item .when{color:var(--ink-soft);margin-left:auto;font-size:12px;}
+  .rec-item b{color:var(--blue);}
+  .empty{color:var(--ink-soft);font-size:14px;text-align:center;padding:16px;}
+
+  /* 庆祝弹层 */
+  .overlay{
+    position:fixed;inset:0;background:rgba(58,48,38,.42);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:24px;
+  }
+  .overlay.show{display:flex;animation:fadein .3s ease;}
+  @keyframes fadein{from{opacity:0;}to{opacity:1;}}
+  .celebrate{
+    background:var(--card);border-radius:28px;padding:26px 22px;width:100%;max-width:380px;text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);animation:pop .4s cubic-bezier(.2,1.3,.4,1);
+  }
+  @keyframes pop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .celebrate .emoji{font-size:60px;line-height:1;}
+  .celebrate h2{margin:10px 0 4px;font-size:26px;}
+  .celebrate p{margin:0 0 16px;color:var(--ink-soft);font-size:15px;}
+  .badge{
+    display:inline-block;background:linear-gradient(180deg,#ffd54f,#ffb300);color:#7a4b00;
+    font-weight:800;padding:6px 16px;border-radius:999px;font-size:14px;margin-bottom:14px;box-shadow:0 4px 10px rgba(255,179,0,.4);
+  }
+  .count-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .count-input{
+    flex:1;border:none;background:#fff3e0;box-shadow:inset 0 0 0 2px #ffe2b8;border-radius:14px;
+    padding:16px;font-size:22px;font-weight:800;text-align:center;color:var(--ink);font-family:inherit;
+  }
+  .step-btn{
+    border:none;cursor:pointer;width:52px;height:56px;border-radius:14px;font-size:26px;font-weight:800;
+    background:#fff3e0;color:var(--blue);box-shadow:inset 0 0 0 2px #ffe2b8;
+  }
+  .step-btn:active{transform:scale(.9);}
+  .celebrate .save-btn{
+    width:100%;border:none;cursor:pointer;border-radius:18px;padding:16px;font-size:20px;font-weight:800;color:#fff;
+    background:linear-gradient(180deg,#62d62f,#52c41a);box-shadow:0 8px 18px rgba(82,196,26,.4);font-family:inherit;
+  }
+  .celebrate .save-btn:active{transform:scale(.96);}
+  .celebrate .skip{margin-top:12px;background:none;border:none;color:var(--ink-soft);font-size:14px;cursor:pointer;font-family:inherit;}
+
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;display:none;}
+  #confetti.show{display:block;}
+
+  .hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;line-height:1.5;}
+
+  /* 摄像头开关 */
+  .cam-toggle{
+    display:flex;align-items:center;gap:12px;background:#fff3e0;border-radius:14px;
+    padding:14px 16px;box-shadow:inset 0 0 0 2px #ffe2b8;cursor:pointer;
+  }
+  .cam-toggle .cam-label{font-weight:700;font-size:15px;display:flex;flex-direction:column;line-height:1.3;}
+  .cam-toggle .cam-label small{font-weight:600;font-size:12px;color:var(--ink-soft);}
+  .switch{margin-left:auto;width:52px;height:30px;border-radius:999px;background:#e2cfae;position:relative;transition:background .2s;flex:none;}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:left .2s;}
+  .cam-toggle.on .switch{background:var(--green);}
+  .cam-toggle.on .switch::after{left:25px;}
+
+  /* 计时界面的摄像头背景 */
+  #camVideo{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transform:scaleX(-1);    /* 镜像，像照镜子 */
+    z-index:0;display:none;
+  }
+  #camVideo.show{display:block;}
+  .cam-dim{position:absolute;inset:0;background:rgba(255,247,236,.45);z-index:1;display:none;}
+  .cam-dim.show{display:block;}
+  .timer-screen{position:relative;}
+  .ring-wrap,.stop-btn,.live-count{position:relative;z-index:2;}
+
+  .live-count{
+    display:none;align-items:center;gap:8px;background:var(--card);border-radius:999px;
+    padding:10px 20px;box-shadow:var(--shadow);font-weight:800;font-size:22px;color:var(--blue);
+  }
+  .live-count.show{display:flex;}
+  .live-count .lc-label{font-size:13px;color:var(--ink-soft);font-weight:700;}
+
+  /* 加载摄像头模型的遮罩 */
+  .cam-loading{
+    position:fixed;inset:0;background:rgba(58,48,38,.55);backdrop-filter:blur(3px);
+    z-index:70;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;color:#fff;padding:24px;text-align:center;
+  }
+  .cam-loading.show{display:flex;}
+  .spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .cam-loading p{margin:0;font-size:16px;font-weight:700;}
+  .cam-loading small{opacity:.85;font-size:13px;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div id="app">
+
+  <!-- 顶部 -->
+  <div class="topbar">
+    <div class="logo"><span class="sun">🌞</span>快乐跳绳</div>
+    <div class="today">
+      <div class="pill sets"><b id="todaySets">0</b>今日组数</div>
+      <div class="pill"><b id="todayCount">0</b>今日个数</div>
+    </div>
+  </div>
+
+  <!-- 设置面板 -->
+  <div class="panel card" id="setupPanel">
+    <div>
+      <p class="section-title">⏱️ 选择跳绳时长</p>
+      <div class="durations" id="durations">
+        <button class="dur active" data-sec="30">30<small>秒</small></button>
+        <button class="dur" data-sec="60">1<small>分钟</small></button>
+        <button class="dur" data-sec="120">2<small>分钟</small></button>
+        <button class="dur" data-sec="180">3<small>分钟</small></button>
+      </div>
+    </div>
+    <div>
+      <p class="section-title">🎯 本次挑战目标（可不填）</p>
+      <div class="goal-row">
+        <input class="goal-input" id="goalInput" type="number" inputmode="numeric" min="1" placeholder="想跳多少个？" />
+      </div>
+    </div>
+    <div class="cam-toggle" id="camToggle">
+      <span style="font-size:24px">📷</span>
+      <span class="cam-label">摄像头自动数数<small>对着人，AI 帮忙数（需联网加载一次）</small></span>
+      <span class="switch"></span>
+    </div>
+    <button class="start-btn" id="startBtn">开始跳绳 <span class="go">GO!</span></button>
+  </div>
+
+  <!-- 计时界面 -->
+  <div class="timer-screen" id="timerScreen">
+    <video id="camVideo" playsinline muted autoplay></video>
+    <div class="cam-dim" id="camDim"></div>
+    <div class="live-count" id="liveCount"><span style="font-size:24px">🤸</span><span id="liveCountNum">0</span><span class="lc-label">个</span></div>
+    <div class="ring-wrap" id="ringWrap">
+      <svg viewBox="0 0 240 240">
+        <circle class="ring-bg" cx="120" cy="120" r="105"></circle>
+        <circle class="ring-fg" id="ringFg" cx="120" cy="120" r="105"></circle>
+      </svg>
+      <div class="ring-center">
+        <div class="big-num" id="bigNum">30</div>
+        <div class="sub-label" id="subLabel">加油！</div>
+      </div>
+    </div>
+    <button class="stop-btn" id="stopBtn">停止</button>
+  </div>
+
+  <!-- 底部记录 -->
+  <div class="records" id="records">
+    <div class="best" id="bestBox" style="display:none">
+      <span class="medal">🏆</span>
+      <span>历史最佳 <b id="bestVal">0</b> 个</span>
+    </div>
+    <h3>📒 最近记录</h3>
+    <div class="rec-list" id="recList"><div class="empty">还没有记录，开跳第一组吧！</div></div>
+    <div class="hint">提示：手机上点「分享 → 添加到主屏幕」，就能像 App 一样全屏使用啦。</div>
+  </div>
+</div>
+
+<!-- 摄像头/模型加载遮罩 -->
+<div class="cam-loading" id="camLoading">
+  <div class="spinner"></div>
+  <p id="camLoadingText">正在打开摄像头与识别模型…</p>
+  <small>第一次需要联网下载一次（约几 MB），之后会快很多</small>
+</div>
+
+<!-- 庆祝弹层 -->
+<div class="overlay" id="overlay">
+  <div class="celebrate">
+    <div class="emoji" id="celebEmoji">🎉</div>
+    <h2 id="celebTitle">太棒了！</h2>
+    <p id="celebSub">这次跳了多少个呀？</p>
+    <div id="badgeWrap"></div>
+    <div class="count-row">
+      <button class="step-btn" id="minusBtn">−</button>
+      <input class="count-input" id="countInput" type="number" inputmode="numeric" min="0" value="0" />
+      <button class="step-btn" id="plusBtn">+</button>
+    </div>
+    <button class="save-btn" id="saveBtn">记录这一组 ✅</button>
+    <button class="skip" id="skipBtn">不记了，关闭</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function(){
+  /* ---------------- 数据存储 ---------------- */
+  var STORE_KEY = "happyRope.records.v1";
+  function loadRecords(){
+    try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveRecords(arr){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+  function todayKey(){
+    var d = new Date();
+    return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+  }
+
+  /* ---------------- 元素引用 ---------------- */
+  var $ = function(id){ return document.getElementById(id); };
+  var setupPanel=$("setupPanel"), timerScreen=$("timerScreen"), records=$("records");
+  var ringFg=$("ringFg"), ringWrap=$("ringWrap"), bigNum=$("bigNum"), subLabel=$("subLabel");
+  var overlay=$("overlay"), confettiCanvas=$("confetti");
+
+  /* ---------------- 设置选择 ---------------- */
+  var selectedSec = 30;
+  var durButtons = document.querySelectorAll(".dur");
+  durButtons.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      durButtons.forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      selectedSec = parseInt(btn.dataset.sec,10);
+    });
+  });
+
+  /* ---------------- 摄像头自动数数（按需加载，破坏离线） ---------------- */
+  var camMode = false;
+  var camToggle = $("camToggle");
+  camToggle.addEventListener("click", function(){
+    camMode = !camMode;
+    camToggle.classList.toggle("on", camMode);
+  });
+
+  // 动态加载脚本
+  function loadScript(src){
+    return new Promise(function(res,rej){
+      var s = document.createElement("script");
+      s.src = src; s.async = true;
+      s.onload = res; s.onerror = function(){ rej(new Error("load fail: "+src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  var camStream = null, detector = null, poseRAF = 0, poseRunning = false;
+  var libsLoaded = false;
+  var TFJS_URL = "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js";
+  var POSE_URL = "https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js";
+
+  // 返回 true=成功进入摄像头模式；false=失败（已回退）
+  function initCamera(){
+    return new Promise(function(resolve){
+      $("camLoading").classList.add("show");
+      var video = $("camVideo");
+
+      function fail(msg){
+        $("camLoading").classList.remove("show");
+        alert(msg + "\n将以普通计时模式开始。");
+        camMode = false; camToggle.classList.remove("on");
+        resolve(false);
+      }
+
+      navigator.mediaDevices.getUserMedia({ video:{ facingMode:"user", width:640, height:480 }, audio:false })
+        .then(function(stream){
+          camStream = stream;
+          video.srcObject = stream;
+          return video.play().catch(function(){});
+        })
+        .then(function(){
+          if(libsLoaded) return Promise.resolve();
+          $("camLoadingText").textContent = "正在加载识别模型…";
+          return loadScript(TFJS_URL).then(function(){ return loadScript(POSE_URL); });
+        })
+        .then(function(){
+          if(detector) return Promise.resolve();
+          if(!window.tf || !window.poseDetection) throw new Error("库未就绪");
+          return window.tf.ready().then(function(){
+            libsLoaded = true;
+            return window.poseDetection.createDetector(
+              window.poseDetection.SupportedModels.MoveNet,
+              { modelType: window.poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING }
+            );
+          }).then(function(d){ detector = d; });
+        })
+        .then(function(){
+          $("camLoading").classList.remove("show");
+          resolve(true);
+        })
+        .catch(function(err){
+          var msg = "摄像头或模型加载失败";
+          if(err && err.name === "NotAllowedError") msg = "没有获得摄像头权限";
+          else if(err && err.name === "NotFoundError") msg = "没有找到摄像头";
+          else if(/load fail|未就绪/.test(String(err && err.message))) msg = "识别模型加载失败（可能是没联网）";
+          fail(msg);
+        });
+    });
+  }
+
+  function stopCamera(){
+    poseRunning = false;
+    cancelAnimationFrame(poseRAF);
+    if(camStream){ camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
+    var video = $("camVideo");
+    video.srcObject = null;
+    video.classList.remove("show");
+    $("camDim").classList.remove("show");
+    $("liveCount").classList.remove("show");
+  }
+
+  /* --- 跳跃计数算法：跟踪髋部垂直起伏，自适应阈值 --- */
+  var jumpCount = 0;
+  var fastY = null, baseY = null, ampEMA = 0, jumpPhase = "ground", lastJumpAt = 0;
+
+  function resetJumpCounter(){
+    jumpCount = 0; fastY = null; baseY = null; ampEMA = 0; jumpPhase = "ground"; lastJumpAt = 0;
+    $("liveCountNum").textContent = "0";
+  }
+
+  function feedY(yNorm, now){
+    // yNorm: 0(顶) ~ 1(底)。人腾空时 y 变小。
+    if(fastY === null){ fastY = baseY = yNorm; return; }
+    fastY = fastY*0.5 + yNorm*0.5;           // 快速跟随
+    baseY = baseY*0.96 + yNorm*0.04;          // 慢速基线≈平均站立位置
+    var dev = baseY - fastY;                   // >0 表示比平均更高（腾空）
+    ampEMA = ampEMA*0.9 + Math.abs(dev)*0.1;
+    var thr = Math.min(0.18, Math.max(0.02, ampEMA*0.6)); // 触发阈值
+    if(jumpPhase === "ground" && dev > thr){
+      jumpPhase = "air";
+    }else if(jumpPhase === "air" && dev < thr*0.4){
+      jumpPhase = "ground";
+      if(now - lastJumpAt > 220){            // 最快约 4.5 次/秒，防抖
+        lastJumpAt = now;
+        jumpCount++;
+        $("liveCountNum").textContent = jumpCount;
+        beep(900, 0.05, "sine", 0.12);       // 轻微计数反馈
+      }
+    }
+  }
+
+  function poseLoop(){
+    if(!poseRunning) return;
+    var video = $("camVideo");
+    if(detector && video.readyState >= 2 && video.videoHeight){
+      detector.estimatePoses(video, { flipHorizontal:false }).then(function(poses){
+        if(poseRunning && poses && poses.length){
+          var kp = poses[0].keypoints;
+          // MoveNet: 11 左髋 12 右髋 5 左肩 6 右肩 0 鼻
+          var hipL = kp[11], hipR = kp[12], shL = kp[5], shR = kp[6];
+          var y = null;
+          if(hipL && hipR && hipL.score>0.3 && hipR.score>0.3) y = (hipL.y+hipR.y)/2;
+          else if(shL && shR && shL.score>0.3 && shR.score>0.3) y = (shL.y+shR.y)/2;
+          else if(kp[0] && kp[0].score>0.3) y = kp[0].y;
+          if(y !== null) feedY(y/video.videoHeight, performance.now());
+        }
+        if(poseRunning) poseRAF = requestAnimationFrame(poseLoop);
+      }).catch(function(){
+        if(poseRunning) poseRAF = requestAnimationFrame(poseLoop);
+      });
+    }else{
+      poseRAF = requestAnimationFrame(poseLoop);
+    }
+  }
+
+  /* ---------------- 音频（Web Audio 实时合成） ---------------- */
+  var audioCtx = null;
+  function unlockAudio(){
+    if(!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC) audioCtx = new AC();
+    }
+    if(audioCtx && audioCtx.state === "suspended"){ audioCtx.resume(); }
+  }
+  function beep(freq, dur, type, vol){
+    if(!audioCtx) return;
+    type = type || "sine"; vol = vol==null ? 0.25 : vol;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = type; osc.frequency.setValueAt = osc.frequency.setValueAtTime;
+    osc.frequency.setValueAtTime(freq, t);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(vol, t+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t+dur+0.02);
+  }
+  // 胜利号角：上行琶音
+  function fanfare(grand){
+    if(!audioCtx) return;
+    var notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+    if(grand) notes = notes.concat([1318.51, 1567.98]); // E6 G6 更长更高
+    notes.forEach(function(f,i){
+      setTimeout(function(){ beep(f, 0.28, "triangle", 0.3); }, i*150);
+    });
+  }
+  function tick(secLeft){
+    // 最后 10 秒，越接近结束音越高越急
+    var freq = 440 + (10 - secLeft) * 70;
+    beep(freq, 0.12, "square", 0.22);
+  }
+
+  /* ---------------- 语音（SpeechSynthesis） ---------------- */
+  var zhVoice = null, voiceReady = false;
+  function pickVoice(){
+    if(!("speechSynthesis" in window)) return;
+    var voices = speechSynthesis.getVoices();
+    if(!voices || !voices.length) return;
+    // 优先中文女声 / 中文，找不到就用第一个
+    zhVoice = voices.find(function(v){ return /zh[-_]CN/i.test(v.lang); })
+           || voices.find(function(v){ return /^zh/i.test(v.lang); })
+           || voices.find(function(v){ return /Chinese|中文|普通话/i.test(v.name); })
+           || null;
+    voiceReady = true;
+  }
+  if("speechSynthesis" in window){
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text){
+    if(!("speechSynthesis" in window)) return;
+    if(!voiceReady) pickVoice();
+    try{
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "zh-CN";
+      if(zhVoice) u.voice = zhVoice;       // 找不到中文 voice 时兜底：仍按 zh-CN 朗读
+      u.rate = 1.0; u.pitch = 1.1; u.volume = 1.0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function unlockSpeech(){
+    // iOS 需要在用户手势内先 speak 一次解锁
+    if(!("speechSynthesis" in window)) return;
+    try{
+      var u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0; speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  /* ---------------- 倒计时核心（基于时间戳，避免后台漂移） ---------------- */
+  var CIRC = 2 * Math.PI * 105; // 圆环周长
+  ringFg.style.strokeDasharray = CIRC;
+  ringFg.style.strokeDashoffset = 0;
+
+  var running = false;
+  var totalMs = 0, endTime = 0, rafId = 0;
+  var currentTarget = null;
+  var flags = {}; // 各阶段触发标记
+
+  function setRingColor(c){ ringFg.style.stroke = c; }
+
+  var camActive = false; // 本次是否真的开了摄像头
+
+  function startTimer(){
+    unlockAudio();
+    unlockSpeech();
+    if(camMode){
+      initCamera().then(function(ok){
+        camActive = ok;
+        beginSession();
+      });
+    }else{
+      camActive = false;
+      beginSession();
+    }
+  }
+
+  function beginSession(){
+    totalMs = selectedSec * 1000;
+    var goalRaw = parseInt($("goalInput").value,10);
+    currentTarget = (goalRaw && goalRaw>0) ? goalRaw : null;
+
+    endTime = performance.now() + totalMs;
+    flags = {half:false, last10:false, lastTickSec:null, said5:false, said3:false, said2:false, said1:false};
+    running = true;
+
+    setupPanel.style.display = "none";
+    records.style.display = "none";
+    timerScreen.style.display = "flex";
+    ringWrap.classList.remove("pulse");
+    bigNum.classList.remove("jump");
+    setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--blue").trim());
+    ringFg.style.strokeDashoffset = 0;
+    bigNum.textContent = selectedSec;
+    subLabel.textContent = "加油！";
+    bigNum.style.color = "var(--ink)";
+
+    if(camActive){
+      $("camVideo").classList.add("show");
+      $("camDim").classList.add("show");
+      $("liveCount").classList.add("show");
+      resetJumpCounter();
+      poseRunning = true;
+      poseRAF = requestAnimationFrame(poseLoop);
+    }
+
+    speak("开始跳绳，加油！");
+    beep(660, 0.18, "triangle", 0.3);
+
+    cancelAnimationFrame(rafId);
+    tickLoop();
+  }
+
+  function tickLoop(){
+    if(!running) return;
+    var now = performance.now();
+    var remainMs = endTime - now;
+    if(remainMs < 0) remainMs = 0;
+    var remainSec = Math.ceil(remainMs/1000);
+    var progress = remainMs / totalMs; // 1 → 0
+
+    // 环消耗
+    ringFg.style.strokeDashoffset = CIRC * (1 - progress);
+
+    // 大数字
+    if(bigNum.textContent != remainSec){
+      bigNum.textContent = remainSec;
+      if(flags.last10 && remainSec>0){
+        bigNum.classList.remove("jump");
+        void bigNum.offsetWidth;
+        bigNum.classList.add("jump");
+      }
+    }
+
+    var elapsedMs = totalMs - remainMs;
+
+    // 时间过半
+    if(!flags.half && elapsedMs >= totalMs/2 && remainMs > 0){
+      flags.half = true;
+      setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--orange").trim());
+      ringWrap.classList.remove("flash"); void ringWrap.offsetWidth; ringWrap.classList.add("flash");
+      subLabel.textContent = "已经一半啦！";
+      beep(720, 0.2, "triangle", 0.3);
+      speak("加油，已经一半啦！");
+    }
+
+    // 最后 10 秒
+    if(!flags.last10 && remainMs <= 10000 && remainMs > 0){
+      flags.last10 = true;
+      setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--red").trim());
+      ringWrap.classList.add("pulse");
+      bigNum.style.color = getComputedStyle(document.documentElement).getPropertyValue("--red").trim();
+      subLabel.textContent = "坚持住！";
+      speak("最后十秒，坚持住！");
+    }
+
+    // 最后 10 秒内每秒滴答 + 报数
+    if(flags.last10 && remainSec>0 && remainSec<=10){
+      if(flags.lastTickSec !== remainSec){
+        flags.lastTickSec = remainSec;
+        tick(remainSec);
+      }
+      // 语音报数：五、三、二、一
+      if(remainSec===5 && !flags.said5){ flags.said5=true; speak("五"); }
+      if(remainSec===3 && !flags.said3){ flags.said3=true; speak("三"); }
+      if(remainSec===2 && !flags.said2){ flags.said2=true; speak("二"); }
+      if(remainSec===1 && !flags.said1){ flags.said1=true; speak("一"); }
+    }
+
+    if(remainMs <= 0){
+      finishTimer();
+      return;
+    }
+    rafId = requestAnimationFrame(tickLoop);
+  }
+
+  function finishTimer(){
+    running = false;
+    cancelAnimationFrame(rafId);
+    poseRunning = false;          // 停止数数，但摄像头先留着到登记完
+    cancelAnimationFrame(poseRAF);
+    ringWrap.classList.remove("pulse");
+    ringFg.style.strokeDashoffset = 0;
+    setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--green").trim());
+    // 圆环中心换成对勾
+    bigNum.textContent = "✅";
+    bigNum.style.color = "var(--green)";
+    bigNum.classList.remove("jump");
+    subLabel.textContent = "完成啦！";
+
+    // 基础庆祝
+    fanfare(false);
+    speak("太棒了，你做到了！");
+    launchConfetti(2200, false);
+
+    setTimeout(openCelebrate, 800);
+  }
+
+  function stopTimer(){
+    running = false;
+    cancelAnimationFrame(rafId);
+    stopCamera();
+    showSetup();
+  }
+
+  function showSetup(){
+    timerScreen.style.display = "none";
+    setupPanel.style.display = "flex";
+    records.style.display = "block";
+    ringWrap.classList.remove("pulse","flash");
+  }
+
+  /* ---------------- 庆祝弹层 + 记录 ---------------- */
+  function openCelebrate(){
+    var best = getBest();
+    $("celebEmoji").textContent = "🎉";
+    $("celebTitle").textContent = "太棒了！";
+    $("celebSub").textContent = "这次跳了多少个呀？";
+    $("badgeWrap").innerHTML = "";
+    if(camActive){
+      // 摄像头模式：预填自动数出来的个数，提示可修正
+      $("countInput").value = jumpCount;
+      $("celebSub").textContent = "摄像头数到 " + jumpCount + " 个，可以改一改～";
+    }else{
+      // 预填：有目标填目标，否则填历史最佳，否则 0
+      $("countInput").value = currentTarget || best || 0;
+    }
+    overlay.classList.add("show");
+  }
+  function closeCelebrate(){
+    overlay.classList.remove("show");
+    stopCamera();
+    showSetup();
+  }
+
+  $("plusBtn").addEventListener("click", function(){
+    $("countInput").value = Math.max(0,(parseInt($("countInput").value,10)||0)+1);
+  });
+  $("minusBtn").addEventListener("click", function(){
+    $("countInput").value = Math.max(0,(parseInt($("countInput").value,10)||0)-1);
+  });
+
+  $("saveBtn").addEventListener("click", function(){
+    var count = parseInt($("countInput").value,10) || 0;
+    var prevBest = getBest();
+    var recs = loadRecords();
+    recs.push({ ts: Date.now(), date: todayKey(), duration: selectedSec, count: count });
+    saveRecords(recs);
+    renderAll();
+
+    var isRecord = count > prevBest && count > 0;
+    var hitGoal = currentTarget && count >= currentTarget;
+
+    if(isRecord || hitGoal){
+      // 更盛大的庆祝
+      var label = isRecord ? "🏅 破纪录了！" : "🎯 达成目标！";
+      $("celebEmoji").textContent = isRecord ? "🏆" : "🎯";
+      $("celebTitle").textContent = isRecord ? "破纪录啦！" : "完成目标！";
+      $("celebSub").textContent = "你真是太厉害了！";
+      $("badgeWrap").innerHTML = '<span class="badge">'+label+' '+count+' 个</span>';
+      // 隐藏输入区，改成「继续」
+      document.querySelector(".count-row").style.display = "none";
+      $("saveBtn").style.display = "none";
+      $("skipBtn").textContent = "好耶，关闭 🎉";
+      fanfare(true);
+      launchConfetti(4000, true);
+      speak(isRecord ? "哇，破纪录了！你太棒了！" : "目标达成，真厉害！");
+    }else{
+      closeCelebrate();
+    }
+  });
+  $("skipBtn").addEventListener("click", function(){
+    // 还原弹层状态
+    document.querySelector(".count-row").style.display = "flex";
+    $("saveBtn").style.display = "block";
+    $("skipBtn").textContent = "不记了，关闭";
+    closeCelebrate();
+  });
+
+  /* ---------------- 统计渲染 ---------------- */
+  function getBest(){
+    var recs = loadRecords(), best = 0;
+    recs.forEach(function(r){ if(r.count>best) best=r.count; });
+    return best;
+  }
+  function renderAll(){
+    var recs = loadRecords();
+    var tk = todayKey();
+    var todaySets = 0, todayCount = 0;
+    recs.forEach(function(r){
+      if(r.date === tk){ todaySets++; todayCount += (r.count||0); }
+    });
+    $("todaySets").textContent = todaySets;
+    $("todayCount").textContent = todayCount;
+
+    var best = getBest();
+    if(best>0){
+      $("bestBox").style.display = "flex";
+      $("bestVal").textContent = best;
+    }else{
+      $("bestBox").style.display = "none";
+    }
+
+    var list = $("recList");
+    var recent = recs.slice(-6).reverse();
+    if(!recent.length){
+      list.innerHTML = '<div class="empty">还没有记录，开跳第一组吧！</div>';
+      return;
+    }
+    list.innerHTML = "";
+    recent.forEach(function(r){
+      var d = new Date(r.ts);
+      var when = (d.getMonth()+1)+"/"+d.getDate()+" "+
+                 String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+      var durTxt = r.duration>=60 ? (r.duration/60)+"分钟" : r.duration+"秒";
+      var item = document.createElement("div");
+      item.className = "rec-item";
+      item.innerHTML = '<span class="icon">🤸</span><span>跳了 <b>'+(r.count||0)+'</b> 个'+
+                       '<span style="color:var(--ink-soft)">（'+durTxt+'）</span></span>'+
+                       '<span class="when">'+when+'</span>';
+      list.appendChild(item);
+    });
+  }
+
+  /* ---------------- 彩带特效（canvas） ---------------- */
+  var ctx = confettiCanvas.getContext("2d");
+  var particles = [], confettiTimer = null, confettiRAF = 0;
+  var EMOJIS = ["🌸","⭐","🎉","🌟","🎊","💪","🏅"];
+  var COLORS = ["#ff9f1c","#2bb3c0","#52c41a","#ff5a5f","#ffd54f","#ff7eb6"];
+
+  function resizeCanvas(){
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function spawnParticles(n, grand){
+    for(var i=0;i<n;i++){
+      var isEmoji = Math.random() < 0.32;
+      particles.push({
+        x: Math.random()*confettiCanvas.width,
+        y: -20 - Math.random()*confettiCanvas.height*0.3,
+        vx: (Math.random()-0.5)*3,
+        vy: 2 + Math.random()*4,
+        rot: Math.random()*Math.PI*2,
+        vr: (Math.random()-0.5)*0.3,
+        size: isEmoji ? (20+Math.random()*16) : (8+Math.random()*8),
+        color: COLORS[(Math.random()*COLORS.length)|0],
+        emoji: isEmoji ? EMOJIS[(Math.random()*EMOJIS.length)|0] : null,
+        life: 1
+      });
+    }
+  }
+  function launchConfetti(durationMs, grand){
+    confettiCanvas.classList.add("show");
+    spawnParticles(grand?110:70, grand);
+    // 持续补撒
+    var start = performance.now();
+    if(confettiTimer) clearInterval(confettiTimer);
+    confettiTimer = setInterval(function(){
+      if(performance.now()-start > durationMs){ clearInterval(confettiTimer); confettiTimer=null; return; }
+      spawnParticles(grand?14:8, grand);
+    }, 200);
+    if(!confettiRAF) confettiRAF = requestAnimationFrame(drawConfetti);
+  }
+  function drawConfetti(){
+    ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    for(var i=particles.length-1;i>=0;i--){
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.rot += p.vr;
+      if(p.y > confettiCanvas.height+40){ particles.splice(i,1); continue; }
+      ctx.save();
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      if(p.emoji){
+        ctx.font = p.size+"px serif";
+        ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(p.emoji,0,0);
+      }else{
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      }
+      ctx.restore();
+    }
+    if(particles.length>0){
+      confettiRAF = requestAnimationFrame(drawConfetti);
+    }else{
+      confettiRAF = 0;
+      confettiCanvas.classList.remove("show");
+      ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    }
+  }
+
+  /* ---------------- 绑定 ---------------- */
+  $("startBtn").addEventListener("click", startTimer);
+  $("stopBtn").addEventListener("click", stopTimer);
+  // 防止双击缩放
+  document.addEventListener("dblclick", function(e){ e.preventDefault(); }, {passive:false});
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
