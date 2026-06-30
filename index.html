@@ -202,19 +202,13 @@
           <p class="kicker">MESSAGE</p>
           <h2 id="message-title">留言给海东</h2>
           <p>
-            留言会发送到邮箱；提交后只有你当前浏览器能看到原文，其他访客看不到。
+            留言会留在当前页面的本机记录里；其他访客看不到正文。后续接入后台后，再做成只有海东可见的集中留言箱。
           </p>
         </div>
         <form
           class="message-form"
-          action="https://formsubmit.co/hello@haidong.chat"
-          method="POST"
           data-message-form
         >
-          <input type="hidden" name="_subject" value="haidong.chat 新留言" />
-          <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_next" value="https://haidong.chat/#message" />
           <input type="hidden" name="masked_message" data-masked-field />
 
           <label>
@@ -244,7 +238,7 @@
             <span>你的留言，仅当前浏览器可见</span>
             <p data-message-trace-text></p>
           </div>
-          <button type="submit">发送留言</button>
+          <button type="submit">留下留言</button>
         </form>
       </section>
     </main>
@@ -319,29 +313,16 @@
 
           const masked = hidden.value;
           showTrace(message, masked);
-          status.textContent = "正在发送...";
+          status.textContent = "正在保存...";
           submitButton.disabled = true;
 
-          try {
-            const response = await fetch(form.action, {
-              method: "POST",
-              body: new FormData(form),
-              headers: { Accept: "application/json" },
-            });
-
-            if (!response.ok) throw new Error("submit failed");
-
-            status.textContent = "已留言。原文只在你当前浏览器可见，其他访客看不到。";
-            form.reset();
-            input.value = "";
-            preview.textContent = "留言内容会在这里被马赛克化显示。";
-            hidden.value = masked;
-            window.history.replaceState(null, "", `${window.location.pathname}#message`);
-          } catch (error) {
-            status.textContent = "提交未确认成功。已保留马赛克痕迹，你可以稍后再试。";
-          } finally {
-            submitButton.disabled = false;
-          }
+          status.textContent = "已留言。原文只在你当前浏览器可见，其他访客看不到。";
+          form.reset();
+          input.value = "";
+          preview.textContent = "留言内容会在这里被马赛克化显示。";
+          hidden.value = masked;
+          window.history.replaceState(null, "", `${window.location.pathname}#message`);
+          submitButton.disabled = false;
         });
         sync();
       })();

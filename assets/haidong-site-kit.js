@@ -1,9 +1,10 @@
 (() => {
   const config = {
-    email: "hello@haidong.chat",
     traceKey: "haidong.ai.trace.v1",
     sessionKey: "haidong.ai.session.v1",
+    feedbackKey: "haidong.ai.feedback.v1",
     maxTrace: 80,
+    maxFeedback: 20,
   };
 
   const now = () => new Date().toISOString();
@@ -227,6 +228,39 @@
         opacity: 0.58;
       }
 
+      .hd-ai-feedback-list {
+        display: grid;
+        gap: 8px;
+        max-height: 150px;
+        overflow: auto;
+      }
+
+      .hd-ai-feedback-item {
+        border: 1px solid rgba(20, 24, 30, 0.1);
+        border-radius: 12px;
+        padding: 9px;
+        background: rgba(250, 250, 250, 0.72);
+      }
+
+      .hd-ai-feedback-item time {
+        display: block;
+        margin-bottom: 6px;
+        color: rgba(21, 23, 25, 0.48);
+        font-size: 11px;
+      }
+
+      .hd-ai-feedback-mask {
+        display: grid;
+        gap: 5px;
+      }
+
+      .hd-ai-feedback-mask span {
+        display: block;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(21, 23, 25, 0.12), rgba(21, 23, 25, 0.05));
+      }
+
       @media (prefers-color-scheme: dark) {
         .hd-ai-watermark {
           color: rgba(255, 255, 255, 0.34);
@@ -279,14 +313,12 @@
           <p class="hd-ai-feedback-title">留言反馈</p>
           <button class="hd-ai-feedback-close" type="button" aria-label="收起反馈">×</button>
         </div>
-        <p class="hd-ai-feedback-note">反馈会发送到海东邮箱；当前页面和最近使用痕迹会一起附上，便于排查。</p>
+        <p class="hd-ai-feedback-note">留言会留在当前页面的本机记录里；其他访客看不到。集中后台查看需要后端权限系统。</p>
         <input name="name" type="text" autocomplete="name" placeholder="称呼，可不填" />
         <textarea name="message" required placeholder="写下问题、建议或使用反馈"></textarea>
-        <input name="_subject" type="hidden" value="haidong.chat 子站反馈" />
-        <input name="page" type="hidden" />
-        <input name="trace" type="hidden" />
-        <button class="hd-ai-feedback-submit" type="submit">发送</button>
+        <button class="hd-ai-feedback-submit" type="submit">留下反馈</button>
         <p class="hd-ai-feedback-status" aria-live="polite"></p>
+        <div class="hd-ai-feedback-list" aria-label="本机留言痕迹"></div>
       </form>
     `;
     document.body.appendChild(widget);
@@ -296,6 +328,44 @@
     const form = widget.querySelector("form");
     const status = widget.querySelector(".hd-ai-feedback-status");
     const submit = widget.querySelector(".hd-ai-feedback-submit");
+    const list = widget.querySelector(".hd-ai-feedback-list");
+
+    const getFeedback = () => readJson(config.feedbackKey, []);
+
+    const getPageFeedback = () =>
+      getFeedback().filter((item) => item.page === pagePath()).slice(0, 6);
+
+    const maskLines = (length) => {
+      const lineCount = Math.min(4, Math.max(2, Math.ceil((Number(length) || 20) / 36)));
+      return Array.from({ length: lineCount }, (_, index) => {
+        const width = Math.max(38, Math.min(96, 88 - index * 12 + ((Number(length) || 0) % 11)));
+        return `<span style="width:${width}%"></span>`;
+      }).join("");
+    };
+
+    const renderFeedback = () => {
+      const entries = getPageFeedback();
+      if (!entries.length) {
+        list.innerHTML = `<p class="hd-ai-feedback-note">暂无本页留言痕迹。</p>`;
+        return;
+      }
+      list.innerHTML = entries
+        .map(
+          (entry) => `
+            <article class="hd-ai-feedback-item">
+              <time>${new Date(entry.time).toLocaleString("zh-CN", { hour12: false })}</time>
+              <div class="hd-ai-feedback-mask" aria-label="留言内容已隐藏">${maskLines(entry.length)}</div>
+            </article>
+          `,
+        )
+        .join("");
+    };
+
+    const saveFeedback = (entry) => {
+      const entries = getFeedback();
+      writeJson(config.feedbackKey, [entry, ...entries].slice(0, config.maxFeedback));
+      renderFeedback();
+    };
 
     const setOpen = (open) => {
       widget.dataset.open = String(open);
@@ -329,28 +399,22 @@
         return;
       }
 
-      form.page.value = `${pageTitle()} | ${location.href}`;
-      form.trace.value = JSON.stringify(getRecentTrace(), null, 2);
       submit.disabled = true;
-      status.textContent = "正在发送...";
       trace("feedback_submit", { length: message.length });
-
-      try {
-        const response = await fetch(`https://formsubmit.co/ajax/${config.email}`, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { Accept: "application/json" },
-        });
-        if (!response.ok) throw new Error("submit failed");
-        form.reset();
-        status.textContent = "已发送。";
-        window.setTimeout(() => setOpen(false), 900);
-      } catch (error) {
-        status.textContent = "发送未确认成功，请稍后再试。";
-      } finally {
-        submit.disabled = false;
-      }
+      saveFeedback({
+        time: now(),
+        page: pagePath(),
+        title: pageTitle(),
+        name: safeText(form.querySelector("[name='name']")?.value || "匿名访客", 40),
+        length: message.length,
+        trace: getRecentTrace(),
+      });
+      form.reset();
+      status.textContent = "已留下本页反馈痕迹。其他访客看不到正文。";
+      submit.disabled = false;
     });
+
+    renderFeedback();
   };
 
   const setupTrace = () => {

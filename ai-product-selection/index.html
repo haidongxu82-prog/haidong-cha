@@ -1618,7 +1618,7 @@
           <button class="btn" id="templateBtn" type="button">下载标准模板</button>
           <a class="btn" href="sample-data.csv" download>下载测试数据</a>
         </div>
-        <div class="privacy-note">数据只在当前浏览器本地分析，不上传服务器；只有你主动提交的留言会发送到邮箱。</div>
+        <div class="privacy-note">数据只在当前浏览器本地分析，不上传服务器；留言只保留本页本机痕迹。</div>
         <div class="status" id="statusText"></div>
       </section>
 
@@ -1860,7 +1860,7 @@
               <p>需要把自有数据口径、平台规则、供应链约束接入模型，可以直接联系海东。</p>
               <div class="cta-row">
                 <button class="btn primary" id="feedbackCtaBtn" type="button">留言咨询</button>
-                <a class="btn" href="mailto:xu-haidong@qq.com?subject=AI%E9%80%89%E5%93%81%E6%A8%A1%E5%9E%8B%E5%AE%9A%E5%88%B6">邮件联系</a>
+                <a class="btn" href="https://haidong.chat/#message">回主站留言</a>
               </div>
             </div>
           </section>
@@ -1879,7 +1879,7 @@
     <div class="feedback-drawer-head">
       <div>
         <h2>使用反馈</h2>
-        <p>留言内容会发送到邮箱，公开区只显示马赛克记录。</p>
+        <p>留言只保留在当前页面的本机记录里，公开区只显示马赛克痕迹。</p>
       </div>
       <button class="icon-btn" id="feedbackCloseBtn" type="button" aria-label="关闭反馈面板">×</button>
     </div>
@@ -2132,7 +2132,6 @@
     const lowConfidenceCutoff = modelConfig.confidence.low;
     const highConfidenceCutoff = modelConfig.confidence.high;
     const tableRenderLimit = modelConfig.ui.tableRenderLimit;
-    const feedbackEndpoint = "https://formsubmit.co/ajax/xu-haidong@qq.com";
     const feedbackStorageKey = "haidong-ai-product-selection-feedback-v1";
 
     function setPairedControlValue(rangeId, val) {
@@ -4041,42 +4040,13 @@
         els.feedbackStatus.textContent = "请先填写留言内容。";
         return;
       }
-      const name = els.feedbackName.value.trim() || "匿名访客";
-      const email = els.feedbackEmail.value.trim();
-      const payload = {
-        _subject: "AI选品工具使用反馈",
-        _template: "table",
-        _captcha: "false",
-        _honey: "",
-        工具: "海东 AI 选品工具",
-        页面: location.href,
-        称呼: name,
-        联系邮箱: email || "未填写",
-        留言内容: message,
-        提交时间: new Date().toLocaleString("zh-CN")
-      };
       els.feedbackSubmitBtn.disabled = true;
-      els.feedbackSubmitBtn.textContent = "发送中";
-      els.feedbackStatus.textContent = "正在发送留言...";
-      try {
-        const response = await fetch(feedbackEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-        if (!response.ok) throw new Error("feedback submit failed");
-        addMaskedFeedback(message);
-        els.feedbackForm.reset();
-        els.feedbackStatus.textContent = "已提交。正文会发送到邮箱，公开区只显示马赛克记录。";
-      } catch {
-        els.feedbackStatus.textContent = "发送失败，请稍后重试，或直接发到 xu-haidong@qq.com。";
-      } finally {
-        els.feedbackSubmitBtn.disabled = false;
-        els.feedbackSubmitBtn.textContent = "提交留言";
-      }
+      els.feedbackSubmitBtn.textContent = "保存中";
+      addMaskedFeedback(message);
+      els.feedbackForm.reset();
+      els.feedbackStatus.textContent = "已留下本页反馈痕迹。其他访客看不到正文。";
+      els.feedbackSubmitBtn.disabled = false;
+      els.feedbackSubmitBtn.textContent = "提交留言";
     }
 
     document.querySelectorAll(".tab").forEach(tab => {
