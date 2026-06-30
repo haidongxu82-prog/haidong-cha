@@ -2504,3 +2504,15 @@ body::before {
   opacity: 0.045;
   filter: saturate(0.65) hue-rotate(86deg) contrast(1.08) brightness(0.82);
 }
+
+.post-views {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.post-views span {
+  font-weight: 700;
+  color: var(--ink);
+}
