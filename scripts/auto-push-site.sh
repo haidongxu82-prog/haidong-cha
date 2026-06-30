@@ -48,6 +48,7 @@ fi
   posts \
   ai-product-selection \
   inventory-smart-replenishment \
+  store-link-promotion-value \
   ai-chat \
   chat-screenshot-helper \
   deploy \
