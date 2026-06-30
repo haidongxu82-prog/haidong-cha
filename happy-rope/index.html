@@ -189,10 +189,16 @@
     z-index:0;display:none;
   }
   #camVideo.show{display:block;}
-  .cam-dim{position:absolute;inset:0;background:rgba(255,247,236,.45);z-index:1;display:none;}
+  /* 只在顶部/底部加一点点暗角，保证文字可读，中间完全透出人像 */
+  .cam-dim{position:absolute;inset:0;z-index:1;display:none;
+    background:linear-gradient(180deg,rgba(58,48,38,.28) 0%,rgba(58,48,38,0) 22%,rgba(58,48,38,0) 72%,rgba(58,48,38,.30) 100%);}
   .cam-dim.show{display:block;}
   .timer-screen{position:relative;}
   .ring-wrap,.stop-btn,.live-count{position:relative;z-index:2;}
+  /* 开摄像头时：数字/文字加白色光晕，叠在真实画面上也看得清 */
+  .timer-screen.cam-on .big-num{text-shadow:0 0 10px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.95),0 2px 6px rgba(0,0,0,.35);}
+  .timer-screen.cam-on .sub-label{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);}
+  .timer-screen.cam-on .ring-bg{stroke:rgba(255,255,255,.55);}
 
   .live-count{
     display:none;align-items:center;gap:8px;background:var(--card);border-radius:999px;
@@ -428,14 +434,16 @@
 
   function resetJumpCounter(){
     jumpCount = 0; fastY = null; baseY = null; ampEMA = 0; jumpPhase = "ground"; lastJumpAt = 0;
+    lastSeenAt = performance.now();
     $("liveCountNum").textContent = "0";
+    var label = $("liveCount").querySelector(".lc-label"); if(label) label.textContent = "个";
   }
 
   function feedY(yNorm, now){
     // yNorm: 0(顶) ~ 1(底)。人腾空时 y 变小。
     if(fastY === null){ fastY = baseY = yNorm; return; }
     fastY = fastY*0.5 + yNorm*0.5;           // 快速跟随
-    baseY = baseY*0.96 + yNorm*0.04;          // 慢速基线≈平均站立位置
+    baseY = baseY*0.985 + yNorm*0.015;        // 慢速基线≈平均站立位置（放慢，少漏数）
     var dev = baseY - fastY;                   // >0 表示比平均更高（腾空）
     ampEMA = ampEMA*0.9 + Math.abs(dev)*0.1;
     var thr = Math.min(0.18, Math.max(0.02, ampEMA*0.6)); // 触发阈值
@@ -452,21 +460,30 @@
     }
   }
 
+  var lastSeenAt = 0;
+  function setTracking(found, now){
+    var label = $("liveCount").querySelector(".lc-label");
+    if(found){ lastSeenAt = now; if(label) label.textContent = "个"; }
+    else if(now - lastSeenAt > 1200 && label){ label.textContent = "个 · 没看到人，往后站站"; }
+  }
+
   function poseLoop(){
     if(!poseRunning) return;
     var video = $("camVideo");
     if(detector && video.readyState >= 2 && video.videoHeight){
       detector.estimatePoses(video, { flipHorizontal:false }).then(function(poses){
+        var now = performance.now();
+        var y = null;
         if(poseRunning && poses && poses.length){
           var kp = poses[0].keypoints;
           // MoveNet: 11 左髋 12 右髋 5 左肩 6 右肩 0 鼻
           var hipL = kp[11], hipR = kp[12], shL = kp[5], shR = kp[6];
-          var y = null;
           if(hipL && hipR && hipL.score>0.3 && hipR.score>0.3) y = (hipL.y+hipR.y)/2;
           else if(shL && shR && shL.score>0.3 && shR.score>0.3) y = (shL.y+shR.y)/2;
           else if(kp[0] && kp[0].score>0.3) y = kp[0].y;
-          if(y !== null) feedY(y/video.videoHeight, performance.now());
+          if(y !== null) feedY(y/video.videoHeight, now);
         }
+        setTracking(y !== null, now);
         if(poseRunning) poseRAF = requestAnimationFrame(poseLoop);
       }).catch(function(){
         if(poseRunning) poseRAF = requestAnimationFrame(poseLoop);
@@ -579,38 +596,79 @@
     }
   }
 
+  var readyTimer = 0;
+
   function beginSession(){
     totalMs = selectedSec * 1000;
     var goalRaw = parseInt($("goalInput").value,10);
     currentTarget = (goalRaw && goalRaw>0) ? goalRaw : null;
-
-    endTime = performance.now() + totalMs;
     flags = {half:false, last10:false, lastTickSec:null, said5:false, said3:false, said2:false, said1:false};
-    running = true;
+    running = false; // 准备阶段还没正式开始
 
     setupPanel.style.display = "none";
     records.style.display = "none";
     timerScreen.style.display = "flex";
-    ringWrap.classList.remove("pulse");
+    timerScreen.classList.toggle("cam-on", camActive);
+    ringWrap.classList.remove("pulse","flash");
     bigNum.classList.remove("jump");
     setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--blue").trim());
     ringFg.style.strokeDashoffset = 0;
-    bigNum.textContent = selectedSec;
-    subLabel.textContent = "加油！";
     bigNum.style.color = "var(--ink)";
 
+    // 摄像头在准备阶段就亮起来，让孩子先照镜子站好位（此时还不计数）
     if(camActive){
       $("camVideo").classList.add("show");
       $("camDim").classList.add("show");
-      $("liveCount").classList.add("show");
+      $("liveCount").classList.remove("show");
       resetJumpCounter();
+    }
+
+    // 先来 5 秒准备倒计时
+    runReady(5, startMainTimer);
+  }
+
+  function runReady(n, done){
+    var count = n;
+    subLabel.textContent = "准备好，站到镜头里～";
+    bigNum.textContent = count;
+    beep(440, 0.12, "sine", 0.22);
+    speak("准备，" + count);
+    clearInterval(readyTimer);
+    readyTimer = setInterval(function(){
+      count--;
+      if(count > 0){
+        bigNum.textContent = count;
+        bigNum.classList.remove("jump"); void bigNum.offsetWidth; bigNum.classList.add("jump");
+        beep(440 + (n-count)*60, 0.12, "sine", 0.22);
+        speak(String(count));
+      }else{
+        clearInterval(readyTimer); readyTimer = 0;
+        bigNum.textContent = "GO!";
+        bigNum.classList.remove("jump"); void bigNum.offsetWidth; bigNum.classList.add("jump");
+        beep(880, 0.22, "triangle", 0.32);
+        speak("开始！");
+        setTimeout(done, 450);
+      }
+    }, 1000);
+  }
+
+  function startMainTimer(){
+    endTime = performance.now() + totalMs;
+    running = true;
+    setRingColor(getComputedStyle(document.documentElement).getPropertyValue("--blue").trim());
+    ringFg.style.strokeDashoffset = 0;
+    bigNum.textContent = Math.ceil(totalMs/1000);
+    bigNum.style.color = "var(--ink)";
+    subLabel.textContent = "加油！";
+
+    if(camActive){
+      $("liveCount").classList.add("show");
+      resetJumpCounter();              // 正式开始才清零计数
       poseRunning = true;
       poseRAF = requestAnimationFrame(poseLoop);
     }
 
-    speak("开始跳绳，加油！");
     beep(660, 0.18, "triangle", 0.3);
-
     cancelAnimationFrame(rafId);
     tickLoop();
   }
@@ -703,6 +761,7 @@
   function stopTimer(){
     running = false;
     cancelAnimationFrame(rafId);
+    clearInterval(readyTimer); readyTimer = 0;
     stopCamera();
     showSetup();
   }
@@ -712,6 +771,7 @@
     setupPanel.style.display = "flex";
     records.style.display = "block";
     ringWrap.classList.remove("pulse","flash");
+    timerScreen.classList.remove("cam-on");
   }
 
   /* ---------------- 庆祝弹层 + 记录 ---------------- */
