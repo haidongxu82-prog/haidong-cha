@@ -1,23 +1,16 @@
 :root {
-  color-scheme: light;
-  --bg: #f7f5ef;
-  --paper: #fbfaf6;
-  --panel: #fbfaf6;
-  --panel-strong: #f0eee7;
-  --line: #ded9cd;
-  --line-strong: #bdb6a8;
-  --ink: #171817;
-  --text: #272925;
-  --muted: #74776f;
-  --soft: #474a44;
-  --faint: #a6a79f;
-  --accent: #8d641d;
-  --accent-soft: #efe3cb;
-  --green: #2f7d50;
-  --yellow: #a9781a;
-  --red: #b3402f;
-  --blue: #8d641d;
-  --gold: #8d641d;
+  color-scheme: dark;
+  --bg: #050708;
+  --panel: rgba(10, 14, 17, 0.84);
+  --line: rgba(157, 227, 255, 0.14);
+  --line-strong: rgba(157, 227, 255, 0.3);
+  --text: #f0f8fb;
+  --muted: #90a1a8;
+  --soft: #c8d6dc;
+  --blue: #9de3ff;
+  --green: #9effc9;
+  --gold: #ffd166;
+  --red: #ff7a7a;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -38,8 +31,9 @@ body {
 body {
   overflow-x: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
-    var(--bg);
+    radial-gradient(circle at 16% 10%, rgba(157, 227, 255, 0.17), transparent 28vw),
+    radial-gradient(circle at 78% 18%, rgba(158, 255, 201, 0.1), transparent 30vw),
+    linear-gradient(145deg, #050708 0%, #071018 52%, #070b0d 100%);
 }
 
 a {
@@ -65,16 +59,18 @@ button {
 
 .ambient {
   z-index: -3;
-  display: none;
+  background:
+    linear-gradient(115deg, transparent 0 32%, rgba(157, 227, 255, 0.05) 33%, transparent 48%),
+    radial-gradient(ellipse at 50% 100%, rgba(158, 255, 201, 0.07), transparent 48%);
 }
 
 .grid {
   z-index: -2;
   background-image:
-    linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 24, 23, 0.018) 1px, transparent 1px);
+    linear-gradient(rgba(157, 227, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 227, 255, 0.04) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 62%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.82), transparent 86%);
 }
 
 .topbar {
@@ -87,10 +83,9 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-bottom: 1px solid rgba(222, 217, 205, 0.86);
-  background: rgba(247, 245, 239, 0.86);
+  border-bottom: 1px solid rgba(157, 227, 255, 0.1);
+  background: rgba(5, 8, 10, 0.78);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
 }
 
 .brand,
@@ -101,7 +96,6 @@ button {
 
 .brand {
   gap: 12px;
-  color: var(--ink);
   font-size: 15px;
   font-weight: 760;
 }
@@ -111,10 +105,9 @@ button {
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(157, 227, 255, 0.18);
   border-radius: 11px;
-  background: var(--paper);
-  box-shadow: 0 10px 34px rgba(40, 32, 20, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   overflow: hidden;
 }
 
@@ -141,8 +134,8 @@ button {
 
 .nav a:hover {
   border-color: var(--line-strong);
-  color: var(--ink);
-  background: rgba(222, 217, 205, 0.4);
+  color: var(--text);
+  background: rgba(157, 227, 255, 0.06);
 }
 
 .shell {
@@ -159,7 +152,7 @@ button {
 .kicker,
 .panel-head p {
   margin: 0 0 16px;
-  color: var(--accent);
+  color: var(--blue);
   font-family: "SFMono-Regular", "Cascadia Code", Menlo, monospace;
   font-size: 12px;
   font-weight: 760;
@@ -168,7 +161,6 @@ button {
 
 .hero h1 {
   margin: 0;
-  color: var(--ink);
   font-size: clamp(44px, 7vw, 88px);
   line-height: 0.98;
   font-weight: 790;
@@ -195,10 +187,12 @@ button {
   border: 1px solid var(--line);
   border-radius: 28px;
   padding: 24px;
-  background: var(--panel);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
+    var(--panel);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 24px 60px rgba(40, 32, 20, 0.06);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 34px 100px rgba(0, 0, 0, 0.3);
 }
 
 .panel-head,
@@ -212,7 +206,6 @@ button {
 
 .panel-head h2 {
   margin: 0;
-  color: var(--ink);
   font-size: 28px;
   line-height: 1;
 }
@@ -225,7 +218,7 @@ button {
   border-radius: 999px;
   padding: 0 14px;
   background: transparent;
-  color: var(--muted);
+  color: var(--soft);
   font-size: 13px;
   font-weight: 720;
 }
@@ -234,8 +227,8 @@ button {
 .ghost:hover,
 .notice-head button:hover {
   border-color: var(--line-strong);
-  color: var(--ink);
-  background: rgba(222, 217, 205, 0.4);
+  color: var(--text);
+  background: rgba(157, 227, 255, 0.06);
 }
 
 textarea {
@@ -246,15 +239,16 @@ textarea {
   border-radius: 20px;
   padding: 18px;
   outline: none;
-  background: #ffffff;
-  color: var(--ink);
+  background: rgba(0, 0, 0, 0.26);
+  color: var(--text);
   font-family: "SFMono-Regular", "Cascadia Code", Menlo, monospace;
   font-size: 13px;
   line-height: 1.7;
 }
 
 textarea:focus {
-  border-color: var(--ink);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 4px rgba(157, 227, 255, 0.06);
 }
 
 .actions {
@@ -265,17 +259,12 @@ textarea:focus {
 
 .primary {
   min-height: 44px;
-  border: 1px solid var(--ink);
+  border: 0;
   border-radius: 999px;
   padding: 0 18px;
-  background: var(--ink);
-  color: var(--paper);
+  background: linear-gradient(135deg, var(--blue), #eefaff);
+  color: #061018;
   font-weight: 820;
-}
-
-.primary:hover {
-  border-color: var(--accent);
-  background: var(--accent);
 }
 
 .hint {
@@ -314,7 +303,7 @@ textarea:focus {
 .rule-grid article {
   border: 1px solid var(--line);
   border-radius: 20px;
-  background: var(--panel-strong);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .metric-strip article,
@@ -338,7 +327,6 @@ textarea:focus {
 .metric-strip strong {
   display: block;
   margin-top: 18px;
-  color: var(--ink);
   font-size: 28px;
 }
 
@@ -370,7 +358,7 @@ textarea:focus {
 .image-card strong {
   display: block;
   margin: 10px 0;
-  color: var(--ink);
+  color: var(--text);
 }
 
 .image-card p {
@@ -392,16 +380,16 @@ ul {
 }
 
 .recommend-list article {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(157, 227, 255, 0.1);
   border-radius: 16px;
   padding: 14px;
-  background: var(--panel-strong);
+  background: rgba(0, 0, 0, 0.18);
   color: var(--soft);
 }
 
 .recommend-list strong {
   display: block;
-  color: var(--ink);
+  color: var(--text);
 }
 
 pre {
