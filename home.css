@@ -761,122 +761,6 @@ a {
   color: var(--accent);
 }
 
-.about-panel {
-  display: grid;
-  grid-template-columns: 154px minmax(0, 1fr);
-  gap: clamp(18px, 4vw, 54px);
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.about-copy {
-  display: grid;
-  align-content: start;
-  gap: 10px;
-}
-
-.about-copy h2 {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(18px, 2vw, 24px);
-  font-weight: 740;
-  line-height: 1.12;
-}
-
-.about-copy p:not(.kicker) {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.68;
-}
-
-.about-body {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 20px;
-  align-items: start;
-  border-top: 1px solid var(--ink);
-  padding-top: 18px;
-}
-
-.about-avatar {
-  width: 96px;
-  height: 96px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--paper-soft);
-}
-
-.about-avatar img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.about-avatar.is-empty {
-  display: grid;
-  place-items: center;
-  background: repeating-linear-gradient(
-    45deg,
-    var(--accent-soft) 0 9px,
-    var(--paper-soft) 9px 18px
-  );
-}
-
-.about-avatar.is-empty span {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
-
-.about-intro {
-  display: grid;
-  gap: 10px;
-}
-
-.about-lead {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(17px, 1.8vw, 21px);
-  font-weight: 720;
-  line-height: 1.3;
-}
-
-.about-intro p:not(.about-lead) {
-  margin: 0;
-  max-width: 640px;
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.78;
-}
-
-.about-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 30px;
-  margin-top: 6px;
-}
-
-.about-stats div {
-  display: grid;
-  gap: 3px;
-}
-
-.about-stats strong {
-  color: var(--accent);
-  font-size: clamp(20px, 2.2vw, 26px);
-  font-weight: 760;
-  line-height: 1;
-}
-
-.about-stats span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
 .footer {
   width: min(var(--max), calc(100% - 44px));
   display: flex;
@@ -910,14 +794,9 @@ a {
   .tool-panel,
   .share-panel,
   .photo-panel,
-  .about-panel,
   .message-panel {
     grid-template-columns: 1fr;
     gap: 16px;
-  }
-
-  .about-body {
-    grid-template-columns: 1fr;
   }
 
   .announcement > div:first-child {
