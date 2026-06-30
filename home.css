@@ -853,24 +853,28 @@ a {
   line-height: 1.78;
 }
 
-.about-tags {
+.about-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 2px;
+  gap: 12px 30px;
+  margin-top: 6px;
 }
 
-.about-tags span {
-  display: inline-flex;
-  align-items: center;
-  min-height: 27px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0 11px;
-  background: rgba(255, 255, 255, 0.38);
+.about-stats div {
+  display: grid;
+  gap: 3px;
+}
+
+.about-stats strong {
+  color: var(--accent);
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 760;
+  line-height: 1;
+}
+
+.about-stats span {
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 620;
+  font-size: 12px;
 }
 
 .footer {
