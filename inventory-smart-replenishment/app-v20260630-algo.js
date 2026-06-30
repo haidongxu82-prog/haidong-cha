@@ -279,6 +279,7 @@ function normalizeRecord(row, index, settings) {
   const targetDaysFromRow = toNumber(pick(row, FIELD_ALIASES.safetyDays));
   const targetDays = targetDaysFromRow || settings.targetDays;
   const packUnit = toNumber(pick(row, FIELD_ALIASES.packUnit)) || toNumber(pick(row, FIELD_ALIASES.minShipment)) || settings.defaultPackUnit;
+  const minShipment = toNumber(pick(row, FIELD_ALIASES.minShipment)); // ③ 起发量：下单时的最低起订量，独立于整装单位
   const sales7 = toNumber(pick(row, FIELD_ALIASES.sales7));
   const sales30 = toNumber(pick(row, FIELD_ALIASES.sales30));
   const imageName = textValue(pick(row, FIELD_ALIASES.imageName));
@@ -325,7 +326,7 @@ function normalizeRecord(row, index, settings) {
     const targetStock = effDaily * targetDays;
     const shortage = triggered ? Math.max(0, targetStock - item.stock) : 0;
     const rawNeed = Math.max(0, shortage - (settings.deductTransit ? allocatedTransit : 0));
-    const roundedNeed = roundToPack(rawNeed, packUnit, settings.roundingMode, settings.minReplenish); // ①
+    const roundedNeed = roundToPack(rawNeed, packUnit, settings.roundingMode, settings.minReplenish, minShipment); // ①③
     return {
       ...item,
       dailyAvg: effDaily,
@@ -423,7 +424,7 @@ function renderKpis() {
 
   $("kpiStrip").innerHTML = [
     metricCard("SKU 总数", formatNumber(records.length), state.sourceName || "未导入底表"),
-    metricCard("预警 SKU", formatNumber(triggered.length), `${formatNumber(triggeredWarehouses)} 个仓低于阈值`),
+    metricCard("预警 SKU", formatNumber(triggered.length), `${formatNumber(triggeredWarehouses)} 个仓低于阈值${stockoutCount ? ` · ${formatNumber(stockoutCount)} 断货` : ""}`),
     metricCard("建议补货", `${formatNumber(totalNeed)} 双`, `按 ${formatNumber(settings.defaultPackUnit)} 双整装`),
     metricCard("全国库存天数", records.length ? formatDays(overallStockDays) : "-", `预警线 ${formatNumber(settings.alertDays)} 天`),
     metricCard("排除季节款", formatNumber(excludedCount), "凉拖/棉拖不进本逻辑"),
@@ -501,8 +502,9 @@ function renderUrgentPanel() {
 
 function getUrgentRecords() {
   return state.records
-    .filter((record) => record.triggered)
+    .filter((record) => record.triggered && record.totalRecommended > 0)
     .sort((a, b) => {
+      if (a.stockout !== b.stockout) return a.stockout ? -1 : 1; // 断货款最优先
       const aMinDays = Math.min(...a.triggeredWarehouses.map((item) => item.stockDays));
       const bMinDays = Math.min(...b.triggeredWarehouses.map((item) => item.stockDays));
       return aMinDays - bMinDays || b.totalRecommended - a.totalRecommended || b.historicalSales - a.historicalSales;
@@ -597,7 +599,7 @@ function buildReplenishmentTable() {
     `${formatNumber(record.sales7)} 双`,
     `${formatNumber(record.sales30)} 双`,
     `${formatNumber(record.totalStock)} 双`,
-    record.excluded ? "季节款排除" : record.stockout ? "断货待补" : record.triggered ? "需要补货" : "暂不补货",
+    record.excluded ? "季节款排除" : record.stockout ? "断货待补" : record.triggered && record.totalRecommended > 0 ? "需要补货" : record.triggered ? "缺口偏小" : "暂不补货",
     `${formatNumber(record.totalRecommended)} 双`,
     record.triggeredWarehouses.map((item) => `${item.name}${formatNumber(item.roundedNeed)}`).join(" / ") || "-",
   ]);
@@ -609,7 +611,7 @@ function buildReplenishmentTable() {
       <td>${formatNumber(record.sales7)} 双</td>
       <td>${formatNumber(record.sales30)} 双</td>
       <td>${formatNumber(record.totalStock)} 双</td>
-      <td>${record.excluded ? pill("季节款排除", "gray") : record.stockout ? pill("断货待补", "red") : record.triggered ? pill("需要补货", "amber") : pill("暂不补货", "green")}</td>
+      <td>${record.excluded ? pill("季节款排除", "gray") : record.stockout ? pill("断货待补", "red") : record.triggered && record.totalRecommended > 0 ? pill("需要补货", "amber") : record.triggered ? pill("缺口偏小", "gray") : pill("暂不补货", "green")}</td>
       <td class="num-strong">${formatNumber(record.totalRecommended)} 双</td>
       <td>${escapeHtml(record.triggeredWarehouses.slice(0, 4).map((item) => `${item.name} ${formatNumber(item.roundedNeed)}双`).join("，") || "-")}</td>
     </tr>
@@ -689,7 +691,10 @@ async function drawBossReport() {
   const canvas = $("bossCanvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const records = state.records.filter((item) => item.triggered).sort((a, b) => layerRank(a.layer) - layerRank(b.layer) || b.historicalSales - a.historicalSales || a.nationalStockDays - b.nationalStockDays).slice(0, 8);
+  const records = state.records
+    .filter((item) => item.triggered && item.totalRecommended > 0)
+    .sort((a, b) => (a.stockout === b.stockout ? 0 : a.stockout ? -1 : 1) || layerRank(a.layer) - layerRank(b.layer) || b.historicalSales - a.historicalSales || a.nationalStockDays - b.nationalStockDays)
+    .slice(0, 8);
   const settings = readSettings();
   const now = new Date();
 
@@ -748,7 +753,9 @@ async function drawBossReport() {
     ctx.font = "700 20px PingFang SC, Microsoft YaHei, sans-serif";
     wrapCanvasText(ctx, warehouseText || "-", 760, y + 4, 320, 26, 2);
 
-    if (record.triggered) {
+    if (record.stockout) {
+      drawSmallBadge(ctx, "断货", 1060, y - 5, "#fde0dc", "#a12a20");
+    } else if (record.triggered) {
       drawSmallBadge(ctx, "预警", 1060, y - 5, "#fff3d6", "#8a5a0a");
     } else if (record.trend.label === "上升") {
       drawSmallBadge(ctx, "上升", 1060, y - 5, "#d9f8f1", "#0f6f64");
@@ -1061,12 +1068,16 @@ function textValue(value) {
   return String(value ?? "").trim();
 }
 
-function roundToPack(value, packUnit, mode = "up", minNeed = 0) {
+function roundToPack(value, packUnit, mode = "up", minNeed = 0, minShipment = 0) {
   if (value <= 0) return 0;
   if (minNeed > 0 && value < minNeed) return 0; // ① 单仓起补门槛：缺口太小不为凑一个箱子下单
   const unit = Math.max(1, Math.round(packUnit || 1));
   const packs = mode === "nearest" ? Math.round(value / unit) : Math.ceil(value / unit);
-  return packs * unit;
+  let result = packs * unit;
+  if (result > 0 && minShipment > 0 && result < minShipment) {
+    result = Math.ceil(minShipment / unit) * unit; // ③ 起发量下限：满足最低起订量，仍对齐整装单位
+  }
+  return result;
 }
 
 function formatNumber(value) {
