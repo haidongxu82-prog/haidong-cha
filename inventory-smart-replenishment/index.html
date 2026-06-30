@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>智能补货系统</title>
-    <link rel="stylesheet" href="./styles-v20260629-mvp.css" />
+    <link rel="stylesheet" href="./styles-v20260630-algo.css" />
     <script defer src="./xlsx.full.min.js"></script>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script defer src="./app-v20260629-mvp.js"></script>
+    <script defer src="./app-v20260630-algo.js"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -91,6 +91,27 @@
           <label class="switch-row">
             <input id="deductTransit" type="checkbox" checked />
             <span>建议补货扣减在途库存</span>
+          </label>
+          <label class="field-row">
+            <span>有货天数下限</span>
+            <input id="minAvailableDays" type="number" min="1" step="1" value="7" />
+            <em>天</em>
+          </label>
+          <label class="field-row select-row">
+            <span>取整方式</span>
+            <select id="roundingMode">
+              <option value="up" selected>向上取整（保守）</option>
+              <option value="nearest">就近取整（省库存）</option>
+            </select>
+          </label>
+          <label class="field-row">
+            <span>单仓起补门槛</span>
+            <input id="minReplenish" type="number" min="0" step="50" value="0" />
+            <em>双</em>
+          </label>
+          <label class="switch-row">
+            <input id="trendAdjust" type="checkbox" />
+            <span>按近期趋势修正日均（7天）</span>
           </label>
         </section>
 
@@ -177,6 +198,5 @@
         </section>
       </main>
     </div>
-    <script src="https://haidong.chat/assets/haidong-site-kit.js" defer></script>
-</body>
+  </body>
 </html>

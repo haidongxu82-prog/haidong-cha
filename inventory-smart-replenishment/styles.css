@@ -277,6 +277,7 @@ button {
 }
 
 .field-row input,
+.field-row select,
 .side-panel textarea {
   width: 100%;
   min-height: 34px;
@@ -285,6 +286,14 @@ button {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
   padding: 7px 9px;
+}
+
+.field-row.select-row {
+  grid-template-columns: 1fr 132px;
+}
+
+.field-row select option {
+  color: #182422;
 }
 
 .side-panel textarea {
@@ -472,6 +481,11 @@ button {
   font-size: 12px;
   font-weight: 900;
   white-space: nowrap;
+}
+
+.urgent-tag.danger {
+  background: #fde0dc;
+  color: #a12a20;
 }
 
 .urgent-numbers {
@@ -664,6 +678,14 @@ tbody tr.warning-row {
 
 tbody tr.warning-row:hover {
   background: #fff3d6;
+}
+
+tbody tr.danger-row {
+  background: #fdecea;
+}
+
+tbody tr.danger-row:hover {
+  background: #fde0dc;
 }
 
 .sku-cell {

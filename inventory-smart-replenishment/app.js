@@ -113,6 +113,10 @@ function bindEvents() {
     "defaultPackUnit",
     "useAvailableDays",
     "deductTransit",
+    "minAvailableDays",
+    "roundingMode",
+    "minReplenish",
+    "trendAdjust",
     "warehouses",
   ].forEach((id) => {
     const input = $(id);
@@ -218,6 +222,10 @@ function readSettings() {
     defaultPackUnit: positiveNumber(inputValue("defaultPackUnit", 200), 200),
     useAvailableDays: inputChecked("useAvailableDays", true),
     deductTransit: inputChecked("deductTransit", inputChecked("includeTransit", true)),
+    minAvailableDays: positiveNumber(inputValue("minAvailableDays", 7), 7),
+    roundingMode: inputValue("roundingMode", "up") === "nearest" ? "nearest" : "up",
+    minReplenish: Math.max(0, toNumber(inputValue("minReplenish", 0))),
+    trendAdjust: inputChecked("trendAdjust", false),
   };
 }
 
@@ -230,6 +238,10 @@ function persistSettings() {
     defaultPackUnit: inputValue("defaultPackUnit", 200),
     useAvailableDays: inputChecked("useAvailableDays", true),
     deductTransit: inputChecked("deductTransit", inputChecked("includeTransit", true)),
+    minAvailableDays: inputValue("minAvailableDays", 7),
+    roundingMode: inputValue("roundingMode", "up"),
+    minReplenish: inputValue("minReplenish", 0),
+    trendAdjust: inputChecked("trendAdjust", false),
     warehouses: inputValue("warehouses", DEFAULT_WAREHOUSES.join("\n")),
   };
   localStorage.setItem("replenishment.settings", JSON.stringify(settings));
@@ -273,33 +285,50 @@ function normalizeRecord(row, index, settings) {
   const imageUrl = resolveImageUrl(skuId, imageName);
   const excluded = isExcluded(category, seasonal);
 
+  // ④ 近期趋势修正系数（国别 7天 vs 30天，夹在保守区间；默认关闭，需勾选才生效）
+  const trendFactor = computeTrendFactor(sales7, sales30, settings);
+
   const initialWarehouses = settings.warehouses.map((name) => {
     const stock = toNumber(pickWarehouse(row, name, "stock"));
     const sales28 = toNumber(pickWarehouse(row, name, "sales28"));
     const availableDays = toNumber(pickWarehouse(row, name, "availableDays"));
     const shareRaw = toRatio(pickWarehouse(row, name, "share"));
-    const transit = toNumber(pickWarehouse(row, name, "transit"));
-    const daysBase = settings.useAvailableDays && availableDays > 0 ? availableDays : 28;
-    const dailyAvg = sales28 > 0 ? sales28 / daysBase : 0;
-    return { name, stock, sales28, availableDays, shareRaw, transit, dailyAvg };
+    const transitRaw = pickWarehouse(row, name, "transit");
+    const hasTransit = String(transitRaw ?? "").trim() !== ""; // ⑤ 区分“显式填了在途(含0)”与“留空”
+    const transit = toNumber(transitRaw);
+    // ③ 有货天数下限：避免 1~2 天的偶发销量被外推成全月节奏、放大日均
+    const effectiveDays = settings.useAvailableDays && availableDays > 0 ? Math.max(availableDays, settings.minAvailableDays) : 28;
+    const baseDailyAvg = sales28 > 0 ? sales28 / effectiveDays : 0;
+    const dailyAvg = baseDailyAvg * trendFactor;
+    return { name, stock, sales28, availableDays, shareRaw, transit, hasTransit, baseDailyAvg, dailyAvg };
   });
 
   const shareSum = initialWarehouses.reduce((sum, item) => sum + item.shareRaw, 0);
+  const baseStockSum = initialWarehouses.reduce((sum, item) => sum + item.stock, 0);
+  const baseSales28Sum = initialWarehouses.reduce((sum, item) => sum + item.sales28, 0);
   const demandShareSum = initialWarehouses.reduce((sum, item) => sum + item.dailyAvg, 0);
   const layer = historicalSales >= settings.hotThreshold ? "爆款" : historicalSales >= settings.potentialThreshold ? "潜力款" : "观察款";
 
+  // ② 缺货截断盲点：全仓零库存且近28天零出库，但国别近期/历史仍有需求 → 卖断码的“隐身”爆款。
+  // 用国别近期日均按历史销售占比回填到各仓，让它复用同一套触发/目标/取整逻辑，不再被漏掉。
+  const recentNationalDaily = Math.max(sales7 / 7, sales30 / 30, 0);
+  const stockoutMode = !excluded && baseStockSum === 0 && baseSales28Sum === 0 && recentNationalDaily > 0;
+
   const warehouses = initialWarehouses.map((item) => {
-    const share =
-      demandShareSum > 0 ? item.dailyAvg / demandShareSum : shareSum > 0 ? item.shareRaw / shareSum : 1 / initialWarehouses.length;
-    const stockDays = item.dailyAvg > 0 ? item.stock / item.dailyAvg : item.stock > 0 ? 999 : 0;
-    const allocatedTransit = item.transit || totalTransit * share;
-    const triggered = !excluded && item.dailyAvg > 0 && stockDays < settings.alertDays;
-    const targetStock = item.dailyAvg * targetDays;
+    const histShare = shareSum > 0 ? item.shareRaw / shareSum : 1 / initialWarehouses.length;
+    // 断货款各仓没有自身动销数据，用国别近期日均按历史占比回填；正常款 effDaily === 自身日均
+    const effDaily = stockoutMode ? recentNationalDaily * histShare : item.dailyAvg;
+    const share = demandShareSum > 0 ? item.dailyAvg / demandShareSum : histShare;
+    const stockDays = effDaily > 0 ? item.stock / effDaily : item.stock > 0 ? 999 : 0;
+    const allocatedTransit = item.hasTransit ? item.transit : totalTransit * share; // ⑤ 留空才按占比分摊
+    const triggered = !excluded && effDaily > 0 && stockDays < settings.alertDays;
+    const targetStock = effDaily * targetDays;
     const shortage = triggered ? Math.max(0, targetStock - item.stock) : 0;
     const rawNeed = Math.max(0, shortage - (settings.deductTransit ? allocatedTransit : 0));
-    const roundedNeed = roundToPack(rawNeed, packUnit);
+    const roundedNeed = roundToPack(rawNeed, packUnit, settings.roundingMode, settings.minReplenish); // ①
     return {
       ...item,
+      dailyAvg: effDaily,
       share,
       allocatedTransit,
       targetStock,
@@ -346,9 +375,17 @@ function normalizeRecord(row, index, settings) {
     triggered: triggeredWarehouseCount > 0,
     triggeredWarehouseCount,
     triggeredWarehouses,
+    stockout: stockoutMode,
     layer,
     strategyLabel: layer,
   };
+}
+
+function computeTrendFactor(sales7, sales30, settings) {
+  if (!settings.trendAdjust || sales7 <= 0 || sales30 <= 0) return 1;
+  const ratio = (sales7 / 7) / (sales30 / 30);
+  if (!Number.isFinite(ratio) || ratio <= 0) return 1;
+  return clampNumber(ratio, 0.7, 1.5); // 温和修正，防止单周波动过冲
 }
 
 function buildTrend(sales7, sales30) {
@@ -381,6 +418,7 @@ function renderKpis() {
   const totalStock = records.reduce((sum, item) => sum + item.totalStock, 0);
   const overallStockDays = totalDailyAvg > 0 ? totalStock / totalDailyAvg : 0;
   const excludedCount = records.filter((item) => item.excluded).length;
+  const stockoutCount = records.filter((item) => item.stockout).length;
   const settings = readSettings();
 
   $("kpiStrip").innerHTML = [
@@ -393,7 +431,7 @@ function renderKpis() {
 
   $("dataStatus").textContent = records.length ? `${records.length} 条` : "等待导入";
   $("runSummary").textContent = records.length
-    ? `当前有 ${triggered.length} 个 SKU、${triggeredWarehouses} 个仓库存天数低于 ${formatNumber(settings.alertDays)} 天，建议补 ${formatNumber(totalNeed)} 双。`
+    ? `当前有 ${triggered.length} 个 SKU、${triggeredWarehouses} 个仓库存天数低于 ${formatNumber(settings.alertDays)} 天，建议补 ${formatNumber(totalNeed)} 双。${stockoutCount ? `其中 ${stockoutCount} 个为断货待补（卖断码、近期零出库）。` : ""}`
     : "导入底表后，库存天数低于预警线的 SKU 会优先显示在页面上方。";
 }
 
@@ -484,7 +522,7 @@ function urgentCard(record) {
     <article class="urgent-card">
       <div class="urgent-card-top">
         ${skuCell(record)}
-        <span class="urgent-tag">${escapeHtml(record.layer)}</span>
+        <span class="urgent-tag${record.stockout ? " danger" : ""}">${escapeHtml(record.stockout ? "断货待补" : record.layer)}</span>
       </div>
       <div class="urgent-numbers">
         <div>
@@ -559,7 +597,7 @@ function buildReplenishmentTable() {
     `${formatNumber(record.sales7)} 双`,
     `${formatNumber(record.sales30)} 双`,
     `${formatNumber(record.totalStock)} 双`,
-    record.excluded ? "季节款排除" : record.triggered ? "需要补货" : "暂不补货",
+    record.excluded ? "季节款排除" : record.stockout ? "断货待补" : record.triggered ? "需要补货" : "暂不补货",
     `${formatNumber(record.totalRecommended)} 双`,
     record.triggeredWarehouses.map((item) => `${item.name}${formatNumber(item.roundedNeed)}`).join(" / ") || "-",
   ]);
@@ -571,7 +609,7 @@ function buildReplenishmentTable() {
       <td>${formatNumber(record.sales7)} 双</td>
       <td>${formatNumber(record.sales30)} 双</td>
       <td>${formatNumber(record.totalStock)} 双</td>
-      <td>${record.excluded ? pill("季节款排除", "gray") : record.triggered ? pill("需要补货", "amber") : pill("暂不补货", "green")}</td>
+      <td>${record.excluded ? pill("季节款排除", "gray") : record.stockout ? pill("断货待补", "red") : record.triggered ? pill("需要补货", "amber") : pill("暂不补货", "green")}</td>
       <td class="num-strong">${formatNumber(record.totalRecommended)} 双</td>
       <td>${escapeHtml(record.triggeredWarehouses.slice(0, 4).map((item) => `${item.name} ${formatNumber(item.roundedNeed)}双`).join("，") || "-")}</td>
     </tr>
@@ -604,7 +642,7 @@ function buildOpsTable() {
     formatNumber(wh.roundedNeed),
   ]);
   const htmlRows = details.map(({ record, wh }) => `
-    <tr class="warning-row">
+    <tr class="${record.stockout ? "danger-row" : "warning-row"}">
       <td>${escapeHtml(record.skuId)}</td>
       <td>${escapeHtml(record.skuName)}</td>
       <td>${escapeHtml(wh.name)}</td>
@@ -1023,10 +1061,12 @@ function textValue(value) {
   return String(value ?? "").trim();
 }
 
-function roundToPack(value, packUnit) {
+function roundToPack(value, packUnit, mode = "up", minNeed = 0) {
   if (value <= 0) return 0;
+  if (minNeed > 0 && value < minNeed) return 0; // ① 单仓起补门槛：缺口太小不为凑一个箱子下单
   const unit = Math.max(1, Math.round(packUnit || 1));
-  return Math.ceil(value / unit) * unit;
+  const packs = mode === "nearest" ? Math.round(value / unit) : Math.ceil(value / unit);
+  return packs * unit;
 }
 
 function formatNumber(value) {
