@@ -153,6 +153,29 @@
         font-weight: 800;
       }
 
+      .hd-ai-feedback-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .hd-ai-feedback-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid rgba(20, 24, 30, 0.1);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        color: rgba(21, 23, 25, 0.68);
+        font: inherit;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
       .hd-ai-feedback-note,
       .hd-ai-feedback-status {
         margin: 0;
@@ -228,15 +251,34 @@
     document.body.appendChild(watermark);
   };
 
+  const hasExistingFeedback = () =>
+    Boolean(
+      document.querySelector(
+        [
+          "[data-message-form]",
+          ".message-form",
+          ".feedback-fab",
+          ".feedback-drawer",
+          "#feedbackForm",
+          "#feedbackDrawer",
+          "form[action*='formsubmit.co']",
+        ].join(","),
+      ),
+    );
+
   const addFeedback = () => {
     if (document.querySelector(".hd-ai-feedback")) return;
+    if (hasExistingFeedback()) return;
     const widget = document.createElement("section");
     widget.className = "hd-ai-feedback";
     widget.setAttribute("aria-label", "留言反馈");
     widget.innerHTML = `
       <button class="hd-ai-feedback-toggle" type="button" aria-expanded="false">反馈</button>
       <form class="hd-ai-feedback-panel">
-        <p class="hd-ai-feedback-title">留言反馈</p>
+        <div class="hd-ai-feedback-head">
+          <p class="hd-ai-feedback-title">留言反馈</p>
+          <button class="hd-ai-feedback-close" type="button" aria-label="收起反馈">×</button>
+        </div>
         <p class="hd-ai-feedback-note">反馈会发送到海东邮箱；当前页面和最近使用痕迹会一起附上，便于排查。</p>
         <input name="name" type="text" autocomplete="name" placeholder="称呼，可不填" />
         <textarea name="message" required placeholder="写下问题、建议或使用反馈"></textarea>
@@ -250,15 +292,32 @@
     document.body.appendChild(widget);
 
     const toggle = widget.querySelector(".hd-ai-feedback-toggle");
+    const close = widget.querySelector(".hd-ai-feedback-close");
     const form = widget.querySelector("form");
     const status = widget.querySelector(".hd-ai-feedback-status");
     const submit = widget.querySelector(".hd-ai-feedback-submit");
 
-    toggle.addEventListener("click", () => {
-      const open = widget.dataset.open !== "true";
+    const setOpen = (open) => {
       widget.dataset.open = String(open);
       toggle.setAttribute("aria-expanded", String(open));
       trace(open ? "feedback_open" : "feedback_close");
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(widget.dataset.open !== "true");
+    });
+
+    close.addEventListener("click", () => setOpen(false));
+
+    document.addEventListener("pointerdown", (event) => {
+      if (widget.dataset.open !== "true") return;
+      if (widget.contains(event.target)) return;
+      setOpen(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || widget.dataset.open !== "true") return;
+      setOpen(false);
     });
 
     form.addEventListener("submit", async (event) => {
@@ -285,6 +344,7 @@
         if (!response.ok) throw new Error("submit failed");
         form.reset();
         status.textContent = "已发送。";
+        window.setTimeout(() => setOpen(false), 900);
       } catch (error) {
         status.textContent = "发送未确认成功，请稍后再试。";
       } finally {
