@@ -1,15 +1,21 @@
 :root {
-  color-scheme: dark;
-  --bg: #06080a;
-  --panel: rgba(12, 17, 20, 0.78);
-  --line: rgba(185, 255, 220, 0.12);
-  --line-strong: rgba(185, 255, 220, 0.24);
-  --text: #eef7f1;
-  --muted: #93a39b;
-  --soft: #c9d8d0;
-  --green: #9fffc3;
-  --yellow: #ffd166;
-  --red: #ff6b6b;
+  color-scheme: light;
+  --bg: #f7f5ef;
+  --paper: #fbfaf6;
+  --panel: #fbfaf6;
+  --panel-strong: #f0eee7;
+  --line: #ded9cd;
+  --line-strong: #bdb6a8;
+  --ink: #171817;
+  --text: #272925;
+  --muted: #74776f;
+  --soft: #474a44;
+  --faint: #a6a79f;
+  --accent: #8d641d;
+  --accent-soft: #efe3cb;
+  --green: #2f7d50;
+  --yellow: #a9781a;
+  --red: #b3402f;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -29,9 +35,8 @@ body {
 
 body {
   background:
-    radial-gradient(circle at 16% 12%, rgba(159, 255, 195, 0.15), transparent 26vw),
-    radial-gradient(circle at 78% 16%, rgba(141, 232, 255, 0.1), transparent 28vw),
-    linear-gradient(145deg, #050607 0%, #08100d 48%, #0b1514 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
+    var(--bg);
   overflow-x: hidden;
 }
 
@@ -58,18 +63,16 @@ button {
 
 .ambient {
   z-index: -3;
-  background:
-    linear-gradient(120deg, transparent 0 30%, rgba(159, 255, 195, 0.05) 31%, transparent 42%),
-    radial-gradient(ellipse at 50% 100%, rgba(159, 255, 195, 0.08), transparent 42%);
+  display: none;
 }
 
 .grid {
   z-index: -2;
   background-image:
-    linear-gradient(rgba(185, 255, 220, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(185, 255, 220, 0.045) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 84%);
+    linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 24, 23, 0.018) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 62%);
 }
 
 .topbar {
@@ -82,9 +85,10 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-bottom: 1px solid rgba(185, 255, 220, 0.1);
-  background: rgba(5, 8, 8, 0.78);
+  border-bottom: 1px solid rgba(222, 217, 205, 0.86);
+  background: rgba(247, 245, 239, 0.86);
   backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .brand,
@@ -95,6 +99,7 @@ button {
 
 .brand {
   gap: 12px;
+  color: var(--ink);
   font-size: 15px;
   font-weight: 760;
 }
@@ -104,9 +109,10 @@ button {
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(185, 255, 220, 0.18);
+  border: 1px solid var(--line);
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--paper);
+  box-shadow: 0 10px 34px rgba(40, 32, 20, 0.08);
   overflow: hidden;
 }
 
@@ -133,8 +139,8 @@ button {
 
 .nav a:hover {
   border-color: var(--line-strong);
-  color: var(--text);
-  background: rgba(185, 255, 220, 0.06);
+  color: var(--ink);
+  background: rgba(222, 217, 205, 0.4);
 }
 
 .shell {
@@ -151,7 +157,7 @@ button {
 .kicker,
 .panel-head p {
   margin: 0 0 16px;
-  color: var(--green);
+  color: var(--accent);
   font-family: "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
   font-size: 12px;
   font-weight: 760;
@@ -160,6 +166,7 @@ button {
 
 .hero h1 {
   margin: 0;
+  color: var(--ink);
   font-size: clamp(44px, 7vw, 90px);
   line-height: 0.98;
   font-weight: 790;
@@ -185,12 +192,10 @@ button {
   border: 1px solid var(--line);
   border-radius: 28px;
   padding: 24px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
-    var(--panel);
+  background: var(--panel);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 34px 100px rgba(0, 0, 0, 0.3);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 24px 60px rgba(40, 32, 20, 0.06);
 }
 
 .panel-head {
@@ -207,6 +212,7 @@ button {
 
 .panel-head h2 {
   margin: 0;
+  color: var(--ink);
   font-size: 28px;
   line-height: 1;
 }
@@ -224,20 +230,20 @@ button {
 
 .sample-button:hover,
 .ghost:hover {
-  color: var(--text);
+  color: var(--ink);
   border-color: var(--line-strong);
-  background: rgba(159, 255, 195, 0.06);
+  background: rgba(222, 217, 205, 0.4);
 }
 
 textarea {
   width: 100%;
   min-height: 360px;
   resize: vertical;
-  border: 1px solid rgba(185, 255, 220, 0.1);
+  border: 1px solid var(--line);
   border-radius: 20px;
   padding: 18px;
-  background: rgba(2, 6, 6, 0.42);
-  color: #d8ffe6;
+  background: #ffffff;
+  color: var(--ink);
   outline: none;
   font-family: "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
   font-size: 13px;
@@ -245,7 +251,11 @@ textarea {
 }
 
 textarea:focus {
-  border-color: var(--line-strong);
+  border-color: var(--ink);
+}
+
+textarea::placeholder {
+  color: var(--faint);
 }
 
 .actions {
@@ -256,12 +266,17 @@ textarea:focus {
 
 .primary {
   min-height: 44px;
-  border: 0;
+  border: 1px solid var(--ink);
   border-radius: 999px;
   padding: 0 18px;
-  background: var(--green);
-  color: #07110d;
+  background: var(--ink);
+  color: var(--paper);
   font-weight: 800;
+}
+
+.primary:hover {
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .hint {
@@ -279,10 +294,10 @@ textarea:focus {
 
 .score-strip article,
 .summary-grid article {
-  border: 1px solid rgba(185, 255, 220, 0.1);
+  border: 1px solid var(--line);
   border-radius: 18px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--panel-strong);
 }
 
 .score-strip span,
@@ -304,7 +319,7 @@ textarea:focus {
 
 .table-wrap {
   overflow: auto;
-  border: 1px solid rgba(185, 255, 220, 0.1);
+  border: 1px solid var(--line);
   border-radius: 18px;
 }
 
@@ -317,7 +332,7 @@ table {
 th,
 td {
   padding: 14px 13px;
-  border-bottom: 1px solid rgba(185, 255, 220, 0.08);
+  border-bottom: 1px solid var(--line);
   text-align: left;
   font-size: 13px;
 }
@@ -346,17 +361,17 @@ tr:last-child td {
 
 .badge.increase {
   color: var(--green);
-  background: rgba(159, 255, 195, 0.08);
+  background: rgba(47, 125, 80, 0.08);
 }
 
 .badge.keep {
   color: var(--yellow);
-  background: rgba(255, 209, 102, 0.08);
+  background: rgba(169, 120, 26, 0.08);
 }
 
 .badge.decrease {
   color: var(--red);
-  background: rgba(255, 107, 107, 0.08);
+  background: rgba(179, 64, 47, 0.08);
 }
 
 .summary-panel {
@@ -377,9 +392,9 @@ tr:last-child td {
 
 .json-panel {
   margin-top: 14px;
-  border: 1px solid rgba(185, 255, 220, 0.1);
+  border: 1px solid var(--line);
   border-radius: 18px;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--panel-strong);
   overflow: hidden;
 }
 
@@ -394,7 +409,7 @@ pre {
   margin: 0;
   overflow: auto;
   padding: 16px;
-  color: #d8ffe6;
+  color: var(--text);
   font-family: "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
   font-size: 12px;
   line-height: 1.7;
