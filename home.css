@@ -725,7 +725,6 @@ a {
 
 .photo-card {
   margin: 0;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -735,7 +734,7 @@ a {
 .photo-card img {
   display: block;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   transition: transform 0.4s ease;
 }
@@ -744,7 +743,15 @@ a {
   transform: scale(1.04);
 }
 
+.photo-card figcaption {
+  padding: 8px 11px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .photo-card.is-empty {
+  aspect-ratio: 4 / 3;
   display: grid;
   place-items: center;
   background: repeating-linear-gradient(
@@ -759,6 +766,37 @@ a {
   font-size: 11px;
   letter-spacing: 0.1em;
   color: var(--accent);
+}
+
+.photo-card.is-upcoming {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 16px;
+  text-align: center;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.photo-card.is-upcoming .upcoming-tag {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.photo-card.is-upcoming strong {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 720;
+}
+
+.photo-card.is-upcoming time {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .footer {
