@@ -26,7 +26,7 @@ def build_template() -> str:
     js = read(APP)
     logo = read(LOGO).replace("<svg ", '<svg class="brand" aria-hidden="true" ')
 
-    # html = html.replace('data-theme="light"', 'data-theme="dark"')  # 撤销强制深色，恢复浅色（之前的样子）
+    html = html.replace('data-theme="light"', 'data-theme="dark"')
     html = html.replace("../index.html", "https://ai.haidong.chat/")
     html = re.sub(
         r'<img class="brand" src="\.\./assets/logo-hd-minimal\.svg" alt="HD">',
