@@ -51,6 +51,7 @@ fi
   store-link-promotion-value \
   team-profit-dashboard \
   product-profit-roi \
+  kids-english-ai-coach \
   profit-statement-dashboard \
   ai-chat \
   chat-screenshot-helper \

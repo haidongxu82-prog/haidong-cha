@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>儿童英语 AI 陪练</title>
+    <meta
+      name="description"
+      content="儿童英语固定流程陪练，完成对话、纠错鼓励和家长报告。"
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260702-a" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="https://haidong.chat/">
+        <span>海东 AI</span>
+        <strong>儿童英语陪练</strong>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <button class="active" type="button" data-view-button="learn">学习</button>
+        <button type="button" data-view-button="parent">家长报告</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">KIDS ENGLISH COACH</p>
+          <h1 id="pageTitle">Fruit Shop English</h1>
+        </div>
+        <div class="top-actions">
+          <button class="btn ghost" id="newLessonBtn" type="button">重新开始</button>
+          <a class="btn ghost" href="https://haidong.chat/">回主站</a>
+        </div>
+      </header>
+
+      <div id="toast" class="toast" hidden></div>
+      <section id="view" class="view"></section>
+    </main>
+
+    <script src="./app.js?v=20260702-a"></script>
+  </body>
+</html>
