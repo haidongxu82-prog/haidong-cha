@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>产品利润与投放 ROI 自动核算</title>
+    <meta
+      name="description"
+      content="基础产品成本、组合装利润、投放 ROI 和编码联动查询工具。"
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260701-a" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="https://haidong.chat/">
+        <span>海东 AI</span>
+        <strong>产品利润 ROI 核算</strong>
+      </a>
+      <nav id="tabs" class="nav"></nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PRODUCT PROFIT SYSTEM</p>
+          <h1 id="pageTitle">利润看板</h1>
+        </div>
+        <div class="top-actions">
+          <button class="btn ghost" id="seedBtn" type="button">载入模拟数据</button>
+          <button class="btn ghost" id="resetBtn" type="button">清空本地数据</button>
+          <a class="btn ghost" href="https://haidong.chat/">回主站</a>
+        </div>
+      </header>
+
+      <div id="toast" class="toast" hidden></div>
+      <section id="view" class="view"></section>
+    </main>
+
+    <script src="./xlsx.full.min.js"></script>
+    <script src="./app.js?v=20260701-a"></script>
+  </body>
+</html>

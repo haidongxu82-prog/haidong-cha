@@ -50,6 +50,8 @@ fi
   inventory-smart-replenishment \
   store-link-promotion-value \
   team-profit-dashboard \
+  product-profit-roi \
+  profit-statement-dashboard \
   ai-chat \
   chat-screenshot-helper \
   deploy \
