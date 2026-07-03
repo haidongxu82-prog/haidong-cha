@@ -143,17 +143,31 @@
   }
 
   /* count stepper */
-  .count-row { display: flex; align-items: center; gap: 14px; }
+  .count-row { display: flex; align-items: center; gap: 10px; }
   .count-row input[type=range] {
-    flex: 1; accent-color: var(--accent); height: 4px;
+    flex: 1; accent-color: var(--accent); height: 4px; min-width: 0;
   }
-  .count-badge {
-    min-width: 46px; text-align: center;
+  .step {
+    flex: none; width: 32px; height: 32px;
+    border: 1px solid var(--line-soft); background: var(--bg-soft); color: var(--text);
+    border-radius: var(--r-sm); font-size: 19px; line-height: 1; font-family: inherit;
+    cursor: pointer; display: grid; place-items: center; user-select: none;
+    transition: border-color .15s var(--ease), color .15s var(--ease), background .15s;
+  }
+  .step:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .step:active { background: var(--panel); }
+  .step:disabled { opacity: .35; cursor: not-allowed; }
+  .count-num {
+    flex: none; width: 50px; text-align: center;
     font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px;
     color: var(--accent-hi);
     background: var(--accent-soft); border: 1px solid var(--accent-line);
-    border-radius: var(--r-sm); padding: 4px 0;
+    border-radius: var(--r-sm); padding: 5px 0; font-family: inherit; outline: none;
+    -moz-appearance: textfield;
   }
+  .count-num::-webkit-outer-spin-button,
+  .count-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .count-num:focus { box-shadow: 0 0 0 3px var(--accent-soft); }
 
   .go {
     width: 100%; margin-top: 6px;
@@ -330,8 +344,10 @@
         <div class="field">
           <label>生成数量</label>
           <div class="count-row">
+            <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
             <input type="range" id="count" min="1" max="15" value="10">
-            <span class="count-badge" id="countVal">10</span>
+            <input type="number" id="countVal" class="count-num" min="1" max="15" value="10" inputmode="numeric" aria-label="生成数量">
+            <button type="button" class="step" id="countPlus" aria-label="增加数量">+</button>
           </div>
         </div>
 
@@ -401,10 +417,34 @@ function buildStyles() {
   });
 }
 
-/* --- count slider --- */
-$("count").addEventListener("input", function () {
-  $("countVal").textContent = this.value;
+/* --- 生成数量：加减号 / 滑块 / 手动输入 三者实时同步 --- */
+const COUNT_MIN = 1, COUNT_MAX = 15;
+function clampCount(v) {
+  v = parseInt(v, 10);
+  if (isNaN(v)) v = COUNT_MIN;
+  return Math.min(COUNT_MAX, Math.max(COUNT_MIN, v));
+}
+function getCount() { return clampCount($("count").value); }
+function setCount(v, keepTyping) {
+  const n = clampCount(v);
+  $("count").value = n;
+  if (!keepTyping) $("countVal").value = n;
+  $("countMinus").disabled = n <= COUNT_MIN;
+  $("countPlus").disabled = n >= COUNT_MAX;
+  return n;
+}
+$("count").addEventListener("input", function () { setCount(this.value); });
+$("countMinus").addEventListener("click", function () { setCount(getCount() - 1); });
+$("countPlus").addEventListener("click", function () { setCount(getCount() + 1); });
+$("countVal").addEventListener("input", function () {
+  if (this.value === "") return;        // 允许清空重敲
+  setCount(this.value, true);           // 同步滑块，但不打断正在输入的数字
 });
+$("countVal").addEventListener("blur", function () { this.value = getCount(); });
+$("countVal").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") { this.blur(); generate(); }
+});
+setCount(10);
 
 function setRunning(on) {
   running = on;
@@ -550,7 +590,7 @@ async function generate() {
     return;
   }
 
-  const count = parseInt($("count").value, 10);
+  const count = setCount(getCount());
   const payload = { product, count, style: currentStyle };
   const features = $("features").value.trim();
   const target = $("target").value.trim();
