@@ -708,7 +708,8 @@ a {
   display: grid;
   grid-template-columns: 154px minmax(0, 1fr);
   gap: clamp(18px, 4vw, 54px);
-  padding: 24px 0 0;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .photo-copy {
