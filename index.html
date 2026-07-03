@@ -37,7 +37,6 @@
         <a href="#tools-title">工具</a>
         <a href="#share">分享文章</a>
         <a href="#moments">剪影</a>
-        <a href="#message">留言</a>
       </nav>
     </header>
 
@@ -252,50 +251,6 @@
         </div>
       </section>
 
-      <section class="message-panel" id="message" aria-labelledby="message-title">
-        <div class="message-copy">
-          <p class="kicker">MESSAGE</p>
-          <h2 id="message-title">留言给海东</h2>
-          <p>
-            留言会留在当前页面的本机记录里；其他访客看不到正文。后续接入后台后，再做成只有海东可见的集中留言箱。
-          </p>
-        </div>
-        <form
-          class="message-form"
-          data-message-form
-        >
-          <input type="hidden" name="masked_message" data-masked-field />
-
-          <label>
-            <span>称呼</span>
-            <input name="name" type="text" autocomplete="name" placeholder="你的名字或称呼" />
-          </label>
-          <label>
-            <span>邮箱 / 微信</span>
-            <input name="contact" type="text" autocomplete="email" placeholder="方便我回复你的方式" />
-          </label>
-          <label class="message-field">
-            <span>留言内容</span>
-            <textarea
-              name="message"
-              rows="5"
-              required
-              placeholder="写下你想交流的问题、合作想法或工具反馈..."
-              data-message-input
-            ></textarea>
-          </label>
-          <div class="mosaic-preview" aria-live="polite">
-            <span>马赛克预览</span>
-            <p data-mosaic-preview>留言内容会在这里被马赛克化显示。</p>
-          </div>
-          <div class="message-status" aria-live="polite" data-message-status></div>
-          <div class="message-trace" data-message-trace hidden>
-            <span>你的留言，仅当前浏览器可见</span>
-            <p data-message-trace-text></p>
-          </div>
-          <button type="submit">留下留言</button>
-        </form>
-      </section>
     </main>
 
     <footer class="footer">
@@ -317,70 +272,6 @@
         });
       })();
 
-      (() => {
-        const form = document.querySelector("[data-message-form]");
-        const input = document.querySelector("[data-message-input]");
-        const preview = document.querySelector("[data-mosaic-preview]");
-        const hidden = document.querySelector("[data-masked-field]");
-        const status = document.querySelector("[data-message-status]");
-        const trace = document.querySelector("[data-message-trace]");
-        const traceText = document.querySelector("[data-message-trace-text]");
-        const submitButton = form?.querySelector("button[type='submit']");
-        if (!form || !input || !preview || !hidden || !status || !trace || !traceText || !submitButton) return;
-
-        const traceKey = "haidong.message.trace";
-
-        const mask = (value) => {
-          const text = value.trim();
-          if (!text) return "留言内容会在这里被马赛克化显示。";
-          return text.replace(/[\p{L}\p{N}]/gu, "▓");
-        };
-
-        const showTrace = (message, masked) => {
-          trace.hidden = false;
-          traceText.textContent = message;
-          try {
-            localStorage.setItem(traceKey, JSON.stringify({ message, masked }));
-          } catch (error) {}
-        };
-
-        const sync = () => {
-          const masked = mask(input.value);
-          preview.textContent = masked;
-          hidden.value = masked;
-        };
-
-        try {
-          const savedTrace = JSON.parse(localStorage.getItem(traceKey) || "null");
-          if (savedTrace?.message) showTrace(savedTrace.message, savedTrace.masked || mask(savedTrace.message));
-        } catch (error) {}
-
-        input.addEventListener("input", sync);
-        form.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          sync();
-
-          const message = input.value.trim();
-          if (!message) {
-            status.textContent = "请先填写留言内容。";
-            return;
-          }
-
-          const masked = hidden.value;
-          showTrace(message, masked);
-          status.textContent = "正在保存...";
-          submitButton.disabled = true;
-
-          status.textContent = "已留言。原文只在你当前浏览器可见，其他访客看不到。";
-          form.reset();
-          input.value = "";
-          preview.textContent = "留言内容会在这里被马赛克化显示。";
-          hidden.value = masked;
-          window.history.replaceState(null, "", `${window.location.pathname}#message`);
-          submitButton.disabled = false;
-        });
-        sync();
-      })();
     </script>
   </body>
 </html>
