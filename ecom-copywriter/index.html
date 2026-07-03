@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>电商文案生成（海东）· 文案台</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --bg-soft: #141417;
+    --panel: #161619;
+    --panel-hi: #1d1d21;
+    --line: #26262b;
+    --line-soft: #202024;
+    --text: #f2f2f4;
+    --text-2: #b7b7bf;
+    --muted: #74747e;
+    --accent: #7c6cff;
+    --accent-hi: #9a8dff;
+    --accent-soft: rgba(124, 108, 255, .14);
+    --accent-line: rgba(124, 108, 255, .32);
+    --ok: #46c98b;
+    --danger: #ff6f6f;
+    --r-lg: 18px;
+    --r-md: 13px;
+    --r-sm: 9px;
+    --shadow: 0 12px 40px -14px rgba(0,0,0,.7);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(124,108,255,.10), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 26px; }
+
+  /* ---- top bar ---- */
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 24px 0 18px;
+  }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #b06cff);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 17px; color: #fff;
+    box-shadow: 0 6px 18px -6px var(--accent);
+  }
+  .topbar .name { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
+  .topbar .tag {
+    font-size: 12px; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 20px;
+    padding: 2px 10px; margin-left: auto;
+  }
+  .topbar .tag b { color: var(--accent-hi); font-weight: 600; }
+
+  /* ---- layout ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 26px;
+    padding-bottom: 60px;
+    align-items: start;
+  }
+
+  .composer {
+    background: linear-gradient(180deg, var(--panel-hi), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 22px;
+    position: sticky; top: 20px;
+    box-shadow: var(--shadow);
+  }
+  .composer h1 { font-size: 15px; margin: 0 0 3px; letter-spacing: .2px; }
+  .composer .hint { font-size: 12px; color: var(--muted); margin: 0 0 20px; }
+
+  .field { margin-bottom: 17px; }
+  .field > label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12.5px; color: var(--text-2); margin-bottom: 8px; font-weight: 500;
+  }
+  .field > label .star { color: var(--accent-hi); }
+  .field > label .opt { color: var(--muted); font-weight: 400; margin-left: auto; font-size: 11.5px; }
+
+  .input, textarea, select {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-md);
+    color: var(--text);
+    padding: 11px 13px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .16s var(--ease), box-shadow .16s var(--ease), background .16s;
+  }
+  .input::placeholder, textarea::placeholder { color: #5c5c66; }
+  .input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background: var(--panel);
+  }
+  textarea { resize: vertical; min-height: 62px; line-height: 1.55; }
+
+  /* segmented style picker */
+  .segs { display: flex; flex-wrap: wrap; gap: 7px; }
+  .seg {
+    border: 1px solid var(--line-soft);
+    background: var(--bg-soft);
+    color: var(--text-2);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s var(--ease);
+    user-select: none;
+  }
+  .seg:hover { border-color: var(--accent-line); color: var(--text); }
+  .seg.on {
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
+    color: var(--accent-hi);
+    font-weight: 600;
+  }
+
+  /* count stepper */
+  .count-row { display: flex; align-items: center; gap: 14px; }
+  .count-row input[type=range] {
+    flex: 1; accent-color: var(--accent); height: 4px;
+  }
+  .count-badge {
+    min-width: 46px; text-align: center;
+    font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px;
+    color: var(--accent-hi);
+    background: var(--accent-soft); border: 1px solid var(--accent-line);
+    border-radius: var(--r-sm); padding: 4px 0;
+  }
+
+  .go {
+    width: 100%; margin-top: 6px;
+    border: none; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--accent), #a06bff);
+    color: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
+    padding: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .12s var(--ease), box-shadow .2s, opacity .2s;
+    box-shadow: 0 10px 26px -10px var(--accent);
+  }
+  .go:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -10px var(--accent); }
+  .go:active { transform: translateY(0); }
+  .go:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .spin {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- results ---- */
+  .results-bar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 18px; min-height: 34px;
+  }
+  .results-bar h2 { font-size: 15px; margin: 0; }
+  .results-bar .meta {
+    font-size: 12px; color: var(--muted);
+    display: inline-flex; gap: 7px; align-items: center;
+  }
+  .results-bar .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  .results-bar .copy-all {
+    margin-left: auto;
+    border: 1px solid var(--line); background: var(--panel-hi); color: var(--text-2);
+    border-radius: var(--r-sm); padding: 7px 13px; font-size: 12.5px; font-family: inherit;
+    cursor: pointer; transition: all .15s;
+  }
+  .results-bar .copy-all:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+
+  .empty {
+    border: 1px dashed var(--line); border-radius: var(--r-lg);
+    padding: 70px 24px; text-align: center; color: var(--muted);
+  }
+  .empty .big { font-size: 30px; margin-bottom: 12px; }
+  .empty .t { color: var(--text-2); font-size: 14px; margin-bottom: 4px; }
+
+  .err {
+    border: 1px solid rgba(255,111,111,.3); background: rgba(255,111,111,.06);
+    border-radius: var(--r-lg); padding: 22px; color: var(--danger);
+  }
+  .err .d { font-size: 12px; color: var(--muted); margin-top: 8px; word-break: break-word; }
+
+  .cards { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel-hi), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    display: flex; flex-direction: column;
+    transition: border-color .18s var(--ease), transform .18s var(--ease);
+    animation: pop .35s var(--ease) both;
+  }
+  .card:hover { border-color: var(--accent-line); transform: translateY(-2px); }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; } }
+
+  .card .idx {
+    align-self: flex-start;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    color: var(--accent-hi); background: var(--accent-soft);
+    border: 1px solid var(--accent-line); border-radius: 6px;
+    padding: 2px 8px; margin-bottom: 12px;
+  }
+  .card h3 { font-size: 17px; margin: 0 0 5px; line-height: 1.4; }
+  .card .sub { color: var(--accent-hi); font-size: 13px; margin: 0 0 4px; }
+
+  .points { display: flex; flex-wrap: wrap; gap: 7px; margin: 13px 0; }
+  .points .p {
+    font-size: 12px; color: var(--text-2);
+    background: var(--bg-soft); border: 1px solid var(--line-soft);
+    border-radius: 7px; padding: 4px 10px;
+  }
+
+  .desc {
+    font-size: 13.5px; color: var(--text-2);
+    background: var(--bg-soft); border: 1px solid var(--line-soft);
+    border-radius: var(--r-md); padding: 12px 13px; margin: 4px 0 2px;
+  }
+  .desc.clip { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .more {
+    background: none; border: none; color: var(--accent-hi); cursor: pointer;
+    font-size: 12px; font-family: inherit; padding: 6px 0 0; align-self: flex-start;
+  }
+
+  .tags { font-size: 12.5px; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+  .tags .h { color: var(--accent-hi); }
+
+  .card .foot {
+    margin-top: 15px; padding-top: 14px; border-top: 1px solid var(--line-soft);
+    display: flex; gap: 8px;
+  }
+  .mini {
+    border: 1px solid var(--line); background: var(--bg-soft); color: var(--text-2);
+    border-radius: var(--r-sm); padding: 7px 12px; font-size: 12.5px; font-family: inherit;
+    cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mini:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .mini.done { color: var(--ok); border-color: rgba(70,201,139,.4); }
+
+  /* skeleton */
+  .sk {
+    background: var(--panel); border: 1px solid var(--line-soft);
+    border-radius: var(--r-lg); padding: 20px;
+  }
+  .sk .bar { height: 12px; border-radius: 6px; background: var(--line-soft); margin-bottom: 10px;
+    background-image: linear-gradient(90deg, var(--line-soft) 0, var(--line) 40%, var(--line-soft) 80%);
+    background-size: 300% 100%; animation: sh 1.3s ease infinite; }
+  @keyframes sh { from { background-position: 200% 0; } to { background-position: -100% 0; } }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translate(-50%, 16px); opacity: 0;
+    background: #232329; border: 1px solid var(--line);
+    color: #fff; padding: 11px 18px; border-radius: 11px; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow); pointer-events: none; z-index: 60;
+    transition: opacity .22s var(--ease), transform .22s var(--ease);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+    .composer { position: static; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo">文</div>
+      <span class="name">文案台</span>
+      <span class="tag">电商批量文案 · <b>DeepSeek</b></span>
+    </div>
+
+    <div class="grid">
+      <!-- 创作台 -->
+      <section class="composer">
+        <h1>创作参数</h1>
+        <p class="hint">填好产品信息，一键生成多套可直接用的文案</p>
+
+        <div class="field">
+          <label>产品名称 <span class="star">*</span></label>
+          <input class="input" id="product" placeholder="如：进口冻干猫粮" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>核心卖点 <span class="opt">选填</span></label>
+          <textarea id="features" placeholder="如：85% 鲜肉、无谷低敏、爆毛亮毛"></textarea>
+        </div>
+
+        <div class="field">
+          <label>目标人群 <span class="opt">选填</span></label>
+          <input class="input" id="target" placeholder="如：养猫的都市白领女性" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>文案风格</label>
+          <div class="segs" id="styleSegs"></div>
+        </div>
+
+        <div class="field">
+          <label>生成数量</label>
+          <div class="count-row">
+            <input type="range" id="count" min="1" max="15" value="10">
+            <span class="count-badge" id="countVal">10</span>
+          </div>
+        </div>
+
+        <button class="go" id="go">
+          <span id="goLabel">✦ 生成文案</span>
+        </button>
+      </section>
+
+      <!-- 结果 -->
+      <section>
+        <div class="results-bar">
+          <h2>生成结果</h2>
+          <span class="meta" id="meta"></span>
+        </div>
+        <div id="out">
+          <div class="empty">
+            <div class="big">✦</div>
+            <div class="t">还没有文案</div>
+            <div>填好左侧参数，点击「生成文案」开始</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const API_URL = "https://n8n-sv.haidong.chat/webhook/ecom-copywriter-qiqi";
+const STYLES = ["通用电商", "小红书种草风", "抖音直播风", "淘宝详情页", "京东卖点"];
+
+const $ = (id) => document.getElementById(id);
+let currentStyle = STYLES[0];
+let running = false;
+
+function esc(s) {
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+}
+
+/* --- style segmented control --- */
+function buildStyles() {
+  const box = $("styleSegs");
+  STYLES.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "seg" + (i === 0 ? " on" : "");
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      currentStyle = s;
+      box.querySelectorAll(".seg").forEach((el) => el.classList.remove("on"));
+      b.classList.add("on");
+    });
+    box.appendChild(b);
+  });
+}
+
+/* --- count slider --- */
+$("count").addEventListener("input", function () {
+  $("countVal").textContent = this.value;
+});
+
+function setRunning(on) {
+  running = on;
+  $("go").disabled = on;
+  $("goLabel").innerHTML = on ? '<span class="spin"></span> 生成中…' : "✦ 生成文案";
+}
+
+/* --- clipboard --- */
+function copy(text, okMsg, btn) {
+  const done = () => {
+    toast(okMsg);
+    if (btn) {
+      const old = btn.innerHTML;
+      btn.innerHTML = "✓ 已复制";
+      btn.classList.add("done");
+      setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1400);
+    }
+  };
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) { toast("复制失败，请手动选择"); }
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } else fallback();
+}
+
+function itemToText(item, i) {
+  const L = [`【文案 ${i + 1}】`];
+  if (item.title) L.push(`标题：${item.title}`);
+  if (item.subtitle) L.push(`副标题：${item.subtitle}`);
+  if (item.selling_points && item.selling_points.length) L.push(`卖点：${item.selling_points.join(" / ")}`);
+  if (item.description) L.push(`描述：${item.description}`);
+  if (item.hashtags && item.hashtags.length) L.push(`标签：${item.hashtags.join(" ")}`);
+  return L.join("\n");
+}
+
+/* --- render states --- */
+function renderLoading(n) {
+  const skTmpl =
+    '<div class="sk">' +
+    '<div class="bar" style="width:35%"></div>' +
+    '<div class="bar" style="width:80%;height:16px"></div>' +
+    '<div class="bar" style="width:55%"></div>' +
+    '<div class="bar" style="width:95%;margin-top:16px"></div>' +
+    '<div class="bar" style="width:70%"></div>' +
+    "</div>";
+  const count = Math.min(Math.max(n, 1), 4);
+  $("out").innerHTML = '<div class="cards">' + skTmpl.repeat(count) + "</div>";
+  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> DeepSeek 正在生成，约 15–30 秒';
+}
+
+function renderError(title, detail) {
+  $("out").innerHTML = '<div class="err">⚠️ ' + esc(title) + (detail ? '<div class="d">' + esc(detail) + "</div>" : "") + "</div>";
+  $("meta").textContent = "";
+}
+
+function renderResults(data) {
+  const list = data.copywriting || [];
+  const parts = [];
+  if (data.product) parts.push(esc(data.product));
+  if (data.style) parts.push(esc(data.style));
+  parts.push("共 " + list.length + " 套");
+  if (data.model) parts.push(esc(data.model));
+  $("meta").innerHTML = parts.join('<span class="dot"></span>');
+
+  if (!list.length) {
+    $("out").innerHTML = '<div class="empty"><div class="t">没有返回文案内容</div></div>';
+    return;
+  }
+
+  const cards = list.map((item, i) => {
+    const points = (item.selling_points || []).map((p) => '<span class="p">' + esc(p) + "</span>").join("");
+    const tags = (item.hashtags || []).map((h) => '<span class="h">' + esc(h) + "</span>").join("");
+    return (
+      '<article class="card">' +
+        '<span class="idx">#' + (i + 1) + "</span>" +
+        "<h3>" + esc(item.title) + "</h3>" +
+        (item.subtitle ? '<p class="sub">' + esc(item.subtitle) + "</p>" : "") +
+        (points ? '<div class="points">' + points + "</div>" : "") +
+        (item.description
+          ? '<div class="desc clip" data-desc="' + i + '">' + esc(item.description) + "</div>" +
+            '<button class="more" data-toggle="' + i + '">展开全文</button>'
+          : "") +
+        (tags ? '<div class="tags">' + tags + "</div>" : "") +
+        '<div class="foot">' +
+          '<button class="mini" data-copy="' + i + '">📋 复制这套</button>' +
+        "</div>" +
+      "</article>"
+    );
+  });
+
+  $("out").innerHTML = '<div class="results-bar-inner"></div><div class="cards">' + cards.join("") + "</div>";
+
+  // 复制全部按钮放到顶部 meta 行右侧
+  const bar = document.querySelector(".results-bar");
+  let allBtn = document.getElementById("copyAll");
+  if (!allBtn) {
+    allBtn = document.createElement("button");
+    allBtn.id = "copyAll";
+    allBtn.className = "copy-all";
+    bar.appendChild(allBtn);
+  }
+  allBtn.textContent = "📋 复制全部 " + list.length + " 套";
+  allBtn.onclick = () => {
+    const all = list.map((it, k) => itemToText(it, k)).join("\n\n————————\n\n");
+    copy(all, "已复制全部 " + list.length + " 套文案", null);
+  };
+
+  $("out").querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const i = +btn.dataset.copy;
+      copy(itemToText(list[i], i), "已复制第 " + (i + 1) + " 套", btn);
+    });
+  });
+  $("out").querySelectorAll("[data-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const el = $("out").querySelector('[data-desc="' + btn.dataset.toggle + '"]');
+      if (!el) return;
+      const clipped = el.classList.toggle("clip");
+      btn.textContent = clipped ? "展开全文" : "收起";
+    });
+  });
+}
+
+/* --- submit --- */
+async function generate() {
+  if (running) return;
+  const product = $("product").value.trim();
+  if (!product) {
+    toast("请先填写产品名称");
+    $("product").focus();
+    return;
+  }
+
+  const count = parseInt($("count").value, 10);
+  const payload = { product, count, style: currentStyle };
+  const features = $("features").value.trim();
+  const target = $("target").value.trim();
+  if (features) payload.features = features;
+  if (target) payload.target = target;
+
+  const oldAll = document.getElementById("copyAll");
+  if (oldAll) oldAll.remove();
+
+  setRunning(true);
+  renderLoading(count);
+
+  try {
+    const resp = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const raw = await resp.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch (e) { throw { title: "返回内容解析失败", detail: raw.slice(0, 300) }; }
+
+    if (!resp.ok || data.success === false) {
+      throw { title: data.error || "生成失败（HTTP " + resp.status + "）", detail: data.detail || "" };
+    }
+    renderResults(data);
+  } catch (err) {
+    if (err && err.title) renderError(err.title, err.detail);
+    else renderError("请求出错", (err && err.message) || "网络异常，请重试");
+  } finally {
+    setRunning(false);
+  }
+}
+
+buildStyles();
+$("go").addEventListener("click", generate);
+["product", "target"].forEach((id) =>
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); })
+);
+</script>
+</body>
+</html>
