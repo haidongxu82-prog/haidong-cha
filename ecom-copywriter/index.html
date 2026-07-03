@@ -40,7 +40,14 @@
     min-height: 100vh;
   }
 
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 26px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 26px; position: relative; z-index: 1; }
+
+  /* 全页水印：海东 AI */
+  .watermark {
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170'><text x='16' y='96' transform='rotate(-28 130 85)' fill='rgba(255,255,255,0.045)' font-family='sans-serif' font-size='23' font-weight='700'>%E6%B5%B7%E4%B8%9C AI</text></svg>");
+    background-repeat: repeat;
+  }
 
   /* ---- top bar ---- */
   .topbar {
@@ -286,11 +293,12 @@
 </style>
 </head>
 <body>
+  <div class="watermark" aria-hidden="true"></div>
   <div class="wrap">
     <div class="topbar">
       <div class="logo">文</div>
       <span class="name">文案台</span>
-      <span class="tag">电商批量文案 · <b>DeepSeek</b></span>
+      <span class="tag">电商批量文案 · <b>海东 AI</b></span>
     </div>
 
     <div class="grid">
@@ -449,7 +457,7 @@ function renderLoading(n) {
     "</div>";
   const count = Math.min(Math.max(n, 1), 4);
   $("out").innerHTML = '<div class="cards">' + skTmpl.repeat(count) + "</div>";
-  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> DeepSeek 正在生成，约 15–30 秒';
+  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 海东 AI 正在生成，约 15–30 秒';
 }
 
 function renderError(title, detail) {
@@ -471,7 +479,6 @@ function renderResults(data) {
   if (data.product) parts.push(esc(data.product));
   if (data.style) parts.push(esc(data.style));
   parts.push("共 " + list.length + " 套");
-  if (data.model) parts.push(esc(data.model));
   $("meta").innerHTML = parts.join('<span class="dot"></span>');
 
   if (!list.length) {
