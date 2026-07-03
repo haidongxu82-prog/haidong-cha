@@ -81,6 +81,9 @@
   }
   .composer h1 { font-size: 15px; margin: 0 0 3px; letter-spacing: .2px; }
   .composer .hint { font-size: 12px; color: var(--muted); margin: 0 0 20px; }
+  .quota-line { font-size: 11.5px; color: var(--muted); margin: 11px 0 0; text-align: center; cursor: default; }
+  .quota-line b { color: var(--accent-hi); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .quota-line.low b { color: var(--danger); }
 
   .field { margin-bottom: 17px; }
   .field > label {
@@ -327,6 +330,7 @@
         <button class="go" id="go">
           <span id="goLabel">✦ 生成文案</span>
         </button>
+        <p class="quota-line" id="quota" title="全站共享的每日生成额度，非单个用户的次数">今日额度剩余 <b>—</b><span> / —</span> · 全站共享</p>
       </section>
 
       <!-- 结果 -->
@@ -453,6 +457,14 @@ function renderError(title, detail) {
   $("meta").textContent = "";
 }
 
+function updateQuota(data) {
+  if (!data || typeof data.daily_remaining !== "number") return;
+  const el = $("quota");
+  if (!el) return;
+  el.innerHTML = "今日额度剩余 <b>" + data.daily_remaining + "</b><span> / " + data.daily_limit + "</span> · 全站共享";
+  el.classList.toggle("low", data.daily_remaining <= 50);
+}
+
 function renderResults(data) {
   const list = data.copywriting || [];
   const parts = [];
@@ -554,6 +566,8 @@ async function generate() {
     let data;
     try { data = JSON.parse(raw); }
     catch (e) { throw { title: "返回内容解析失败", detail: raw.slice(0, 300) }; }
+
+    updateQuota(data);
 
     if (!resp.ok || data.success === false) {
       throw { title: data.error || "生成失败（HTTP " + resp.status + "）", detail: data.detail || "" };
