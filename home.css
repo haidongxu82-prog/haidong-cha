@@ -365,6 +365,12 @@ a {
   padding-bottom: 14px;
 }
 
+.announcement-brief.announcement-expired {
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
 .announcement-brief-body {
   min-width: 0;
 }
