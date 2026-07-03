@@ -231,6 +231,17 @@ a {
   background: var(--accent);
 }
 
+.announcement-actions .announcement-price {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 0 14px;
+  min-height: 32px;
+}
+
 .announcement-title {
   max-width: 720px;
   margin: 4px 0 0;
