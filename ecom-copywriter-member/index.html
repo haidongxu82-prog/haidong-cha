@@ -27,6 +27,25 @@
     --shadow: 0 12px 40px -14px rgba(0,0,0,.7);
     --ease: cubic-bezier(.22,.61,.36,1);
   }
+  /* 浅色（乳白）主题 */
+  body.light {
+    --bg: #f5f2ec;
+    --bg-soft: #ece8e0;
+    --panel: #ffffff;
+    --panel-hi: #ffffff;
+    --line: #e3ded4;
+    --line-soft: #ebe7de;
+    --text: #262019;
+    --text-2: #56504a;
+    --muted: #8b857b;
+    --accent: #6f5ef0;
+    --accent-hi: #5a48d4;
+    --accent-soft: rgba(111,94,240,.11);
+    --accent-line: rgba(111,94,240,.34);
+    --ok: #1f9d57;
+    --danger: #cf4040;
+    --shadow: 0 14px 40px -18px rgba(70,60,45,.22);
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -42,11 +61,11 @@
 
   .wrap { max-width: 1200px; margin: 0 auto; padding: 0 26px; position: relative; z-index: 1; }
 
-  /* 全页水印：海东 AI */
+  /* 角标水印：海东 AI（右下角单个）*/
   .watermark {
-    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='170'><text x='16' y='96' transform='rotate(-28 130 85)' fill='rgba(255,255,255,0.045)' font-family='sans-serif' font-size='23' font-weight='700'>%E6%B5%B7%E4%B8%9C AI</text></svg>");
-    background-repeat: repeat;
+    position: fixed; right: 14px; bottom: 11px; z-index: 20; pointer-events: none;
+    font-size: 12px; font-weight: 700; letter-spacing: .5px;
+    color: var(--muted); opacity: .5;
   }
 
   /* ---- top bar ---- */
@@ -189,6 +208,16 @@
   .apibox-help { margin-left: auto; font-size: 12px; color: var(--accent-hi); text-decoration: none; }
   .apibox-help:hover { text-decoration: underline; }
   .apibox-note { font-size: 11.5px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+  /* 已配置折叠态：隐藏输入/按钮，只留一行摘要 */
+  .apibox-done { display: none; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .apibox-done-txt { font-size: 12px; color: var(--ok); }
+  .apibox-done-btns { display: flex; gap: 8px; }
+  .apibox.done .apibox-done { display: flex; }
+  .apibox.done .key-row,
+  .apibox.done .apibox-actions,
+  .apibox.done .apibox-guide,
+  .apibox.done .apibox-adv,
+  .apibox.done .apibox-note { display: none; }
   .apibox-guide { margin-top: 9px; font-size: 12px; }
   .apibox-guide summary { cursor: pointer; color: var(--accent-hi); list-style: none; }
   .apibox-guide summary::-webkit-details-marker { display: none; }
@@ -397,12 +426,13 @@
 </style>
 </head>
 <body>
-  <div class="watermark" aria-hidden="true"></div>
+  <div class="watermark" aria-hidden="true">海东 AI</div>
   <div class="wrap">
     <div class="topbar">
       <div class="logo">文</div>
       <span class="name">文案台</span>
       <span class="tag">会员版 · <b>自带 Key</b></span>
+      <button class="help-btn" id="themeBtn" type="button" aria-label="切换主题">☀️</button>
       <button class="help-btn" id="histBtn" type="button">🕘 历史</button>
       <button class="help-btn" id="guideBtn" type="button">📖 使用说明</button>
     </div>
@@ -417,6 +447,13 @@
           <div class="apibox-head">
             <span class="apibox-title">🔑 API 设置</span>
             <span class="apibox-state" id="keyState">未配置</span>
+          </div>
+          <div class="apibox-done">
+            <span class="apibox-done-txt">✓ 配置已保存，直接开始生成即可</span>
+            <div class="apibox-done-btns">
+              <button type="button" class="mini" id="keyEdit">修改</button>
+              <button type="button" class="mini" id="keyClear3">清除</button>
+            </div>
           </div>
           <div class="key-row">
             <input class="input" type="password" id="apiKey" placeholder="粘贴你的 API Key（sk-…）" autocomplete="off" spellcheck="false">
@@ -737,7 +774,8 @@ function saveKey() {
   if (url) localStorage.setItem(URL_STORE, url); else localStorage.removeItem(URL_STORE);
   if (model) localStorage.setItem(MODEL_STORE, model); else localStorage.removeItem(MODEL_STORE);
   refreshKeyState();
-  toast("已保存到本浏览器");
+  applyKeyUI();
+  toast("已保存，可直接生成");
 }
 function clearKey() {
   localStorage.removeItem(KEY_STORE);
@@ -747,7 +785,13 @@ function clearKey() {
   $("apiUrl").value = "";
   $("apiModel").value = "";
   refreshKeyState();
+  applyKeyUI();
   toast("已清除（Key 与接口配置）");
+}
+function applyKeyUI() {
+  const box = document.querySelector(".apibox");
+  if (!box) return;
+  if (getKey()) box.classList.add("done"); else box.classList.remove("done");
 }
 
 /* --- 直连 DeepSeek：风格调教 + 容错解析 + 重试 --- */
@@ -1115,8 +1159,14 @@ $("apiKey").value = getKey();
 $("apiUrl").value = localStorage.getItem(URL_STORE) || "";
 $("apiModel").value = localStorage.getItem(MODEL_STORE) || "";
 refreshKeyState();
+applyKeyUI();
 $("keySave").addEventListener("click", saveKey);
 $("keyClear").addEventListener("click", clearKey);
+$("keyClear3").addEventListener("click", clearKey);
+$("keyEdit").addEventListener("click", function () {
+  document.querySelector(".apibox").classList.remove("done");
+  $("apiKey").focus();
+});
 $("keyEye").addEventListener("click", function () {
   const el = $("apiKey");
   el.type = el.type === "password" ? "text" : "password";
@@ -1125,6 +1175,21 @@ $("apiPreset").addEventListener("change", function () {
   const p = PRESETS[this.value];
   if (p) { $("apiUrl").value = p.url; $("apiModel").value = p.model; }
 });
+
+/* --- 主题（深色 / 乳白）--- */
+const THEME_STORE = "hd_ecom_theme";
+function applyTheme(t) {
+  const light = t === "light";
+  document.body.classList.toggle("light", light);
+  $("themeBtn").textContent = light ? "🌙" : "☀️";
+}
+function toggleTheme() {
+  const next = document.body.classList.contains("light") ? "dark" : "light";
+  try { localStorage.setItem(THEME_STORE, next); } catch (e) {}
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_STORE) || "dark");
+$("themeBtn").addEventListener("click", toggleTheme);
 /* --- 使用说明弹层 --- */
 function openGuide() { $("guideModal").classList.add("show"); $("guideModal").setAttribute("aria-hidden", "false"); }
 function closeGuide() { $("guideModal").classList.remove("show"); $("guideModal").setAttribute("aria-hidden", "true"); }
