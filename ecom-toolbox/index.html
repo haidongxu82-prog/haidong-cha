@@ -48,6 +48,27 @@
   .val .k .em{color:var(--accent-hi)}
   .val .d{font-size:12.5px; color:var(--muted); margin-top:5px; line-height:1.55}
 
+  /* 统一 Key 配置 */
+  .keybox { margin-top:26px; border:1px solid var(--accent-line); background:var(--accent-soft); border-radius:var(--r-lg); padding:18px 20px; }
+  .keybox-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .kb-title { font-size:14px; font-weight:700; color:var(--text); }
+  .kb-state { font-size:12px; color:var(--muted); }
+  .kb-state.ok { color:var(--ok); }
+  .kb-row { display:flex; gap:8px; }
+  .kb-row input { flex:1; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-md); color:var(--text); padding:11px 13px; font-size:13.5px; font-family:inherit; outline:none; }
+  .kb-row input:focus { border-color:var(--accent-line); box-shadow:0 0 0 3px var(--accent-soft); }
+  #kbEye { flex:none; width:42px; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-md); cursor:pointer; font-size:15px; color:var(--text-2); }
+  .kb-actions { display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .kb-btn { border:1px solid var(--line); background:var(--panel-hi); color:var(--text); border-radius:var(--r-sm); padding:8px 16px; font-size:13px; font-family:inherit; cursor:pointer; }
+  .kb-btn:hover { border-color:var(--accent-line); }
+  .kb-btn.ghost { color:var(--text-2); }
+  .kb-help { margin-left:auto; font-size:12.5px; color:var(--accent-hi); }
+  .kb-adv { margin-top:10px; font-size:12.5px; }
+  .kb-adv summary { cursor:pointer; color:var(--accent-hi); list-style:none; }
+  .kb-adv summary::-webkit-details-marker { display:none; }
+  .kb-adv input { display:block; width:100%; margin-top:8px; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-md); color:var(--text); padding:9px 12px; font-size:12.5px; font-family:inherit; outline:none; }
+  .kb-note { font-size:11.5px; color:var(--muted); margin:11px 0 0; line-height:1.55; }
+
   /* section */
   .sec-title{display:flex; align-items:baseline; gap:12px; margin:40px 0 14px}
   .sec-title h2{font-size:17px; margin:0}
@@ -122,6 +143,28 @@
       </div>
     </div>
 
+    <div class="keybox">
+      <div class="keybox-head">
+        <span class="kb-title">🔑 一次配置，整套通用</span>
+        <span class="kb-state" id="kbState">未配置</span>
+      </div>
+      <div class="kb-row">
+        <input id="kbKey" type="password" placeholder="粘贴你的 DeepSeek API Key（sk-…）" autocomplete="off" spellcheck="false">
+        <button id="kbEye" type="button" aria-label="显示或隐藏 Key">👁</button>
+      </div>
+      <div class="kb-actions">
+        <button id="kbSave" type="button" class="kb-btn">保存</button>
+        <button id="kbClear" type="button" class="kb-btn ghost">清除</button>
+        <a class="kb-help" href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">获取 Key ›</a>
+      </div>
+      <details class="kb-adv">
+        <summary>高级 · 换用别的接口（OpenRouter 等）</summary>
+        <input id="kbUrl" placeholder="接口地址（chat/completions 全地址，留空=DeepSeek）" autocomplete="off" spellcheck="false">
+        <input id="kbModel" placeholder="模型名称（留空=deepseek-v4-flash）" autocomplete="off" spellcheck="false">
+      </details>
+      <p class="kb-note">Key 只保存在你自己浏览器，<b style="color:var(--accent-hi)">工具箱所有工具通用</b>；生成时浏览器直连接口，本站不经手、不上传。</p>
+    </div>
+
     <div class="sec-title"><h2>已上线工具</h2><span>READY TO USE</span></div>
     <div class="grid">
       <a class="card" href="/ecom-copywriter-member/">
@@ -166,5 +209,40 @@
       <span><a href="https://haidong.chat/">← 回海东 AI 首页</a></span>
     </div>
   </div>
+  <script>
+  (function () {
+    var KEY = "hd_ecom_ds_key", URL = "hd_ecom_api_url", MODEL = "hd_ecom_api_model";
+    function $(id) { return document.getElementById(id); }
+    function gk() { return (localStorage.getItem(KEY) || "").trim(); }
+    function gm() { return (localStorage.getItem(MODEL) || "").trim() || "deepseek-v4-flash"; }
+    function refresh() {
+      var has = !!gk(); var st = $("kbState");
+      st.textContent = has ? ("已配置 ✓ · " + gm() + " · 全套通用") : "未配置";
+      st.className = "kb-state" + (has ? " ok" : "");
+    }
+    $("kbKey").value = gk();
+    $("kbUrl").value = localStorage.getItem(URL) || "";
+    $("kbModel").value = localStorage.getItem(MODEL) || "";
+    refresh();
+    $("kbSave").addEventListener("click", function () {
+      var v = $("kbKey").value.trim();
+      if (!v) { $("kbState").textContent = "请先粘贴 Key"; return; }
+      localStorage.setItem(KEY, v);
+      var u = $("kbUrl").value.trim(), m = $("kbModel").value.trim();
+      if (u) localStorage.setItem(URL, u); else localStorage.removeItem(URL);
+      if (m) localStorage.setItem(MODEL, m); else localStorage.removeItem(MODEL);
+      refresh();
+      $("kbState").textContent = "已保存 ✓ 整个工具箱通用";
+      setTimeout(refresh, 1600);
+    });
+    $("kbClear").addEventListener("click", function () {
+      localStorage.removeItem(KEY); localStorage.removeItem(URL); localStorage.removeItem(MODEL);
+      $("kbKey").value = ""; $("kbUrl").value = ""; $("kbModel").value = ""; refresh();
+    });
+    $("kbEye").addEventListener("click", function () {
+      var e = $("kbKey"); e.type = e.type === "password" ? "text" : "password";
+    });
+  })();
+  </script>
 </body>
 </html>

@@ -451,7 +451,7 @@
             <span class="apibox-state" id="keyState">未配置</span>
           </div>
           <div class="apibox-done">
-            <span class="apibox-done-txt">✓ 配置已保存，直接开始生成即可</span>
+            <span class="apibox-done-txt">✓ 已配置 · 整个工具箱通用</span>
             <div class="apibox-done-btns">
               <button type="button" class="mini" id="keyEdit">修改</button>
               <button type="button" class="mini" id="keyClear3">清除</button>
@@ -921,6 +921,7 @@ async function complianceFix(items, cfg) {
     const resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(body) });
     if (!resp.ok) return items;
     const data = await resp.json();
+    addUsage(data);
     const c = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : "";
     const fixed = normalizeItems(salvageParse(c));
     if (fixed.length === items.length) return fixed;
@@ -931,6 +932,7 @@ async function complianceFix(items, cfg) {
 // 主生成：显式派角度 + 部分成功抢救 + 数量补齐 + 截断加token + 退避 + 合规闭环
 async function generateSets(input, cfg) {
   const target = input.count;
+  _usage = { p: 0, c: 0, t: 0 };
   const temp = tempForStyle(input.style);
   let maxTokens = Math.min(8000, 700 + target * 420);
   let useJsonMode = true;
@@ -965,6 +967,7 @@ async function generateSets(input, cfg) {
       await sleep(400 * round); continue;
     }
     let data; try { data = await resp.json(); } catch (e) { lastErr = "返回内容异常"; await sleep(400 * round); continue; }
+    addUsage(data);
     const choice = data && data.choices && data.choices[0];
     const content = choice && choice.message ? choice.message.content : "";
     const finish = choice ? choice.finish_reason : "";
@@ -977,7 +980,7 @@ async function generateSets(input, cfg) {
   if (!collected.length) throw { title: "文案生成失败，请重试", detail: lastErr };
   collected = collected.slice(0, target);
   collected = await complianceFix(collected, cfg);
-  return { copywriting: collected };
+  return { copywriting: collected, usage: { p: _usage.p, c: _usage.c, t: _usage.t } };
 }
 
 /* --- 结果状态 --- */
@@ -989,13 +992,29 @@ const BAN_RE = new RegExp("(" + BAN_WORDS.join("|") + ")", "g");
 function countBan(text) { const m = String(text == null ? "" : text).match(BAN_RE); return m ? m.length : 0; }
 function markBan(escaped) { return escaped.replace(BAN_RE, '<mark class="ban" title="疑似违禁/极限词，发布前建议替换">$1</mark>'); }
 
+let _usage = { p: 0, c: 0, t: 0 };
+function addUsage(data) {
+  const u = data && data.usage;
+  if (!u) return;
+  _usage.p += u.prompt_tokens || 0;
+  _usage.c += u.completion_tokens || 0;
+  _usage.t += u.total_tokens || ((u.prompt_tokens || 0) + (u.completion_tokens || 0));
+}
+function usageMeta() {
+  if (!RESULT || !RESULT.usage || !RESULT.usage.t) return "";
+  const u = RESULT.usage;
+  const rmb = (u.p * 0.14 + u.c * 0.28) / 1e6 * 7.2;
+  return '<span class="dot"></span><span title="按 DeepSeek 价格估算，实际以你所用接口为准">本次约 ' + u.t + ' token ≈ ¥' + rmb.toFixed(4) + '</span>';
+}
+
 function renderResults(data) {
   RESULT = {
     product: data.product || "",
     style: data.style || "",
     features: data.features || "通用卖点",
     target: data.target || "电商通用人群",
-    list: (data.copywriting || []).slice()
+    list: (data.copywriting || []).slice(),
+    usage: data.usage || null
   };
   renderCards();
 }
@@ -1007,7 +1026,7 @@ function renderCards() {
   if (RESULT.product) parts.push(esc(RESULT.product));
   if (RESULT.style) parts.push(esc(RESULT.style));
   parts.push("共 " + list.length + " 套");
-  $("meta").innerHTML = parts.join('<span class="dot"></span>');
+  $("meta").innerHTML = parts.join('<span class="dot"></span>') + usageMeta();
 
   if (!list.length) {
     $("out").innerHTML = '<div class="empty"><div class="t">没有返回文案内容</div></div>';
@@ -1148,7 +1167,7 @@ function openHist() {
 function closeHist() { $("histModal").classList.remove("show"); $("histModal").setAttribute("aria-hidden", "true"); }
 
 /* --- 一键示例 + 记住上次输入 --- */
-const INPUT_STORE = "hd_ecom_last_input";
+const PROFILE_STORE = "hd_ecom_profile";
 function setStyleByValue(s) {
   $("styleSegs").querySelectorAll(".seg").forEach(function (el) {
     const on = el.textContent === s;
@@ -1158,20 +1177,15 @@ function setStyleByValue(s) {
 }
 function saveLastInput() {
   try {
-    localStorage.setItem(INPUT_STORE, JSON.stringify({
-      product: $("product").value, features: $("features").value, target: $("target").value,
-      style: currentStyle, count: getCount()
-    }));
+    const p = $("product").value.trim(), f = $("features").value.trim();
+    if (p || f) localStorage.setItem(PROFILE_STORE, JSON.stringify({ product: p, features: f }));
   } catch (e) {}
 }
 function restoreLastInput() {
-  let s; try { s = JSON.parse(localStorage.getItem(INPUT_STORE) || "null"); } catch (e) { s = null; }
+  let s; try { s = JSON.parse(localStorage.getItem(PROFILE_STORE) || "null"); } catch (e) { s = null; }
   if (!s) return;
-  $("product").value = s.product || "";
-  $("features").value = s.features || "";
-  $("target").value = s.target || "";
-  if (s.count) setCount(s.count);
-  if (s.style) setStyleByValue(s.style);
+  if (!$("product").value && s.product) $("product").value = s.product;
+  if (!$("features").value && s.features) $("features").value = s.features;
 }
 function fillSample() {
   $("product").value = "进口冻干猫粮";
@@ -1217,7 +1231,7 @@ async function generate() {
   try {
     const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
     const parsed = await generateSets(input, cfg);
-    renderResults({ product: input.product, style: input.style, features: input.features, target: input.target, copywriting: parsed.copywriting });
+    renderResults({ product: input.product, style: input.style, features: input.features, target: input.target, copywriting: parsed.copywriting, usage: parsed.usage });
     saveHistory();
   } catch (err) {
     if (err && err.title) renderError(err.title, err.detail);
