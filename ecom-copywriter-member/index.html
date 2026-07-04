@@ -580,21 +580,55 @@ function clearKey() {
   toast("已清除");
 }
 
-/* --- 直连 DeepSeek：prompt + 三重容错解析 + 重试 --- */
+/* --- 直连 DeepSeek：风格调教 + 容错解析 + 重试 --- */
+const STYLE_GUIDE = {
+  "小红书种草风": "第一人称口语化分享，像真实用户安利；适度使用 emoji；可用「宝子/姐妹」等亲切称呼；先戳中痛点再种草；标签用小红书流行话题词。",
+  "抖音直播风": "短句、强节奏、有口播冲击力；营造限时限量的紧迫感；带「话不多说/直接上链接」式临场逼单感；情绪饱满。",
+  "淘宝详情页": "卖点清晰罗列，突出材质/工艺/规格/使用效果；理性利益点与吸引力结合；契合详情页阅读节奏。",
+  "京东卖点": "理性专业，强调参数、品质与正品/物流/售后保障；简洁有力，打动理性决策的买家。",
+  "通用电商": "通用高转化电商风格，兼顾吸引力与信息完整，适配多平台通用场景。"
+};
+function styleSpecOf(s) { return STYLE_GUIDE[s] || STYLE_GUIDE["通用电商"]; }
+
+const SYSTEM_PROMPT = "你是一位资深电商文案策划师，擅长写高转化、可直接使用的电商文案。硬性要求：(1) 严格遵守中国广告法，禁用「最/第一/顶级/国家级/绝对/纯天然/包治/无副作用」等绝对化与违禁用语，不虚构或夸大功效、成分、资质；(2) 所有卖点必须基于用户提供的信息，不编造；(3) 必须严格按JSON格式返回，不要输出任何其他内容，不要包含markdown代码块标记。";
+
 function buildPrompt(p) {
   return "请为以下产品生成 " + p.count + " 套电商文案：\n\n" +
     "产品名称：" + p.product + "\n" +
     "核心卖点：" + p.features + "\n" +
     "目标人群：" + p.target + "\n" +
-    "文案风格：" + p.style + "\n\n" +
-    "每套文案包含：\n" +
-    "1. title：主标题（15字以内，抓眼球）\n" +
-    "2. subtitle：副标题（25字以内，补充卖点）\n" +
-    "3. selling_points：3个核心卖点（每个10字以内）\n" +
-    "4. description：详情摘要（80-120字，突出差异化）\n" +
-    "5. hashtags：5个适用标签\n\n" +
+    "文案风格：" + p.style + "\n" +
+    "风格要求：" + styleSpecOf(p.style) + "\n\n" +
+    "写作要求：\n" +
+    "- " + p.count + " 套之间从不同角度切入（痛点/使用场景/人群/情感/促销/权威背书/对比等），不要雷同。\n" +
+    "- 贴合「" + p.target + "」的语气与用词。\n" +
+    "- 每套包含：\n" +
+    "  1. title 主标题（15字以内，抓眼球）\n" +
+    "  2. subtitle 副标题（25字以内，补充卖点）\n" +
+    "  3. selling_points 3个核心卖点（每个10字以内）\n" +
+    "  4. description 详情摘要（80-120字，突出差异化）\n" +
+    "  5. hashtags 5个契合「" + p.style + "」的标签\n\n" +
     '严格按以下JSON格式输出，不要包含任何markdown标记：\n' +
     '{"copywriting": [{"title": "", "subtitle": "", "selling_points": ["", "", ""], "description": "", "hashtags": ["", "", "", "", ""]}]}';
+}
+
+function normalizeItems(arr) {
+  if (!Array.isArray(arr)) return [];
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const it = arr[i];
+    if (!it || typeof it !== "object") continue;
+    const title = String(it.title || "").trim();
+    if (!title) continue;
+    out.push({
+      title: title,
+      subtitle: String(it.subtitle || "").trim(),
+      selling_points: Array.isArray(it.selling_points) ? it.selling_points.filter(Boolean).map(String) : [],
+      description: String(it.description || "").trim(),
+      hashtags: Array.isArray(it.hashtags) ? it.hashtags.filter(Boolean).map(String) : []
+    });
+  }
+  return out;
 }
 
 function tryParse(text) {
@@ -608,18 +642,23 @@ function tryParse(text) {
 }
 
 async function callDeepSeek(input, apiKey) {
-  const body = {
-    model: DS_MODEL,
-    messages: [
-      { role: "system", content: "你是一位资深电商文案策划师，擅长写高转化的电商文案。必须严格按JSON格式返回，不要输出任何其他内容，不要包含markdown代码块标记。" },
-      { role: "user", content: buildPrompt(input) }
-    ],
-    temperature: 0.8,
-    max_tokens: 4000,
-    response_format: { type: "json_object" }
-  };
+  const maxTokens = Math.min(8000, 1200 + input.count * 450);
   let lastErr = "";
   for (let attempt = 1; attempt <= 3; attempt++) {
+    const messages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: buildPrompt(input) }
+    ];
+    if (attempt > 1) {
+      messages.push({ role: "user", content: "上次返回的不是合法JSON或格式不符，请务必只输出符合上面要求的合法JSON，不要任何多余文字。" });
+    }
+    const body = {
+      model: DS_MODEL,
+      messages: messages,
+      temperature: 0.8,
+      max_tokens: maxTokens,
+      response_format: { type: "json_object" }
+    };
     let resp;
     try {
       resp = await fetch(DS_URL, {
@@ -640,8 +679,8 @@ async function callDeepSeek(input, apiKey) {
     try { json = await resp.json(); } catch (e) { lastErr = "返回内容异常"; continue; }
     const content = json && json.choices && json.choices[0] && json.choices[0].message
       ? json.choices[0].message.content : "";
-    const parsed = tryParse(content);
-    if (parsed && Array.isArray(parsed.copywriting) && parsed.copywriting.length) return parsed;
+    const items = normalizeItems((tryParse(content) || {}).copywriting);
+    if (items.length) return { copywriting: items };
     lastErr = "模型返回内容无法解析";
   }
   throw { title: "文案生成失败，请重试", detail: lastErr };
