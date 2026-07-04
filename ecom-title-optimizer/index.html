@@ -382,6 +382,8 @@
     transition: border-color .15s var(--ease), color .15s var(--ease);
   }
   .help-btn:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .tool-switch { flex: none; background: var(--panel-hi); border: 1px solid var(--line); color: var(--text-2); border-radius: 20px; padding: 5px 11px; font-size: 12.5px; font-family: inherit; cursor: pointer; outline: none; max-width: 130px; }
+  .tool-switch:hover { border-color: var(--accent-line); color: var(--accent-hi); }
   .modal-mask {
     position: fixed; inset: 0; z-index: 9995; background: rgba(0,0,0,.62);
     display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
@@ -434,6 +436,12 @@
   @media (max-width: 880px) {
     .grid { grid-template-columns: 1fr; }
     .composer { position: static; }
+    body { overflow-x: hidden; }
+    .wrap { padding: 0 15px; }
+    .topbar { flex-wrap: wrap; gap: 8px; row-gap: 8px; }
+    .topbar .name { white-space: nowrap; }
+    .topbar .tag { display: none; }
+    .help-btn, .tool-switch { padding: 5px 10px; font-size: 12px; }
   }
 </style>
     <script defer src="https://analytics.haidong.chat/script.js" data-website-id="dd54fa0f-cf40-496c-bccb-a7f8b7fadb47"></script>
@@ -445,7 +453,15 @@
       <div class="logo">文</div>
       <span class="name">标题台</span>
       <span class="tag">标题&关键词 · <b>自带 Key</b></span>
-      <a class="help-btn" href="/ecom-toolbox/" style="text-decoration:none">◧ 工具箱</a>
+      <select class="tool-switch" aria-label="切换工具" onchange="if(this.value)location.href=this.value">
+        <option value="">🔀 切换工具</option>
+        <option value="/ecom-toolbox/">← 工具箱首页</option>
+        <option value="/ecom-copywriter-member/">📝 文案生成</option>
+        <option value="/ecom-title-optimizer/">🏷️ 标题优化</option>
+        <option value="/ecom-review-reply/">💬 差评回复</option>
+        <option value="/ecom-live-script/">🎬 直播脚本</option>
+        <option value="/ecom-promo-pack/">🎯 大促文案包</option>
+      </select>
       <button class="help-btn" id="themeBtn" type="button" aria-label="切换主题">☀️</button>
       <button class="help-btn" id="histBtn" type="button">🕘 历史</button>
       <button class="help-btn" id="guideBtn" type="button">📖 使用说明</button>
@@ -725,8 +741,8 @@ setCount(10);
 
 function setRunning(on) {
   running = on;
-  $("go").disabled = on;
-  $("goLabel").innerHTML = on ? '<span class="spin"></span> 生成中…' : "✦ 生成文案";
+  $("go").disabled = false;
+  $("goLabel").innerHTML = on ? '<span class="spin"></span> 停止生成' : "✦ 生成文案";
 }
 
 /* --- clipboard --- */
@@ -773,7 +789,7 @@ function renderLoading(n) {
 }
 
 function renderError(title, detail) {
-  $("out").innerHTML = '<div class="err">⚠️ ' + esc(title) + (detail ? '<div class="d">' + esc(detail) + "</div>" : "") + "</div>";
+  $("out").innerHTML = '<div class="err">⚠️ ' + esc(title) + (detail ? '<div class="d">' + esc(detail) + "</div>" : "") + '<div style="margin-top:12px"><button class="mini" onclick="generate()">🔄 重试</button></div>' + "</div>";
   $("meta").textContent = "";
 }
 
@@ -949,8 +965,8 @@ async function streamCall(body, cfg, onDelta) {
   const b = Object.assign({}, body, { stream: true, stream_options: { include_usage: true } });
   let resp;
   try {
-    resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(b) });
-  } catch (e) { return { neterr: true }; }
+    resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(b), signal: cfg.signal });
+  } catch (e) { return e && e.name === "AbortError" ? { aborted: true } : { neterr: true }; }
   if (resp.status >= 400) return { status: resp.status, resp: resp };
   const ct = resp.headers.get("content-type") || "";
   if (!resp.body || ct.indexOf("event-stream") < 0) {
@@ -1018,6 +1034,7 @@ async function generateSets(input, cfg, onProgress) {
     if (sres.neterr) {
       throw { title: "无法连接该接口", detail: "可能是接口地址填错，或该接口不允许浏览器直连(CORS)。请改用 DeepSeek / OpenRouter 等支持浏览器的接口。" };
     }
+    if (sres.aborted) throw { aborted: true };
     if (sres.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
     if (sres.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
     if (sres.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
@@ -1287,14 +1304,19 @@ async function generate() {
   RESULT = { product: input.product, style: input.style, features: input.features, target: input.target, list: [], usage: null };
 
   try {
-    const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
+    _abort = new AbortController();
+    const cfg = { url: getEndpoint(), model: getModel(), key: apiKey, signal: _abort.signal };
     const parsed = await generateSets(input, cfg, function (items) { RESULT.list = items; renderCards(); });
     RESULT.list = parsed.copywriting;
     RESULT.usage = parsed.usage;
     renderCards();
     saveHistory();
   } catch (err) {
-    if (err && err.title) renderError(err.title, err.detail);
+    if (err && err.aborted) {
+      if (RESULT && RESULT.list && RESULT.list.length) { renderCards(); toast("已停止，保留了 " + RESULT.list.length + " 条"); }
+      else { $("out").innerHTML = '<div class="empty"><div class="t">已停止</div><div>已取消本次生成</div></div>'; $("meta").textContent = ""; }
+    }
+    else if (err && err.title) renderError(err.title, err.detail);
     else renderError("请求出错", (err && err.message) || "网络异常，请重试");
   } finally {
     setRunning(false);
@@ -1422,7 +1444,11 @@ function exportCsv(rows) {
   toast("已导出 CSV");
 }
 
-$("go").addEventListener("click", generate);
+let _abort = null;
+$("go").addEventListener("click", function () {
+  if (running) { if (_abort) { _abort.abort(); } return; }
+  generate();
+});
 ["product", "target"].forEach((id) =>
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); })
 );
