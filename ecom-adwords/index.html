@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>直通车广告词拓展 · 会员版（自带 Key）· 广告词台</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --bg-soft: #141417;
+    --panel: #161619;
+    --panel-hi: #1d1d21;
+    --line: #26262b;
+    --line-soft: #202024;
+    --text: #f2f2f4;
+    --text-2: #b7b7bf;
+    --muted: #74747e;
+    --accent: #7c6cff;
+    --accent-hi: #9a8dff;
+    --accent-soft: rgba(124, 108, 255, .14);
+    --accent-line: rgba(124, 108, 255, .32);
+    --ok: #46c98b;
+    --danger: #ff6f6f;
+    --r-lg: 18px;
+    --r-md: 13px;
+    --r-sm: 9px;
+    --shadow: 0 12px 40px -14px rgba(0,0,0,.7);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+  /* 浅色（乳白）主题 */
+  body.light {
+    --bg: #f5f2ec;
+    --bg-soft: #ece8e0;
+    --panel: #ffffff;
+    --panel-hi: #ffffff;
+    --line: #e3ded4;
+    --line-soft: #ebe7de;
+    --text: #262019;
+    --text-2: #56504a;
+    --muted: #8b857b;
+    --accent: #6f5ef0;
+    --accent-hi: #5a48d4;
+    --accent-soft: rgba(111,94,240,.11);
+    --accent-line: rgba(111,94,240,.34);
+    --ok: #1f9d57;
+    --danger: #cf4040;
+    --shadow: 0 14px 40px -18px rgba(70,60,45,.22);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(124,108,255,.10), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 26px; position: relative; z-index: 1; }
+
+  /* 角标水印：海东 AI（右下角单个）*/
+  .watermark {
+    position: fixed; right: 14px; bottom: 11px; z-index: 20; pointer-events: none;
+    font-size: 12px; font-weight: 700; letter-spacing: .5px;
+    color: var(--muted); opacity: .5;
+  }
+
+  /* ---- top bar ---- */
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 24px 0 18px;
+  }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #b06cff);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 17px; color: #fff;
+    box-shadow: 0 6px 18px -6px var(--accent);
+  }
+  .topbar .name { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
+  .topbar .tag {
+    font-size: 12px; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 20px;
+    padding: 2px 10px; margin-left: auto;
+  }
+  .topbar .tag b { color: var(--accent-hi); font-weight: 600; }
+
+  /* ---- layout ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 26px;
+    padding-bottom: 60px;
+    align-items: start;
+  }
+
+  .composer {
+    background: linear-gradient(180deg, var(--panel-hi), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 22px;
+    position: sticky; top: 20px;
+    box-shadow: var(--shadow);
+  }
+  .composer h1 { font-size: 15px; margin: 0 0 3px; letter-spacing: .2px; }
+  .composer .hint { font-size: 12px; color: var(--muted); margin: 0 0 20px; }
+  .quota-line { font-size: 11.5px; color: var(--muted); margin: 11px 0 0; text-align: center; cursor: default; }
+  .quota-line b { color: var(--accent-hi); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .quota-line.low b { color: var(--danger); }
+
+  .field { margin-bottom: 17px; }
+  .field > label {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12.5px; color: var(--text-2); margin-bottom: 8px; font-weight: 500;
+  }
+  .field > label .star { color: var(--accent-hi); }
+  .field > label .opt { color: var(--muted); font-weight: 400; margin-left: auto; font-size: 11.5px; }
+
+  .input, textarea, select {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-md);
+    color: var(--text);
+    padding: 11px 13px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .16s var(--ease), box-shadow .16s var(--ease), background .16s;
+  }
+  .input::placeholder, textarea::placeholder { color: #5c5c66; }
+  .input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background: var(--panel);
+  }
+  textarea { resize: vertical; min-height: 62px; line-height: 1.55; }
+
+  /* segmented style picker */
+  .segs { display: flex; flex-wrap: wrap; gap: 7px; }
+  .seg {
+    border: 1px solid var(--line-soft);
+    background: var(--bg-soft);
+    color: var(--text-2);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s var(--ease);
+    user-select: none;
+  }
+  .seg:hover { border-color: var(--accent-line); color: var(--text); }
+  .seg.on {
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
+    color: var(--accent-hi);
+    font-weight: 600;
+  }
+
+  /* count stepper */
+  .count-row { display: flex; align-items: center; gap: 10px; }
+  .count-row input[type=range] {
+    flex: 1; accent-color: var(--accent); height: 4px; min-width: 0;
+  }
+  .step {
+    flex: none; width: 32px; height: 32px;
+    border: 1px solid var(--line-soft); background: var(--bg-soft); color: var(--text);
+    border-radius: var(--r-sm); font-size: 19px; line-height: 1; font-family: inherit;
+    cursor: pointer; display: grid; place-items: center; user-select: none;
+    transition: border-color .15s var(--ease), color .15s var(--ease), background .15s;
+  }
+  .step:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .step:active { background: var(--panel); }
+  .step:disabled { opacity: .35; cursor: not-allowed; }
+  .count-num {
+    flex: none; width: 50px; text-align: center;
+    font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px;
+    color: var(--accent-hi);
+    background: var(--accent-soft); border: 1px solid var(--accent-line);
+    border-radius: var(--r-sm); padding: 5px 0; font-family: inherit; outline: none;
+    -moz-appearance: textfield;
+  }
+  .count-num::-webkit-outer-spin-button,
+  .count-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .count-num:focus { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  /* API 设置盒子 */
+  .apibox {
+    border: 1px solid var(--accent-line); background: var(--accent-soft);
+    border-radius: var(--r-md); padding: 13px 14px; margin-bottom: 20px;
+  }
+  .apibox-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .apibox-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .apibox-state { font-size: 11.5px; color: var(--muted); }
+  .apibox-state.ok { color: var(--ok); }
+  .key-row { display: flex; gap: 8px; }
+  .key-row .input { flex: 1; }
+  .key-eye {
+    flex: none; width: 40px; border: 1px solid var(--line-soft); background: var(--bg-soft);
+    border-radius: var(--r-md); cursor: pointer; font-size: 15px; color: var(--text-2);
+  }
+  .key-eye:hover { border-color: var(--accent-line); }
+  .apibox-actions { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .apibox-help { margin-left: auto; font-size: 12px; color: var(--accent-hi); text-decoration: none; }
+  .apibox-help:hover { text-decoration: underline; }
+  .apibox-note { font-size: 11.5px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+  /* 已配置折叠态：隐藏输入/按钮，只留一行摘要 */
+  .apibox-done { display: none; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .apibox-done-txt { font-size: 12px; color: var(--ok); }
+  .apibox-done-btns { display: flex; gap: 8px; }
+  .apibox.done .apibox-done { display: flex; }
+  .apibox.done .key-row,
+  .apibox.done .apibox-actions,
+  .apibox.done .apibox-guide,
+  .apibox.done .apibox-adv,
+  .apibox.done .apibox-note { display: none; }
+  .apibox-guide { margin-top: 9px; font-size: 12px; }
+  .apibox-guide summary { cursor: pointer; color: var(--accent-hi); list-style: none; }
+  .apibox-guide summary::-webkit-details-marker { display: none; }
+  .apibox-guide ol { margin: 8px 0 0; padding-left: 18px; color: var(--text-2); line-height: 1.7; }
+  .apibox-guide a { color: var(--accent-hi); }
+  .apibox-adv { margin-top: 9px; font-size: 12px; }
+  .apibox-adv summary { cursor: pointer; color: var(--accent-hi); list-style: none; }
+  .apibox-adv summary::-webkit-details-marker { display: none; }
+  .adv-body { margin-top: 8px; }
+  .adv-label { display: block; font-size: 11.5px; color: var(--muted); margin: 10px 0 5px; }
+  .adv-body .input, .adv-body select { font-size: 13px; padding: 9px 11px; }
+  .adv-note { font-size: 11px; color: var(--muted); margin: 9px 0 0; line-height: 1.55; }
+
+  .go {
+    width: 100%; margin-top: 6px;
+    border: none; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--accent), #a06bff);
+    color: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
+    padding: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .12s var(--ease), box-shadow .2s, opacity .2s;
+    box-shadow: 0 10px 26px -10px var(--accent);
+  }
+  .go:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -10px var(--accent); }
+  .go:active { transform: translateY(0); }
+  .go:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .spin {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- results ---- */
+  .results-bar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 18px; min-height: 34px;
+  }
+  .results-bar h2 { font-size: 15px; margin: 0; }
+  .results-bar .meta {
+    font-size: 12px; color: var(--muted);
+    display: inline-flex; gap: 7px; align-items: center;
+  }
+  .results-bar .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  .results-bar .copy-all {
+    margin-left: auto;
+    border: 1px solid var(--line); background: var(--panel-hi); color: var(--text-2);
+    border-radius: var(--r-sm); padding: 7px 13px; font-size: 12.5px; font-family: inherit;
+    cursor: pointer; transition: all .15s;
+  }
+  .results-bar .copy-all:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+
+  .empty {
+    border: 1px dashed var(--line); border-radius: var(--r-lg);
+    padding: 70px 24px; text-align: center; color: var(--muted);
+  }
+  .empty .big { font-size: 30px; margin-bottom: 12px; }
+  .empty .t { color: var(--text-2); font-size: 14px; margin-bottom: 4px; }
+
+  .err {
+    border: 1px solid rgba(255,111,111,.3); background: rgba(255,111,111,.06);
+    border-radius: var(--r-lg); padding: 22px; color: var(--danger);
+  }
+  .err .d { font-size: 12px; color: var(--muted); margin-top: 8px; word-break: break-word; }
+
+  .cards { display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel-hi), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    display: flex; flex-direction: column;
+    transition: border-color .18s var(--ease), transform .18s var(--ease);
+    animation: pop .35s var(--ease) both;
+  }
+  .card:hover { border-color: var(--accent-line); transform: translateY(-2px); }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; } }
+
+  .card .idx {
+    align-self: flex-start;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    color: var(--accent-hi); background: var(--accent-soft);
+    border: 1px solid var(--accent-line); border-radius: 6px;
+    padding: 2px 8px; margin-bottom: 12px;
+  }
+  .card h3 { font-size: 17px; margin: 0 0 5px; line-height: 1.4; }
+  .card .sub { color: var(--accent-hi); font-size: 13px; margin: 0 0 4px; }
+
+  .points { display: flex; flex-wrap: wrap; gap: 7px; margin: 13px 0; }
+  .points .p {
+    font-size: 12px; color: var(--text-2);
+    background: var(--bg-soft); border: 1px solid var(--line-soft);
+    border-radius: 7px; padding: 4px 10px;
+  }
+
+  .desc {
+    font-size: 13.5px; color: var(--text-2);
+    background: var(--bg-soft); border: 1px solid var(--line-soft);
+    border-radius: var(--r-md); padding: 12px 13px; margin: 4px 0 2px;
+  }
+  .desc.clip { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .more {
+    background: none; border: none; color: var(--accent-hi); cursor: pointer;
+    font-size: 12px; font-family: inherit; padding: 6px 0 0; align-self: flex-start;
+  }
+
+  .tags { font-size: 12.5px; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+  .tags .h { color: var(--accent-hi); }
+
+  .card .foot {
+    margin-top: 15px; padding-top: 14px; border-top: 1px solid var(--line-soft);
+    display: flex; gap: 8px;
+  }
+  .mini {
+    border: 1px solid var(--line); background: var(--bg-soft); color: var(--text-2);
+    border-radius: var(--r-sm); padding: 7px 12px; font-size: 12.5px; font-family: inherit;
+    cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mini:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .mini.done { color: var(--ok); border-color: rgba(70,201,139,.4); }
+
+  /* skeleton */
+  .sk {
+    background: var(--panel); border: 1px solid var(--line-soft);
+    border-radius: var(--r-lg); padding: 20px;
+  }
+  .sk .bar { height: 12px; border-radius: 6px; background: var(--line-soft); margin-bottom: 10px;
+    background-image: linear-gradient(90deg, var(--line-soft) 0, var(--line) 40%, var(--line-soft) 80%);
+    background-size: 300% 100%; animation: sh 1.3s ease infinite; }
+  @keyframes sh { from { background-position: 200% 0; } to { background-position: -100% 0; } }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translate(-50%, 16px); opacity: 0;
+    background: #232329; border: 1px solid var(--line);
+    color: #fff; padding: 11px 18px; border-radius: 11px; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: var(--shadow); pointer-events: none; z-index: 60;
+    transition: opacity .22s var(--ease), transform .22s var(--ease);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* 使用说明按钮 + 弹层 */
+  .help-btn {
+    flex: none; margin-left: 10px;
+    border: 1px solid var(--line); background: var(--panel-hi); color: var(--text-2);
+    border-radius: 20px; padding: 5px 12px; font-size: 12.5px; font-family: inherit; cursor: pointer;
+    transition: border-color .15s var(--ease), color .15s var(--ease);
+  }
+  .help-btn:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .tool-switch { flex: none; background: var(--panel-hi); border: 1px solid var(--line); color: var(--text-2); border-radius: 20px; padding: 5px 11px; font-size: 12.5px; font-family: inherit; cursor: pointer; outline: none; max-width: 130px; }
+  .tool-switch:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .modal-mask {
+    position: fixed; inset: 0; z-index: 9995; background: rgba(0,0,0,.62);
+    display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg);
+    max-width: 680px; width: 100%; padding: 26px 28px; box-shadow: var(--shadow); position: relative; margin: auto;
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--line-soft); background: var(--bg-soft); color: var(--text-2);
+    font-size: 15px; cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .guide h2 { font-size: 19px; margin: 0 0 4px; }
+  .guide .lead { color: var(--muted); font-size: 13px; margin: 0 0 16px; line-height: 1.6; }
+  .guide h3 { font-size: 15px; margin: 22px 0 8px; color: var(--accent-hi); }
+  .guide p, .guide li { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+  .guide ol, .guide ul { margin: 6px 0; padding-left: 20px; }
+  .guide b { color: var(--text); }
+  .guide .safe { background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: var(--r-md); padding: 12px 14px; margin: 14px 0; font-size: 13px; line-height: 1.65; }
+  .guide .cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+  .guide .gcard { background: var(--bg-soft); border: 1px solid var(--line-soft); border-radius: var(--r-md); padding: 13px 14px; }
+  .guide .gcard.rec { border-color: var(--accent-line); }
+  .guide .gcard h4 { margin: 0 0 6px; font-size: 13.5px; color: var(--text); }
+  .guide .tagrec { font-size: 11px; color: var(--ok); font-weight: 600; }
+  .guide a { color: var(--accent-hi); }
+  .guide .faq b { color: var(--accent-hi); display: block; margin-top: 12px; }
+  @media (max-width: 560px) { .guide .cards2 { grid-template-columns: 1fr; } }
+
+  /* 违禁词高亮 + 换一批 + 示例 + 历史 */
+  mark.ban { background: rgba(255,111,111,.22); color: #ffb4b4; border-radius: 3px; padding: 0 2px; }
+  .ban-banner { background: rgba(255,111,111,.1); border: 1px solid rgba(255,111,111,.32); color: var(--danger); border-radius: var(--r-md); padding: 10px 13px; font-size: 12.5px; margin-bottom: 14px; line-height: 1.55; }
+  .card-top2 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .card-top2 .idx { margin-bottom: 0; }
+  .regen { border: 1px solid var(--line-soft); background: var(--bg-soft); color: var(--text-2); border-radius: var(--r-sm); padding: 4px 9px; font-size: 11.5px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: border-color .15s, color .15s; }
+  .regen:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .regen:disabled { opacity: .6; cursor: default; }
+  .sample-link { display: inline-block; margin-top: 10px; background: none; border: none; color: var(--accent-hi); font-size: 12.5px; font-family: inherit; cursor: pointer; }
+  .sample-link:hover { text-decoration: underline; }
+  .hist-item { display: block; width: 100%; text-align: left; background: var(--bg-soft); border: 1px solid var(--line-soft); border-radius: var(--r-md); padding: 11px 13px; margin-bottom: 8px; cursor: pointer; font-family: inherit; transition: border-color .15s; }
+  .hist-item:hover { border-color: var(--accent-line); }
+  .hist-item b { display: block; color: var(--text); font-size: 13.5px; margin-bottom: 3px; }
+  .hist-item span { color: var(--muted); font-size: 12px; }
+  .hist-empty { color: var(--muted); font-size: 13px; }
+  .hist-clear { margin-top: 6px; background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; font-family: inherit; }
+  .hist-clear:hover { color: var(--danger); }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+    .composer { position: static; }
+    body { overflow-x: hidden; }
+    .wrap { padding: 0 15px; }
+    .topbar { flex-wrap: wrap; gap: 8px; row-gap: 8px; }
+    .topbar .name { white-space: nowrap; }
+    .topbar .tag { display: none; }
+    .help-btn, .tool-switch { padding: 5px 10px; font-size: 12px; }
+  }
+</style>
+    <script defer src="https://analytics.haidong.chat/script.js" data-website-id="dd54fa0f-cf40-496c-bccb-a7f8b7fadb47"></script>
+</head>
+<body>
+  <div class="watermark" aria-hidden="true">海东 AI</div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo">文</div>
+      <span class="name">广告词台</span>
+      <span class="tag">广告词拓展 · <b>自带 Key</b></span>
+      <select class="tool-switch" aria-label="切换工具" onchange="if(this.value)location.href=this.value">
+        <option value="">🔀 切换工具</option>
+        <option value="/ecom-toolbox/">← 工具箱首页</option>
+        <option value="/ecom-copywriter-member/">📝 文案生成</option>
+        <option value="/ecom-title-optimizer/">🏷️ 标题优化</option>
+        <option value="/ecom-review-reply/">💬 差评回复</option>
+        <option value="/ecom-live-script/">🎬 直播脚本</option>
+        <option value="/ecom-promo-pack/">🎯 大促文案包</option>
+      </select>
+      <button class="help-btn" id="themeBtn" type="button" aria-label="切换主题">☀️</button>
+      <button class="help-btn" id="histBtn" type="button">🕘 历史</button>
+      <button class="help-btn" id="guideBtn" type="button">📖 使用说明</button>
+    </div>
+
+    <div class="grid">
+      <!-- 创作台 -->
+      <section class="composer">
+        <h1>广告词参数</h1>
+        <p class="hint">填核心词，一键拓展分组关键词（含否定词），投放降本</p>
+
+        <div class="apibox">
+          <div class="apibox-head">
+            <span class="apibox-title">🔑 API 设置</span>
+            <span class="apibox-state" id="keyState">未配置</span>
+          </div>
+          <div class="apibox-done">
+            <span class="apibox-done-txt">✓ 已配置 · 整个工具箱通用</span>
+            <div class="apibox-done-btns">
+              <button type="button" class="mini" id="keyEdit">修改</button>
+              <button type="button" class="mini" id="keyClear3">清除</button>
+            </div>
+          </div>
+          <div class="key-row">
+            <input class="input" type="password" id="apiKey" placeholder="粘贴你的 API Key（sk-…）" autocomplete="off" spellcheck="false">
+            <button type="button" class="key-eye" id="keyEye" aria-label="显示或隐藏 Key">👁</button>
+          </div>
+          <div class="apibox-actions">
+            <button type="button" class="mini" id="keySave">保存</button>
+            <button type="button" class="mini" id="keyClear">清除</button>
+            <a class="apibox-help" id="keyHelp" href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">获取 Key ›</a>
+          </div>
+          <details class="apibox-guide">
+            <summary>没有 Key？点这里看 3 步获取 ›</summary>
+            <ol>
+              <li>打开 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a> 注册并登录</li>
+              <li>在「充值 / 余额」里充值（几元起，按用量扣费）</li>
+              <li>进「API Keys」创建密钥，复制 <b>sk-</b> 开头的串，粘到上面点「保存」</li>
+            </ol>
+          </details>
+          <details class="apibox-adv" id="advBox">
+            <summary>高级 · 换用别的 API 接口 ›</summary>
+            <div class="adv-body">
+              <label class="adv-label">接口预设</label>
+              <select id="apiPreset" class="input">
+                <option value="deepseek">DeepSeek（默认，已验证可用）</option>
+                <option value="openrouter">OpenRouter（多模型聚合）</option>
+                <option value="custom">自定义…</option>
+              </select>
+              <label class="adv-label">接口地址（chat/completions 全地址）</label>
+              <input class="input" id="apiUrl" placeholder="https://api.deepseek.com/v1/chat/completions" autocomplete="off" spellcheck="false">
+              <label class="adv-label">模型名称</label>
+              <input class="input" id="apiModel" placeholder="deepseek-v4-flash" autocomplete="off" spellcheck="false">
+              <p class="adv-note">需为 <b>OpenAI 兼容</b>接口（/chat/completions 格式），且<b>允许浏览器跨域(CORS)</b>——DeepSeek、OpenRouter 可用；OpenAI 官方接口不支持浏览器直连。留空则用 DeepSeek 默认。</p>
+            </div>
+          </details>
+          <p class="apibox-note">Key 与接口配置只保存在你自己的浏览器里，生成时浏览器直连你选的接口，费用走你自己的账户，本站不经手、不上传。</p>
+        </div>
+
+        <div class="field">
+          <label>核心词 / 产品 <span class="star">*</span></label>
+          <input class="input" id="product" placeholder="如：冻干猫粮 / 便携榨汁杯" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>类目 / 属性 <span class="opt">选填</span></label>
+          <textarea id="features" placeholder="如：宠物/猫粮；无谷、鲜肉、1.5kg"></textarea>
+        </div>
+
+        <div class="field">
+          <label>补充 <span class="opt">选填</span></label>
+          <input class="input" id="target" placeholder="如：主打人群、价格带" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>投放平台</label>
+          <div class="segs" id="styleSegs"></div>
+        </div>
+
+        <div class="field">
+          <label>词组数</label>
+          <div class="count-row">
+            <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
+            <input type="range" id="count" min="1" max="15" value="6">
+            <input type="number" id="countVal" class="count-num" min="1" max="15" value="6" inputmode="numeric" aria-label="生成数量">
+            <button type="button" class="step" id="countPlus" aria-label="增加数量">+</button>
+          </div>
+        </div>
+
+        <button class="go" id="go">
+          <span id="goLabel">✦ 拓展关键词</span>
+        </button>
+        <button class="sample-link" id="sampleBtn" type="button">试试示例 ›</button>
+      </section>
+
+      <!-- 结果 -->
+      <section>
+        <div class="results-bar">
+          <h2>生成结果</h2>
+          <span class="meta" id="meta"></span>
+        </div>
+        <div id="out">
+          <div class="empty">
+            <div class="big">✦</div>
+            <div class="t">还没有关键词</div>
+            <div>填核心词，点击「拓展关键词」开始</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="guideModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="使用说明">
+      <button class="modal-close" id="guideClose" type="button" aria-label="关闭">✕</button>
+      <div class="guide">
+        <h2>📝 使用说明</h2>
+        <p class="lead">填一个核心词，一键拓展出分组关键词（核心/长尾/相关/人群/否定/高转化词），直接用于直通车、千川等付费投放，降本提效。工具免费，只需你自己的 AI 接口 Key。</p>
+
+        <div class="safe">🔒 <b>数据安全</b>：你填的产品信息、你的 API Key、生成的文案，都从<b>你自己的浏览器直接发给 AI 接口</b>，<b>不经过本站服务器</b>，Key 只保存在你自己电脑里。不放心可按 <b>F12 → Network</b> 自行验证：生成请求只发去了 AI 接口，没发给本站。<br>（本站仅做基础访问流量统计，如页面访问量、来源，<b>不含你填写的内容和 Key</b>。）</div>
+
+        <h3>第一步 · 准备一个 AI 接口 Key（二选一）</h3>
+        <div class="cards2">
+          <div class="gcard rec">
+            <h4>DeepSeek　<span class="tagrec">推荐 · 最简单</span></h4>
+            <p>国内接口，支付宝/微信充值，几块钱用很久。</p>
+            <ol>
+              <li>打开 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a> 注册登录</li>
+              <li>「充值」充一点余额（几元起）</li>
+              <li>「API Keys」创建密钥，复制 <b>sk-</b> 开头的串</li>
+            </ol>
+          </div>
+          <div class="gcard">
+            <h4>OpenRouter</h4>
+            <p>想用 GPT / Claude / Gemini 等多模型。⚠️ 充值多需境外支付方式。</p>
+            <ol>
+              <li>打开 <a href="https://openrouter.ai/" target="_blank" rel="noopener">openrouter.ai</a> 注册登录并充值</li>
+              <li><a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> 创建 Key（sk-or- 开头）</li>
+              <li>到 <a href="https://openrouter.ai/models" target="_blank" rel="noopener">models</a> 复制模型 ID（如 <b>deepseek/deepseek-chat</b>）</li>
+            </ol>
+          </div>
+        </div>
+
+        <h3>第二步 · 把 Key 填进工具</h3>
+        <p><b>用 DeepSeek：</b>在「🔑 API 设置」把 sk- Key 粘进去 → 点「保存」→ 显示「已配置 ✓」即可（默认就是 DeepSeek，直接用）。</p>
+        <p><b>用 OpenRouter：</b>点开「高级 · 换用别的 API 接口」→ 预设选 <b>OpenRouter</b> → 模型名填你复制的模型 ID → Key 粘到上面 → 点「保存」。</p>
+        <p style="color:var(--muted);font-size:12px">Key 保存后记在本浏览器，下次不用重填；换电脑或浏览器需重填。</p>
+
+        <h3>第三步 · 拓展关键词</h3>
+        <ol>
+          <li>填<b>核心词/产品</b>（必填）；类目、属性填了更准</li>
+          <li>选<b>投放平台</b>，设<b>词组数</b></li>
+          <li>点「✦ 拓展关键词」，每组一类词（含否定词），可整组复制去投放后台</li>
+        </ol>
+
+        <h3>常见问题</h3>
+        <div class="faq">
+          <b>会很贵吗？</b>
+          <p>很便宜，DeepSeek 一次生成通常几分钱，按用量扣。</p>
+          <b>提示「API Key 无效」？</b>
+          <p>检查 Key 有没有复制全、有没有多空格；用 OpenRouter 要确认 Key 和「接口预设」都选对。</p>
+          <b>提示「账户余额不足」？</b>
+          <p>去对应平台（DeepSeek / OpenRouter）充值即可。</p>
+          <b>提示「无法连接该接口」？</b>
+          <p>请用 DeepSeek 或 OpenRouter（已验证可用）；OpenAI 官方接口不支持浏览器直连，想用 GPT 请走 OpenRouter。</p>
+          <b>文案有点夸大 / 想更合规？</b>
+          <p>已内置广告法约束，但 AI 偶尔仍会冒夸张词，<b>发布前请自行核对一遍</b>，避免违禁用语。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="histModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="历史记录">
+      <button class="modal-close" id="histClose" type="button" aria-label="关闭">✕</button>
+      <div class="guide">
+        <h2>🕘 历史记录</h2>
+        <p class="lead">最近 12 次生成，存在你自己的浏览器里。点任意一条可重新载入查看。</p>
+        <div id="histList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const DEF_URL = "https://api.deepseek.com/v1/chat/completions";
+const DEF_MODEL = "deepseek-v4-flash";
+const KEY_STORE = "hd_ecom_ds_key";
+const URL_STORE = "hd_ecom_api_url";
+const MODEL_STORE = "hd_ecom_api_model";
+const PRESETS = {
+  deepseek: { url: "https://api.deepseek.com/v1/chat/completions", model: "deepseek-v4-flash" },
+  openrouter: { url: "https://openrouter.ai/api/v1/chat/completions", model: "deepseek/deepseek-chat" }
+};
+function getEndpoint() { return (localStorage.getItem(URL_STORE) || "").trim() || DEF_URL; }
+function getModel() { return (localStorage.getItem(MODEL_STORE) || "").trim() || DEF_MODEL; }
+const STYLES = ["淘宝直通车", "京东快车", "拼多多推广", "抖音千川", "通用"];
+
+const $ = (id) => document.getElementById(id);
+let currentStyle = STYLES[0];
+let running = false;
+
+function esc(s) {
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+}
+
+/* --- style segmented control --- */
+function buildStyles() {
+  const box = $("styleSegs");
+  STYLES.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "seg" + (i === 0 ? " on" : "");
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      currentStyle = s;
+      box.querySelectorAll(".seg").forEach((el) => el.classList.remove("on"));
+      b.classList.add("on");
+    });
+    box.appendChild(b);
+  });
+}
+
+/* --- 生成数量：加减号 / 滑块 / 手动输入 三者实时同步 --- */
+const COUNT_MIN = 1, COUNT_MAX = 15;
+function clampCount(v) {
+  v = parseInt(v, 10);
+  if (isNaN(v)) v = COUNT_MIN;
+  return Math.min(COUNT_MAX, Math.max(COUNT_MIN, v));
+}
+function getCount() { return clampCount($("count").value); }
+function setCount(v, keepTyping) {
+  const n = clampCount(v);
+  $("count").value = n;
+  if (!keepTyping) $("countVal").value = n;
+  $("countMinus").disabled = n <= COUNT_MIN;
+  $("countPlus").disabled = n >= COUNT_MAX;
+  return n;
+}
+$("count").addEventListener("input", function () { setCount(this.value); });
+$("countMinus").addEventListener("click", function () { setCount(getCount() - 1); });
+$("countPlus").addEventListener("click", function () { setCount(getCount() + 1); });
+$("countVal").addEventListener("input", function () {
+  if (this.value === "") return;        // 允许清空重敲
+  setCount(this.value, true);           // 同步滑块，但不打断正在输入的数字
+});
+$("countVal").addEventListener("blur", function () { this.value = getCount(); });
+$("countVal").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") { this.blur(); generate(); }
+});
+setCount(6);
+
+function setRunning(on) {
+  running = on;
+  $("go").disabled = false;
+  $("goLabel").innerHTML = on ? '<span class="spin"></span> 停止生成' : "✦ 拓展关键词";
+}
+
+/* --- clipboard --- */
+function copy(text, okMsg, btn) {
+  const done = () => {
+    toast(okMsg);
+    if (btn) {
+      const old = btn.innerHTML;
+      btn.innerHTML = "✓ 已复制";
+      btn.classList.add("done");
+      setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1400);
+    }
+  };
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) { toast("复制失败，请手动选择"); }
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } else fallback();
+}
+
+function itemToText(item, i) {
+  return (item.type ? item.type + "：" : "") + (item.keywords || []).join(" ");
+}
+
+/* --- render states --- */
+function renderLoading(n) {
+  const skTmpl =
+    '<div class="sk">' +
+    '<div class="bar" style="width:35%"></div>' +
+    '<div class="bar" style="width:80%;height:16px"></div>' +
+    '<div class="bar" style="width:55%"></div>' +
+    '<div class="bar" style="width:95%;margin-top:16px"></div>' +
+    '<div class="bar" style="width:70%"></div>' +
+    "</div>";
+  const count = Math.min(Math.max(n, 1), 4);
+  $("out").innerHTML = '<div class="cards">' + skTmpl.repeat(count) + "</div>";
+  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 海东 AI 正在拓展关键词，约 15–30 秒';
+}
+
+function renderError(title, detail) {
+  $("out").innerHTML = '<div class="err">⚠️ ' + esc(title) + (detail ? '<div class="d">' + esc(detail) + "</div>" : "") + '<div style="margin-top:12px"><button class="mini" onclick="generate()">🔄 重试</button></div>' + "</div>";
+  $("meta").textContent = "";
+}
+
+/* --- API Key 管理（只存本地浏览器）--- */
+function getKey() { return (localStorage.getItem(KEY_STORE) || "").trim(); }
+function refreshKeyState() {
+  const has = !!getKey();
+  const st = $("keyState");
+  st.textContent = has ? ("已配置 ✓ · " + getModel()) : "未配置";
+  st.classList.toggle("ok", has);
+}
+function saveKey() {
+  const v = $("apiKey").value.trim();
+  if (!v) { toast("请先粘贴 API Key"); return; }
+  localStorage.setItem(KEY_STORE, v);
+  const url = $("apiUrl").value.trim();
+  const model = $("apiModel").value.trim();
+  if (url) localStorage.setItem(URL_STORE, url); else localStorage.removeItem(URL_STORE);
+  if (model) localStorage.setItem(MODEL_STORE, model); else localStorage.removeItem(MODEL_STORE);
+  refreshKeyState();
+  applyKeyUI();
+  toast("已保存，可直接生成");
+}
+function clearKey() {
+  localStorage.removeItem(KEY_STORE);
+  localStorage.removeItem(URL_STORE);
+  localStorage.removeItem(MODEL_STORE);
+  $("apiKey").value = "";
+  $("apiUrl").value = "";
+  $("apiModel").value = "";
+  refreshKeyState();
+  applyKeyUI();
+  toast("已清除（Key 与接口配置）");
+}
+function applyKeyUI() {
+  const box = document.querySelector(".apibox");
+  if (!box) return;
+  if (getKey()) box.classList.add("done"); else box.classList.remove("done");
+}
+
+/* --- 直连 DeepSeek：风格调教 + 容错解析 + 重试 --- */
+const STYLE_GUIDE = {
+  "淘宝直通车": "淘系搜索逻辑，核心词+精准长尾+属性词，重相关性与转化。",
+  "京东快车": "京东搜索逻辑，品类+品牌+属性+场景词，理性精准。",
+  "拼多多推广": "拼系流量逻辑，宽泛词+利益词+口语词，重曝光与低价心智。",
+  "抖音千川": "内容电商逻辑，兴趣词+场景词+人群词+痛点词，重兴趣触达。",
+  "通用": "通用付费关键词拓展，覆盖核心/长尾/相关/人群/否定等。"
+};
+function styleSpecOf(s) { return STYLE_GUIDE[s] || STYLE_GUIDE["通用"]; }
+const SYSTEM_PROMPT = "你是资深电商付费投放优化师，精通各平台关键词与搜索逻辑。关键词必须与产品相关、无重复、不堆砌无关词；否定词给应屏蔽的无关/低质词。严格遵守广告法禁极限词；严格按JSON返回，无多余内容与markdown。";
+const ANGLES = ["核心词", "精准长尾词", "相关/场景词", "人群/属性词", "否定词", "高转化词", "蓝海流量词", "竞品/品牌词"];
+const EX = {"type":"精准长尾词","keywords":["冻干猫粮无谷","冻干猫粮成猫","进口冻干猫粮鲜肉","冻干猫粮亮毛","无谷低敏冻干猫粮"]};
+function exampleForStyle(s) { return EX; }
+function tempForStyle(s) { return 0.7; }
+function anglesFor(offset, need) { const out = []; for (let i = 0; i < need; i++) out.push(ANGLES[(offset + i) % ANGLES.length]); return out; }
+function buildPrompt(input, need, angles) {
+  const lines = angles.map(function (a, i) { return "  第" + (i + 1) + "组 → " + a; }).join("\n");
+  return "请为以下产品拓展 " + need + " 组【" + input.style + "】投放关键词：\n\n" +
+    "核心词/产品：" + input.product + "\n类目/属性：" + input.features + "\n补充：" + input.target + "\n平台逻辑：" + styleSpecOf(input.style) + "\n\n" +
+    "参考范例（学结构，不要照抄）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
+    "要求：\n- 拓展 " + need + " 组，每组对应一个词类，顺序一一对应：\n" + lines + "\n" +
+    "- 每组给 8-15 个关键词；词与产品相关、组内不重复；否定词组给应屏蔽的无关词。\n" +
+    "- 每组包含：type(词类名)、keywords(关键词数组)。\n\n" +
+    '严格按此JSON输出，不要markdown：\n{"copywriting": [{"type": "", "keywords": ["", ""]}]}';
+}
+function normalizeItems(arr) {
+  if (!Array.isArray(arr)) return [];
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const it = arr[i]; if (!it || typeof it !== "object") continue;
+    const keywords = Array.isArray(it.keywords) ? it.keywords.filter(Boolean).map(String) : [];
+    if (!keywords.length) continue;
+    out.push({ type: String(it.type || "").trim(), keywords: keywords });
+  }
+  return out;
+}
+
+function tryParse(text) {
+  let t = String(text == null ? "" : text).replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+  try { return JSON.parse(t); } catch (e) {}
+  const m = t.match(/\{[\s\S]*\}/);
+  if (m) { try { return JSON.parse(m[0]); } catch (e) {} }
+  const t2 = t.replace(/,\s*([}\]])/g, "$1");
+  try { return JSON.parse(t2); } catch (e) {}
+  return null;
+}
+
+// 从（可能被截断的）文本里抢救出所有完整的文案对象
+function extractItems(text) {
+  const out = [];
+  let depth = 0, start = -1, inStr = false, esc = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') { inStr = true; continue; }
+    if (c === "{") { if (depth === 1) start = i; depth++; }
+    else if (c === "}") { depth--; if (depth === 1 && start >= 0) { out.push(text.slice(start, i + 1)); start = -1; } }
+  }
+  return out;
+}
+function salvageParse(text) {
+  const cleaned = String(text == null ? "" : text).replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+  const whole = tryParse(cleaned);
+  if (whole && Array.isArray(whole.copywriting) && whole.copywriting.length) return whole.copywriting;
+  // 整体解析失败（多为截断）→ 逐个抠出完整对象
+  const items = [];
+  const objs = extractItems(cleaned);
+  for (let i = 0; i < objs.length; i++) {
+    try { const p = JSON.parse(objs[i]); if (p && (p.title || p.subtitle)) items.push(p); } catch (e) {}
+  }
+  return items;
+}
+
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function hasBanned(item) {
+  let n = 0;
+  for (const k in item) {
+    const v = item[k];
+    if (typeof v === "string") n += countBan(v);
+    else if (Array.isArray(v)) v.forEach(function (x) { if (typeof x === "string") n += countBan(x); });
+  }
+  return n > 0;
+}
+
+// 合规闭环：检出违禁词 → 定向让模型只替换违禁词（失败则原样返回，前端仍会标红）
+async function complianceFix(items, cfg) {
+  if (!items.some(hasBanned)) return items;
+  const messages = [
+    { role: "system", content: "你是电商合规文案助手。只做一件事：把文案里违反中国广告法的极限词/违禁词（如 最/第一/顶级/国家级/纯天然/无副作用/根治/特效 等）替换成合规表达，保持原意、字数与JSON结构不变。只返回JSON，不要多余内容。" },
+    { role: "user", content: "请修正以下文案中的违禁词，返回同样结构的JSON：\n" + JSON.stringify({ copywriting: items }) }
+  ];
+  try {
+    const body = { model: cfg.model, messages: messages, temperature: 0.3, max_tokens: Math.min(8000, 700 + items.length * 420), response_format: { type: "json_object" } };
+    const resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(body) });
+    if (!resp.ok) return items;
+    const data = await resp.json();
+    addUsage(data);
+    const c = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : "";
+    const fixed = normalizeItems(salvageParse(c));
+    if (fixed.length === items.length) return fixed;
+  } catch (e) {}
+  return items;
+}
+
+// 主生成：显式派角度 + 部分成功抢救 + 数量补齐 + 截断加token + 退避 + 合规闭环
+// 流式调用：SSE 累加 delta.content（忽略 reasoning_content），边流边回调
+async function streamCall(body, cfg, onDelta) {
+  const b = Object.assign({}, body, { stream: true, stream_options: { include_usage: true } });
+  let resp;
+  try {
+    resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(b), signal: cfg.signal });
+  } catch (e) { return e && e.name === "AbortError" ? { aborted: true } : { neterr: true }; }
+  if (resp.status >= 400) return { status: resp.status, resp: resp };
+  const ct = resp.headers.get("content-type") || "";
+  if (!resp.body || ct.indexOf("event-stream") < 0) {
+    let data = null; try { data = await resp.json(); } catch (e) {}
+    const ch = data && data.choices && data.choices[0];
+    return { content: ch && ch.message ? ch.message.content : "", finish: ch ? ch.finish_reason : "", usage: data && data.usage };
+  }
+  const reader = resp.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "", content = "", finish = "", usage = null;
+  while (true) {
+    let rd;
+    try { rd = await reader.read(); } catch (e) { break; }
+    if (rd.done) break;
+    buf += dec.decode(rd.value, { stream: true });
+    let nl;
+    while ((nl = buf.indexOf("\n")) >= 0) {
+      const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+      if (line.indexOf("data:") !== 0) continue;
+      const d = line.slice(5).trim();
+      if (d === "[DONE]") continue;
+      try {
+        const j = JSON.parse(d);
+        const ch = j.choices && j.choices[0];
+        if (ch && ch.delta && ch.delta.content) { content += ch.delta.content; if (onDelta) onDelta(content); }
+        if (ch && ch.finish_reason) finish = ch.finish_reason;
+        if (j.usage) usage = j.usage;
+      } catch (e) {}
+    }
+  }
+  return { content: content, finish: finish, usage: usage };
+}
+
+async function generateSets(input, cfg, onProgress) {
+  const target = input.count;
+  _usage = { p: 0, c: 0, t: 0 };
+  const temp = tempForStyle(input.style);
+  let maxTokens = Math.min(8000, 700 + target * 420);
+  let useJsonMode = true;
+  let collected = [];
+  let lastErr = "";
+  let round = 0;
+  while (collected.length < target && round < 4) {
+    round++;
+    const need = target - collected.length;
+    const messages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: buildPrompt(input, need, anglesFor(collected.length, need)) }
+    ];
+    if (collected.length > 0) {
+      messages.push({ role: "user", content: "继续补充生成 " + need + " 套，须与已有内容角度不同、避免重复。" });
+    }
+    const body = { model: cfg.model, messages: messages, temperature: temp, max_tokens: maxTokens };
+    if (useJsonMode) body.response_format = { type: "json_object" };
+
+    let _lastLen = 0;
+    const onDelta = onProgress ? function (partial) {
+      if (partial.length - _lastLen < 30) return;
+      _lastLen = partial.length;
+      const merged = collected.concat(normalizeItems(salvageParse(partial)));
+      if (merged.length) onProgress(merged);
+    } : null;
+
+    const sres = await streamCall(body, cfg, onDelta);
+    if (sres.neterr) {
+      throw { title: "无法连接该接口", detail: "可能是接口地址填错，或该接口不允许浏览器直连(CORS)。请改用 DeepSeek / OpenRouter 等支持浏览器的接口。" };
+    }
+    if (sres.aborted) throw { aborted: true };
+    if (sres.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
+    if (sres.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
+    if (sres.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
+    if (sres.status && sres.status >= 400) {
+      let d = ""; try { d = (await sres.resp.text()).slice(0, 150); } catch (e) {}
+      lastErr = "HTTP " + sres.status + (d ? " · " + d : "");
+      await sleep(400 * round); continue;
+    }
+    if (sres.usage) addUsage({ usage: sres.usage });
+    const content = sres.content || "";
+    const finish = sres.finish || "";
+    const items = normalizeItems(salvageParse(content));
+    if (items.length) collected = collected.concat(items);
+    else lastErr = "模型返回内容无法解析";
+    if (finish === "length") maxTokens = Math.min(8000, Math.round(maxTokens * 1.6)); // 截断→下轮加大 token
+    if (!items.length) await sleep(500 * round);
+  }
+  if (!collected.length) throw { title: "文案生成失败，请重试", detail: lastErr };
+  collected = collected.slice(0, target);
+  collected = await complianceFix(collected, cfg);
+  return { copywriting: collected, usage: { p: _usage.p, c: _usage.c, t: _usage.t } };
+}
+
+/* --- 结果状态 --- */
+let RESULT = null;
+
+/* --- 违禁词/极限词本地高亮（广告法自查，仅提醒非判定）--- */
+const BAN_WORDS = ["最佳","最好","最大","最高","最低","最优","最先","最强","第一","唯一","首选","独家","独一无二","极致","极品","顶级","顶尖","国家级","世界级","全球级","王牌","领导品牌","领袖","冠军","金牌","销量冠军","100%","百分百","纯天然","无副作用","治愈","根治","包治","特效","疗效","抗癌","防癌"];
+const BAN_RE = new RegExp("(" + BAN_WORDS.join("|") + ")", "g");
+function countBan(text) { const m = String(text == null ? "" : text).match(BAN_RE); return m ? m.length : 0; }
+function markBan(escaped) { return escaped.replace(BAN_RE, '<mark class="ban" title="疑似违禁/极限词，发布前建议替换">$1</mark>'); }
+
+let _usage = { p: 0, c: 0, t: 0 };
+function addUsage(data) {
+  const u = data && data.usage;
+  if (!u) return;
+  _usage.p += u.prompt_tokens || 0;
+  _usage.c += u.completion_tokens || 0;
+  _usage.t += u.total_tokens || ((u.prompt_tokens || 0) + (u.completion_tokens || 0));
+}
+function usageMeta() {
+  if (!RESULT || !RESULT.usage || !RESULT.usage.t) return "";
+  const u = RESULT.usage;
+  const rmb = (u.p * 0.14 + u.c * 0.28) / 1e6 * 7.2;
+  return '<span class="dot"></span><span title="按 DeepSeek 价格估算，实际以你所用接口为准">本次约 ' + u.t + ' token ≈ ¥' + rmb.toFixed(4) + '</span>';
+}
+
+function renderResults(data) {
+  RESULT = {
+    product: data.product || "",
+    style: data.style || "",
+    features: data.features || "通用卖点",
+    target: data.target || "电商通用人群",
+    list: (data.copywriting || []).slice(),
+    usage: data.usage || null
+  };
+  renderCards();
+}
+
+function renderCards() {
+  if (!RESULT) return;
+  const list = RESULT.list;
+  const parts = [];
+  if (RESULT.product) parts.push(esc(RESULT.product.slice(0, 24)));
+  if (RESULT.style) parts.push(esc(RESULT.style));
+  parts.push("共 " + list.length + " 组");
+  $("meta").innerHTML = parts.join('<span class="dot"></span>') + usageMeta();
+
+  if (!list.length) {
+    $("out").innerHTML = '<div class="empty"><div class="t">没有返回关键词</div></div>';
+    return;
+  }
+
+  let banTotal = 0;
+  const cards = list.map(function (item, i) {
+    const kw = (item.keywords || []).map(function (k) { return '<span class="p">' + esc(k) + '</span>'; }).join("");
+    return (
+      '<article class="card" data-card="' + i + '">' +
+        '<div class="card-top2"><span class="idx">' + (item.type ? esc(item.type) : ("#" + (i + 1))) + '</span>' +
+          '<button class="regen" data-regen="' + i + '" title="换一组">🔄 换一组</button></div>' +
+        (kw ? '<div class="points">' + kw + '</div>' : '') +
+        '<div class="foot"><button class="mini" data-copy="' + i + '">📋 复制这组</button></div>' +
+      '</article>'
+    );
+  });
+
+  const banner = banTotal > 0
+    ? '<div class="ban-banner">⚠️ 检测到 ' + banTotal + ' 处疑似违禁/极限词（已标红），发布前请替换，避免违反广告法。</div>'
+    : "";
+  $("out").innerHTML = banner + '<div class="cards">' + cards.join("") + "</div>";
+
+  // 复制全部按钮放到顶部 meta 行右侧
+  const bar = document.querySelector(".results-bar");
+  let allBtn = document.getElementById("copyAll");
+  if (!allBtn) {
+    allBtn = document.createElement("button");
+    allBtn.id = "copyAll";
+    allBtn.className = "copy-all";
+    bar.appendChild(allBtn);
+  }
+  allBtn.textContent = "📋 复制全部 " + list.length + " 组";
+  allBtn.onclick = function () {
+    const all = list.map(function (it, k) { return itemToText(it, k); }).join("\n\n————————\n\n");
+    copy(all, "已复制全部关键词", null);
+  };
+
+  $("out").querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () { const i = +btn.dataset.copy; copy(itemToText(list[i], i), "已复制第 " + (i + 1) + " 组", btn); });
+  });
+  $("out").querySelectorAll("[data-toggle]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const el = $("out").querySelector('[data-desc="' + btn.dataset.toggle + '"]');
+      if (!el) return;
+      const clipped = el.classList.toggle("clip");
+      btn.textContent = clipped ? "展开全文" : "收起";
+    });
+  });
+  $("out").querySelectorAll("[data-regen]").forEach(function (btn) {
+    btn.addEventListener("click", function () { regenOne(+btn.dataset.regen); });
+  });
+}
+
+/* --- 换一批：只重写某一套 --- */
+let regening = false;
+async function regenOne(idx) {
+  if (regening || running) return;
+  const apiKey = getKey();
+  if (!apiKey) { toast("请先配置 API Key"); return; }
+  if (!RESULT) return;
+  regening = true;
+  const cardEl = document.querySelector('[data-card="' + idx + '"]');
+  const btn = cardEl ? cardEl.querySelector("[data-regen]") : null;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> 重写中'; }
+  try {
+    const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
+    const input = { product: RESULT.product, features: RESULT.features, target: RESULT.target, count: 1, style: RESULT.style };
+    const r = await generateSets(input, cfg);
+    if (r.copywriting && r.copywriting[0]) {
+      RESULT.list[idx] = r.copywriting[0];
+      renderCards();
+      toast("已换第 " + (idx + 1) + " 组");
+    } else {
+      toast("重写失败，请重试");
+      if (btn) { btn.disabled = false; btn.innerHTML = "🔄 换一批"; }
+    }
+  } catch (err) {
+    toast((err && err.title) || "重写失败，请重试");
+    if (btn) { btn.disabled = false; btn.innerHTML = "🔄 换一批"; }
+  } finally {
+    regening = false;
+  }
+}
+
+/* --- 历史记录（存本地浏览器）--- */
+const HIST_STORE = "hd_ecom_history";
+function loadHist() { try { return JSON.parse(localStorage.getItem(HIST_STORE) || "[]"); } catch (e) { return []; } }
+function saveHistory() {
+  if (!RESULT || !RESULT.list.length) return;
+  const h = loadHist();
+  h.unshift({ ts: Date.now(), product: RESULT.product, style: RESULT.style, features: RESULT.features, target: RESULT.target, list: RESULT.list });
+  try { localStorage.setItem(HIST_STORE, JSON.stringify(h.slice(0, 12))); } catch (e) {}
+}
+function fmtTime(ts) {
+  const t = new Date(ts);
+  const p = function (n) { return String(n).padStart(2, "0"); };
+  return (t.getMonth() + 1) + "-" + t.getDate() + " " + p(t.getHours()) + ":" + p(t.getMinutes());
+}
+function openHist() {
+  const h = loadHist();
+  const box = $("histList");
+  if (!h.length) {
+    box.innerHTML = '<p class="hist-empty">还没有历史记录。每次生成会自动保存最近 12 次（存在你自己浏览器）。</p>';
+  } else {
+    box.innerHTML = h.map(function (e, i) {
+      return '<button class="hist-item" data-hist="' + i + '"><b>' + esc(e.product || "（未命名）") + "</b>" +
+        "<span>" + esc(e.style) + " · " + (e.list ? e.list.length : 0) + " 套 · " + fmtTime(e.ts) + "</span></button>";
+    }).join("") + '<button class="hist-clear" id="histClear" type="button">清空历史</button>';
+    box.querySelectorAll("[data-hist]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const e = loadHist()[+btn.dataset.hist];
+        if (!e) return;
+        RESULT = { product: e.product, style: e.style, features: e.features || "通用卖点", target: e.target || "电商通用人群", list: (e.list || []).slice() };
+        renderCards();
+        closeHist();
+        toast("已载入历史");
+      });
+    });
+    box.querySelector("#histClear").addEventListener("click", function () { localStorage.removeItem(HIST_STORE); openHist(); toast("已清空历史"); });
+  }
+  $("histModal").classList.add("show");
+  $("histModal").setAttribute("aria-hidden", "false");
+}
+function closeHist() { $("histModal").classList.remove("show"); $("histModal").setAttribute("aria-hidden", "true"); }
+
+/* --- 一键示例 + 记住上次输入 --- */
+const PROFILE_STORE = "hd_ecom_profile";
+function setStyleByValue(s) {
+  $("styleSegs").querySelectorAll(".seg").forEach(function (el) {
+    const on = el.textContent === s;
+    el.classList.toggle("on", on);
+    if (on) currentStyle = s;
+  });
+}
+function saveLastInput() {
+  try {
+    const p = $("product").value.trim(), f = $("features").value.trim();
+    if (p || f) localStorage.setItem(PROFILE_STORE, JSON.stringify({ product: p, features: f }));
+  } catch (e) {}
+}
+function restoreLastInput() {
+  let s; try { s = JSON.parse(localStorage.getItem(PROFILE_STORE) || "null"); } catch (e) { s = null; }
+  if (!s) return;
+  if (!$("product").value && s.product) $("product").value = s.product;
+  if (!$("features").value && s.features) $("features").value = s.features;
+}
+function fillSample() {
+  $("product").value = "冻干猫粮";
+  $("features").value = "宠物/猫粮；无谷、鲜肉、1.5kg";
+  $("target").value = "养猫白领，中高价位";
+  setStyleByValue("淘宝直通车");
+  setCount(6);
+  toast("已填入示例，点生成试试");
+}
+
+/* --- submit --- */
+async function generate() {
+  if (running) return;
+  const apiKey = getKey();
+  if (!apiKey) {
+    toast("请先在上方「API 设置」里填入你的 DeepSeek Key");
+    $("apiKey").focus();
+    return;
+  }
+  const product = $("product").value.trim();
+  if (!product) {
+    toast("请先填写产品名称");
+    $("product").focus();
+    return;
+  }
+
+  const count = setCount(getCount());
+  const input = {
+    product,
+    features: $("features").value.trim() || "通用卖点",
+    target: $("target").value.trim() || "电商通用人群",
+    count,
+    style: currentStyle
+  };
+
+  const oldAll = document.getElementById("copyAll");
+  if (oldAll) oldAll.remove();
+
+  setRunning(true);
+  renderLoading(count);
+  saveLastInput();
+  RESULT = { product: input.product, style: input.style, features: input.features, target: input.target, list: [], usage: null };
+
+  try {
+    _abort = new AbortController();
+    const cfg = { url: getEndpoint(), model: getModel(), key: apiKey, signal: _abort.signal };
+    const parsed = await generateSets(input, cfg, function (items) { RESULT.list = items; renderCards(); });
+    RESULT.list = parsed.copywriting;
+    RESULT.usage = parsed.usage;
+    renderCards();
+    saveHistory();
+  } catch (err) {
+    if (err && err.aborted) {
+      if (RESULT && RESULT.list && RESULT.list.length) { renderCards(); toast("已停止，保留了 " + RESULT.list.length + " 条"); }
+      else { $("out").innerHTML = '<div class="empty"><div class="t">已停止</div><div>已取消本次生成</div></div>'; $("meta").textContent = ""; }
+    }
+    else if (err && err.title) renderError(err.title, err.detail);
+    else renderError("请求出错", (err && err.message) || "网络异常，请重试");
+  } finally {
+    setRunning(false);
+  }
+}
+
+/* --- init --- */
+buildStyles();
+$("apiKey").value = getKey();
+$("apiUrl").value = localStorage.getItem(URL_STORE) || "";
+$("apiModel").value = localStorage.getItem(MODEL_STORE) || "";
+refreshKeyState();
+applyKeyUI();
+$("keySave").addEventListener("click", saveKey);
+$("keyClear").addEventListener("click", clearKey);
+$("keyClear3").addEventListener("click", clearKey);
+$("keyEdit").addEventListener("click", function () {
+  document.querySelector(".apibox").classList.remove("done");
+  $("apiKey").focus();
+});
+$("keyEye").addEventListener("click", function () {
+  const el = $("apiKey");
+  el.type = el.type === "password" ? "text" : "password";
+});
+$("apiPreset").addEventListener("change", function () {
+  const p = PRESETS[this.value];
+  if (p) { $("apiUrl").value = p.url; $("apiModel").value = p.model; }
+});
+
+/* --- 主题（深色 / 乳白）--- */
+const THEME_STORE = "hd_ecom_theme";
+function applyTheme(t) {
+  const light = t === "light";
+  document.body.classList.toggle("light", light);
+  $("themeBtn").textContent = light ? "🌙" : "☀️";
+}
+function toggleTheme() {
+  const next = document.body.classList.contains("light") ? "dark" : "light";
+  try { localStorage.setItem(THEME_STORE, next); } catch (e) {}
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem(THEME_STORE) || "dark");
+$("themeBtn").addEventListener("click", toggleTheme);
+/* --- 使用说明弹层 --- */
+function openGuide() { $("guideModal").classList.add("show"); $("guideModal").setAttribute("aria-hidden", "false"); }
+function closeGuide() { $("guideModal").classList.remove("show"); $("guideModal").setAttribute("aria-hidden", "true"); }
+$("guideBtn").addEventListener("click", openGuide);
+$("guideClose").addEventListener("click", closeGuide);
+$("guideModal").addEventListener("click", function (e) { if (e.target === this) closeGuide(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGuide(); });
+
+/* --- 历史 / 示例 / 记忆 --- */
+$("histBtn").addEventListener("click", openHist);
+$("histClose").addEventListener("click", closeHist);
+$("histModal").addEventListener("click", function (e) { if (e.target === this) closeHist(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeHist(); });
+$("sampleBtn").addEventListener("click", fillSample);
+restoreLastInput();
+
+let _abort = null;
+$("go").addEventListener("click", function () {
+  if (running) { if (_abort) { _abort.abort(); } return; }
+  generate();
+});
+["product", "target"].forEach((id) =>
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); })
+);
+</script>
+</body>
+</html>
