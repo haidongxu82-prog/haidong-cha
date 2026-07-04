@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>电商人的 AI 通识课 · 课程说明 · 海东 AI</title>
+    <meta
+      name="description"
+      content="电商人的 AI 通识课：企业内训 · 一日通识课。一天把 AI 在电商日常里能干的事一次性铺开——换脑、心法、提示词、做图、洗图、模特图、买家秀、图生视频、带货文案，五大板块真实跑通、当场演示，还配一套电商 AI 工具箱。"
+    />
+    <meta property="og:title" content="电商人的 AI 通识课 · 课程说明" />
+    <meta property="og:description" content="企业内训一日通识课，20,000 元 / 场 · 全员同享。五大板块 + 电商 AI 工具箱。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://haidong.chat/course/ai-literacy-course.html" />
+    <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
+    <link rel="icon" href="../assets/logo-hd-minimal.svg" />
+    <script defer src="https://analytics.haidong.chat/script.js" data-website-id="dd54fa0f-cf40-496c-bccb-a7f8b7fadb47"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5ef;
+        --paper: #fbfaf6;
+        --paper-soft: #f0eee7;
+        --ink: #171817;
+        --text: #272925;
+        --muted: #74776f;
+        --faint: #a6a79f;
+        --line: #ded9cd;
+        --line-strong: #bdb6a8;
+        --accent: #8d641d;
+        --accent-soft: #efe3cb;
+        --max: 860px;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--bg); scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
+          var(--bg);
+        overflow-x: hidden;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(23, 24, 23, 0.018) 1px, transparent 1px);
+        background-size: 36px 36px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 62%);
+      }
+      a { color: inherit; text-decoration: none; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        height: 62px;
+        padding: 0 max(22px, calc((100vw - var(--max)) / 2));
+        border-bottom: 1px solid rgba(222, 217, 205, 0.86);
+        background: rgba(247, 245, 239, 0.86);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 720;
+      }
+      .brand-mark {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--paper);
+        overflow: hidden;
+      }
+      .brand-mark img { display: block; width: 20px; height: 20px; }
+      .topbar .back { color: var(--muted); font-size: 13px; font-weight: 620; }
+      .topbar .back:hover { color: var(--accent); }
+
+      .wrap { width: min(var(--max), calc(100% - 44px)); margin: 0 auto; }
+
+      .kicker {
+        margin: 0 0 14px;
+        color: var(--accent);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        font-weight: 760;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .hero { padding: 52px 0 30px; border-bottom: 1px solid var(--ink); }
+      .hero h1 {
+        margin: 0;
+        color: var(--ink);
+        font-size: clamp(32px, 6vw, 56px);
+        font-weight: 800;
+        line-height: 1.06;
+        letter-spacing: -0.01em;
+      }
+      .hero .sub {
+        margin: 14px 0 0;
+        color: var(--accent);
+        font-size: clamp(16px, 2.2vw, 21px);
+        font-weight: 680;
+      }
+      .hero .lead {
+        max-width: 720px;
+        margin: 22px 0 0;
+        color: var(--text);
+        font-size: 16px;
+        line-height: 1.85;
+      }
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 26px 0 0;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0 12px;
+        background: rgba(255, 255, 255, 0.4);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 620;
+      }
+      .pill.price {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--paper);
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        padding: 0 22px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 14px;
+        font-weight: 720;
+      }
+      .btn:hover { border-color: var(--accent); background: var(--accent); }
+      .cta-row .note { color: var(--muted); font-size: 13px; }
+
+      section.block { padding: 40px 0; border-bottom: 1px solid var(--line); }
+      .block h2 {
+        margin: 0 0 6px;
+        color: var(--ink);
+        font-size: clamp(22px, 3vw, 30px);
+        font-weight: 760;
+        line-height: 1.2;
+      }
+      .block .intro { max-width: 720px; margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.8; }
+
+      /* 五大板块 */
+      .module {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 8px 22px;
+        padding: 24px 0;
+        border-top: 1px solid var(--line);
+      }
+      .module:first-of-type { border-top: 0; }
+      .module .no {
+        color: var(--accent);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 34px;
+        font-weight: 780;
+        line-height: 1;
+      }
+      .module h3 { margin: 0; color: var(--ink); font-size: 19px; font-weight: 760; }
+      .module .tag { margin: 4px 0 0; color: var(--accent); font-size: 13px; font-weight: 640; }
+      .module .desc { grid-column: 2; margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
+      .module .points { grid-column: 2; margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+      .module .points li {
+        position: relative;
+        padding-left: 24px;
+        color: var(--text);
+        font-size: 14.5px;
+        line-height: 1.6;
+      }
+      .module .points li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .module .points b { color: var(--ink); font-weight: 700; }
+      .module .points span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+      /* 工具箱亮点 */
+      .highlight {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background:
+          linear-gradient(145deg, rgba(239, 227, 203, 0.5), rgba(251, 250, 246, 0.3)),
+          var(--paper);
+        padding: 26px;
+      }
+      .highlight p { margin: 0 0 14px; color: var(--text); font-size: 15px; line-height: 1.85; }
+      .tool-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+      /* 通用要点列表（效果 / 为什么值得） */
+      .list { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+      .list li {
+        position: relative;
+        padding-left: 26px;
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+      .list li::before {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 10px;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .list li b { color: var(--ink); font-weight: 720; }
+
+      /* 课程信息 */
+      .info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 6px; }
+      .info div {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--paper);
+        padding: 16px 18px;
+      }
+      .info .label {
+        margin: 0 0 6px;
+        color: var(--accent);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 10px;
+        font-weight: 760;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .info .val { margin: 0; color: var(--ink); font-size: 15px; font-weight: 640; line-height: 1.55; }
+      .info .val a { color: var(--accent); }
+
+      .final { padding: 46px 0 20px; text-align: center; }
+      .final h2 { margin: 0 0 8px; color: var(--ink); font-size: clamp(22px, 3vw, 30px); font-weight: 780; }
+      .final p { margin: 0 0 22px; color: var(--muted); font-size: 15px; }
+
+      .footer {
+        width: min(var(--max), calc(100% - 44px));
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin: 0 auto;
+        padding: 24px 0 40px;
+        border-top: 1px solid var(--line);
+        color: var(--faint);
+        font-size: 12px;
+      }
+
+      @media (max-width: 620px) {
+        .topbar { height: auto; min-height: 56px; padding: 10px 18px; }
+        .module { grid-template-columns: 1fr; gap: 4px; }
+        .module .no { font-size: 28px; }
+        .module .desc, .module .points { grid-column: 1; }
+        .info { grid-template-columns: 1fr; }
+        .footer { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="海东 AI 首页">
+        <span class="brand-mark"><img src="../assets/logo-hd-minimal.svg" alt="" /></span>
+        <span>海东 AI</span>
+      </a>
+      <a class="back" href="../index.html">← 返回首页</a>
+    </header>
+
+    <main>
+      <section class="hero wrap">
+        <p class="kicker">CURRICULUM · 企业内训 · 一日通识课</p>
+        <h1>电商人的 AI 通识课</h1>
+        <p class="sub">一天，为你的团队打通日常全部场景</p>
+        <p class="lead">
+          你的员工，多少都用过豆包、DeepSeek，但大多停在「随便问问」。AI 在他们这份电商工作里到底能干多少事、每件事的正确打开方式是什么，没人完整讲过。我们过来，对着你的团队，用一天把这张地图一次性铺开。
+        </p>
+        <div class="hero-meta">
+          <span class="pill price">20,000 元 / 场 · 全员同享</span>
+          <span class="pill">线下一日 · 约 6 小时</span>
+          <span class="pill">仅限内部员工</span>
+          <span class="pill">电商一线团队</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn" href="../index.html#tools-title">先看现场演示的电商工具箱 →</a>
+          <span class="note">想为团队约一场？直接私信东哥。</span>
+        </div>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">Why</p>
+        <h2>这一天，解决一个最现实的问题</h2>
+        <p class="intro">
+          不是「教你成为某个领域的高手」，而是先让团队看清全貌——AI 在大家的电商日常里，到底能做哪些事？哪些是早该用却没用上的？哪些一直用错了方式？
+        </p>
+        <p class="intro">
+          一天过完，你的团队会从「用得很皮毛」，变成「知道 AI 在自己工作里的完整版图、也知道每件事该怎么正确使唤它」。看清地图，才知道往哪使劲。
+        </p>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">Curriculum · 5 大板块</p>
+        <h2>这一天，会带团队走过 5 大板块</h2>
+
+        <div class="module">
+          <div class="no">01</div>
+          <div>
+            <h3>换脑</h3>
+            <p class="tag">用 AI 的正确认知</p>
+          </div>
+          <p class="desc">先换脑子，少走一年弯路。这一块决定后面所有技巧使不使得上劲。</p>
+        </div>
+
+        <div class="module">
+          <div class="no">02</div>
+          <div>
+            <h3>内功</h3>
+            <p class="tag">三条贯穿全课的心法</p>
+          </div>
+          <p class="desc">所有产出能稳定出好结果的底层功夫。</p>
+          <ul class="points">
+            <li><b>遇事先问 AI，换一个本能反应</b><span>起标题、定价、回差评、想活动，先问它一句再动手</span></li>
+            <li><b>把 AI 当成「能力很强的实习生」来用</b><span>它不熟你家业务，得给清晰指示，也得盯着</span></li>
+            <li><b>看清 AI 的能力边界</b><span>该信的信、该核的核，知道什么时候别依赖它</span></li>
+            <li><b>AI 不能「无中生有」</b><span>想要像你家的，就得先喂它真实素材</span></li>
+            <li><b>多学底层逻辑，以通百通</b><span>抓住原理，比追着学一个个技巧省力得多</span></li>
+            <li><b>一个字「拆」、两个字「多拆」</b><span>先让它出一份「识别报告」，确认它真懂了再动手</span></li>
+            <li><b>注意力有限：宁愿一步分十步</b><span>一次只干一件事它才办得好，别十步并一步</span></li>
+            <li><b>专业工具做专业事</b><span>每个环节挑最强的，一个工具干两件事往往两头不讨好</span></li>
+          </ul>
+        </div>
+
+        <div class="module">
+          <div class="no">03</div>
+          <div>
+            <h3>会说</h3>
+            <p class="tag">提示词与你的专属 AI 助手</p>
+          </div>
+          <p class="desc">把话跟 AI 说清楚，是一切产出的入口；再把好用法，固化成一个懂你的助手。</p>
+          <ul class="points">
+            <li><b>提示词的润色 / 修改 / 一键转格式</b><span>大白话丢进去，出来就是精简、专业的提示词</span></li>
+            <li><b>从 0 到 1，打造你产品的专业生图提示词</b><span>任意细分品类都能造，比如某款浴室拖鞋</span></li>
+            <li><b>搭一个「入门级评估」智能体</b><span>把需求发给它先出一份专业评估，附核心指令、粘贴即用</span></li>
+            <li><b>现场演示：我用 AI 做的一整套电商工具箱</b><span>Coze + Claude Code 做的，接 DeepSeek，成本几分钱</span></li>
+          </ul>
+        </div>
+
+        <div class="module">
+          <div class="no">04</div>
+          <div>
+            <h3>干活 · 图</h3>
+            <p class="tag">电商最核心的图，一套套走通</p>
+          </div>
+          <p class="desc">每一套都是真实跑通、可现场演示、能直接复用的方法论。</p>
+          <ul class="points">
+            <li><b>电商详情图整套生成</b><span>1–10 张白底图 → 两步得提示词 → 逐张生成，一套跑通</span></li>
+            <li><b>详情图提示词「调教」：重美观 → 重转化</b><span>同一套流程，换个目标就换个风格</span></li>
+            <li><b>洗图：换产品，还能还原原图的设计水平</b><span>产品一致、摆放、背景、文案跟随，四点都顾到</span></li>
+            <li><b>白底图 → 多姿势模特图</b><span>衣服和原图尽量一致、不走形，保住细节</span></li>
+            <li><b>用 AI 裂变买家秀（真实、无 AI 味）</b><span>真背景 + 真模特 + 衣服交叉互换，一下裂变一批</span></li>
+            <li><b>「AI 味」是怎么来的、怎么去掉</b><span>原始素材本身真，出来的图就不假</span></li>
+            <li><b>一句话生成专业信息图</b><span>促销规则、参数对比，一张图看明白</span></li>
+          </ul>
+        </div>
+
+        <div class="module">
+          <div class="no">05</div>
+          <div>
+            <h3>干活 · 视频与文案</h3>
+            <p class="tag">让画面动起来，让文案更能打</p>
+          </div>
+          <p class="desc">从一张图、或一条参考视频，做出你自己的产品视频；再把一线要写的文案一次配齐。</p>
+          <ul class="points">
+            <li><b>图生视频：一张图直接生成产品视频</b><span>有现成好图就别从零生，更稳、更接近成片</span></li>
+            <li><b>复刻爆款视频、换成你的产品</b><span>拆它的钩子和节奏，模仿运镜与拍摄背景</span></li>
+            <li><b>电商文案生成</b><span>一次最多 15 套、套套不同角度；小红书 / 抖音 / 淘宝 / 京东 / 通用</span></li>
+            <li><b>标题 &amp; 关键词优化</b><span>多平台优化、命中关键词，可批量粘一列、导 Excel</span></li>
+            <li><b>差评 / 中评回复</b><span>多版得体公开回复，5 种语气可选，保住链接口碑</span></li>
+            <li><b>直播 / 短视频脚本</b><span>含黄金 3 秒开场 / 促单 / 拍摄提示，按时长控字数</span></li>
+            <li><b>大促活动文案包</b><span>选节日 + 填产品，slogan + 短信 + 朋友圈 + 公告一键出</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">On-site · 现场亮点</p>
+        <h2>我用 AI 做的电商工具箱</h2>
+        <div class="highlight">
+          <p>
+            课上会现场演示我自己用 AI（Coze + Claude Code）做出来的一套电商 AI 工具箱——填一次你自己的 Key、5 个工具都能用、一次生成才几分钱、数据不过本站。它既是能直接用的干货，也是「AI 真能帮你做出东西」最好的证明。
+          </p>
+          <div class="tool-tags">
+            <span class="pill">文案生成</span>
+            <span class="pill">标题 &amp; 关键词</span>
+            <span class="pill">差评回复</span>
+            <span class="pill">直播 / 短视频脚本</span>
+            <span class="pill">大促活动文案</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">Outcomes · 预期效果</p>
+        <h2>这一天结束，团队能收获什么</h2>
+        <ul class="list">
+          <li><b>认知升级：</b>从「随便问问」变成「知道 AI 在自己岗位能干哪些活、每件事怎么正确使唤它」，少踩坑、少走弯路。</li>
+          <li><b>握着能直接用的方法论：</b>详情图、洗图、模特图、买家秀、图生视频…… 几套真实跑通的流程，带回去照着走。</li>
+          <li><b>人手可复制的提示词 / 核心指令：</b>不用从零摸索，粘贴即用，达到和东哥一样的效果。</li>
+          <li><b>产出提效：</b>图、视频、文案更快出、更能打，一线的活儿更省人、更出活。</li>
+          <li><b>上手一套现成工具箱：</b>课上演示的电商 AI 工具箱，回去填个 Key 就能用——文案、标题、差评、脚本、大促，一站搞定。</li>
+          <li><b>团队有了共同语言：</b>大家站在同一个认知起点上，往后能互相带、一起进步。</li>
+        </ul>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">Why us · 为什么值得请进公司</p>
+        <h2>不是网上那种通用 AI 课</h2>
+        <ul class="list">
+          <li><b>贴着电商讲。</b>例子全是你团队手头的活——洗图、详情图、模特图、买家秀、带货视频，听完就能用。</li>
+          <li><b>方法论都跑通了。</b>不是讲概念，是把反复验证、能当场演示的完整流程交给你；有的直接给核心指令，复制粘贴就能达到和东哥一样的效果。</li>
+          <li><b>全员适配。</b>从认知到实操由浅入深，每个岗位都能找到自己的用法，不是一刀切的大锅饭。</li>
+          <li><b>能往下接。</b>看完全貌想深钻某一块？正好衔接更聚焦的进阶实战课。</li>
+        </ul>
+      </section>
+
+      <section class="block wrap">
+        <p class="kicker">Info · 课程信息</p>
+        <h2>课程信息</h2>
+        <div class="info">
+          <div>
+            <p class="label">形式</p>
+            <p class="val">线下一日 · 约 6 小时</p>
+          </div>
+          <div>
+            <p class="label">对象</p>
+            <p class="val">仅限内部员工 · 电商企业一线团队</p>
+          </div>
+          <div>
+            <p class="label">费用</p>
+            <p class="val">20,000 元 / 场（一整天打包价，全员同享）</p>
+          </div>
+          <div>
+            <p class="label">配套</p>
+            <p class="val">全套方法论讲义 + 可复制的提示词 / 核心指令 + <a href="../ecom-toolbox/index.html">电商 AI 工具箱</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="final wrap">
+        <h2>想为团队约一场？</h2>
+        <p>直接私信东哥就好。草堂 · 东哥 · haidong.chat</p>
+        <a class="btn" href="../index.html">← 返回海东 AI 首页</a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>© 2026 Haidong · 草堂出品</span>
+      <span>电商人的 AI 通识课</span>
+    </footer>
+  </body>
+</html>
