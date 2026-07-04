@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>功能介绍 · 电商工具箱 · 海东 AI</title>
+<meta name="description" content="电商工具箱功能介绍：5 个自带 Key 的电商 AI 工具，文案/标题/差评回复/直播脚本/大促文案包，成本极低。">
+<script defer src="https://analytics.haidong.chat/script.js" data-website-id="dd54fa0f-cf40-496c-bccb-a7f8b7fadb47"></script>
+<style>
+  :root{
+    --bg:#0d0d0f; --panel:#161619; --panel-hi:#1d1d21; --line:#26262b; --line-soft:#202024;
+    --text:#f2f2f4; --text-2:#b7b7bf; --muted:#74747e;
+    --accent:#7c6cff; --accent-hi:#9a8dff; --accent-soft:rgba(124,108,255,.14); --accent-line:rgba(124,108,255,.32);
+    --ok:#46c98b; --r-lg:18px; --r-md:13px; --r-sm:9px;
+    --shadow:0 12px 40px -14px rgba(0,0,0,.7); --ease:cubic-bezier(.22,.61,.36,1);
+    --sans:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:radial-gradient(900px 480px at 82% -10%, rgba(124,108,255,.12), transparent 60%), var(--bg);
+    color:var(--text); font-family:var(--sans); line-height:1.62; -webkit-font-smoothing:antialiased; min-height:100vh;}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px 64px}
+
+  .topbar{display:flex; align-items:center; gap:12px; padding:24px 0 6px}
+  .logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--accent),#b06cff);
+    display:grid; place-items:center; font-weight:800; font-size:17px; color:#fff; box-shadow:0 6px 18px -6px var(--accent)}
+  .brand{font-size:16px; font-weight:800; letter-spacing:.3px}
+  .back{margin-left:auto; font-size:12.5px; color:var(--text-2); border:1px solid var(--line); border-radius:20px; padding:6px 13px}
+  .back:hover{border-color:var(--accent-line); color:var(--accent-hi)}
+
+  .hero{padding:42px 0 20px}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.3em; color:var(--accent-hi); text-transform:uppercase}
+  .hero h1{font-size:32px; line-height:1.25; font-weight:800; letter-spacing:.5px; margin:14px 0 0; text-wrap:balance}
+  .hero p{color:var(--text-2); font-size:15px; line-height:1.75; margin:13px 0 0; max-width:60ch}
+
+  .values{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:24px 0 6px}
+  .val{background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md); padding:13px 14px}
+  .val .k{font-size:13.5px; font-weight:700; color:var(--text)}
+  .val .d{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.5}
+
+  .sec-title{display:flex; align-items:baseline; gap:12px; margin:40px 0 14px}
+  .sec-title h2{font-size:18px; margin:0}
+  .sec-title span{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.12em}
+
+  .tools{display:grid; gap:14px}
+  .tool{display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:start;
+    background:linear-gradient(180deg,var(--panel-hi),var(--panel)); border:1px solid var(--line);
+    border-radius:var(--r-lg); padding:20px 22px; transition:border-color .18s var(--ease), transform .18s var(--ease)}
+  .tool:hover{border-color:var(--accent-line); transform:translateY(-2px)}
+  .tool .ic{width:44px; height:44px; border-radius:12px; background:var(--accent-soft); border:1px solid var(--accent-line);
+    display:grid; place-items:center; font-size:22px}
+  .tool h3{margin:0 0 3px; font-size:16.5px; font-weight:750}
+  .tool .sub{color:var(--muted); font-size:12.5px; margin:0 0 9px}
+  .tool ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px}
+  .tool li{font-size:13px; color:var(--text-2); line-height:1.5; padding-left:16px; position:relative}
+  .tool li::before{content:""; position:absolute; left:2px; top:8px; width:5px; height:5px; border-radius:2px; background:var(--accent)}
+  .tool li .hot{color:var(--accent-hi); font-weight:600}
+  .tool .open{align-self:center; flex:none; font-size:12.5px; color:var(--accent-hi); font-weight:600; white-space:nowrap}
+
+  .feat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+  .feat{display:flex; gap:10px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md); padding:13px 15px}
+  .feat .e{font-size:17px; flex:none}
+  .feat .t{font-size:13px; color:var(--text-2); line-height:1.5}
+  .feat .t b{color:var(--text)}
+
+  .how{margin-top:38px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 24px}
+  .how h2{font-size:16px; margin:0 0 14px}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .step{display:flex; gap:11px}
+  .step .n{flex:none; width:26px; height:26px; border-radius:8px; background:var(--accent-soft); border:1px solid var(--accent-line);
+    color:var(--accent-hi); font-family:var(--mono); font-weight:700; display:grid; place-items:center; font-size:13px}
+  .step .t{font-size:13px; color:var(--text-2); line-height:1.55}
+  .step .t b{color:var(--text)}
+
+  .cta{margin-top:30px; text-align:center}
+  .cta a{display:inline-block; background:linear-gradient(135deg,var(--accent),#a06bff); color:#fff; font-weight:700;
+    font-size:15px; padding:14px 30px; border-radius:var(--r-md); box-shadow:0 10px 26px -10px var(--accent)}
+  .cta a:hover{transform:translateY(-1px)}
+
+  .foot{margin-top:40px; padding-top:18px; border-top:1px solid var(--line-soft); color:var(--muted); font-size:12.5px; text-align:center}
+
+  @media (max-width:720px){
+    .hero h1{font-size:26px}
+    .values{grid-template-columns:1fr 1fr}
+    .tool{grid-template-columns:auto 1fr; }
+    .tool .open{grid-column:1 / -1; align-self:start}
+    .feat-grid,.steps{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo">箱</div>
+      <span class="brand">电商工具箱</span>
+      <a class="back" href="/ecom-toolbox/">← 返回工具箱</a>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">FEATURES · 功能介绍</div>
+      <h1>一套自带 Key 的电商 AI 工具，能帮你做什么</h1>
+      <p>写文案、优化标题、回评价、写脚本、做大促文案……5 个开箱即用的小工具，<b style="color:var(--text)">配一次 Key 整套通用</b>，一次生成才几分钱。</p>
+    </section>
+
+    <div class="values">
+      <div class="val"><div class="k">🔑 填一次全套通用</div><div class="d">配一次 Key，5 个工具都能用</div></div>
+      <div class="val"><div class="k">💰 成本极低</div><div class="d">几分钱一次，还实时显示花费</div></div>
+      <div class="val"><div class="k">🔒 数据不过本站</div><div class="d">浏览器直连接口，本站不经手</div></div>
+      <div class="val"><div class="k">⚡ 流式 + 合规</div><div class="d">结果边出边看，违禁词自动标红</div></div>
+    </div>
+
+    <div class="sec-title"><h2>5 个工具</h2><span>WHAT YOU GET</span></div>
+    <div class="tools">
+      <a class="tool" href="/ecom-copywriter-member/">
+        <div class="ic">📝</div>
+        <div>
+          <h3>电商文案生成</h3>
+          <p class="sub">批量生成多套可直接用的带货文案</p>
+          <ul>
+            <li>一次最多 15 套，套套从不同角度切入、不雷同</li>
+            <li>5 大平台风格：小红书种草 / 抖音直播 / 淘宝详情 / 京东 / 通用</li>
+          </ul>
+        </div>
+        <div class="open">打开 ›</div>
+      </a>
+      <a class="tool" href="/ecom-title-optimizer/">
+        <div class="ic">🏷️</div>
+        <div>
+          <h3>标题 &amp; 关键词优化</h3>
+          <p class="sub">多平台优化标题 + 命中关键词</p>
+          <ul>
+            <li>淘宝 / 京东 / 拼多多 / 抖音 / 通用，字数超上限自动标红</li>
+            <li><span class="hot">批量模式</span>：粘一列产品一次全出，导出 CSV 表格</li>
+          </ul>
+        </div>
+        <div class="open">打开 ›</div>
+      </a>
+      <a class="tool" href="/ecom-review-reply/">
+        <div class="ic">💬</div>
+        <div>
+          <h3>差评 / 中评回复</h3>
+          <p class="sub">粘上评价，生成得体的公开回复</p>
+          <ul>
+            <li>多版回复：安抚 + 解决 + 挽回，保住链接口碑</li>
+            <li>语气可选：诚恳道歉 / 专业解释 / 热情挽回 / 真诚感谢 / 简洁高效</li>
+          </ul>
+        </div>
+        <div class="open">打开 ›</div>
+      </a>
+      <a class="tool" href="/ecom-live-script/">
+        <div class="ic">🎬</div>
+        <div>
+          <h3>直播 / 短视频脚本</h3>
+          <p class="sub">按产品和类型生成可照拍的脚本</p>
+          <ul>
+            <li>含 开场（黄金3秒）/ 正文 / 促单 / 拍摄提示</li>
+            <li>短视频种草 / 痛点带货 / 直播讲解 / 逼单 / 口播，按时长控字数</li>
+          </ul>
+        </div>
+        <div class="open">打开 ›</div>
+      </a>
+      <a class="tool" href="/ecom-promo-pack/">
+        <div class="ic">🎯</div>
+        <div>
+          <h3>大促活动文案包</h3>
+          <p class="sub">选节日 + 产品，一键出整套大促文案</p>
+          <ul>
+            <li>整套：主题 slogan + 短信 + 朋友圈 + 店铺公告 + 详情促销语</li>
+            <li>618 / 双11 / 双12 / 年货节 / 通用大促，逢大促全店直接用</li>
+          </ul>
+        </div>
+        <div class="open">打开 ›</div>
+      </a>
+    </div>
+
+    <div class="sec-title"><h2>全套通用的贴心功能</h2><span>EVERYWHERE</span></div>
+    <div class="feat-grid">
+      <div class="feat"><span class="e">⚡</span><span class="t"><b>流式输出</b> —— 结果一条条冒出来，不用干等</span></div>
+      <div class="feat"><span class="e">🚫</span><span class="t"><b>广告法自查</b> —— 违禁词/极限词自动标红提醒</span></div>
+      <div class="feat"><span class="e">🕘</span><span class="t"><b>历史记录</b> —— 自动存最近 12 次，随时翻回</span></div>
+      <div class="feat"><span class="e">📋</span><span class="t"><b>一键复制</b> 单条 / 全部，不满意点 <b>换一条</b></span></div>
+      <div class="feat"><span class="e">💰</span><span class="t"><b>用量花费</b> —— 每次生成显示大约消耗多少钱</span></div>
+      <div class="feat"><span class="e">🌗</span><span class="t"><b>深色 / 乳白主题</b> 切换，护眼</span></div>
+      <div class="feat"><span class="e">🔌</span><span class="t"><b>可换接口</b> —— OpenRouter 等，也能用 GPT/Claude</span></div>
+      <div class="feat"><span class="e">🔑</span><span class="t"><b>一次配置</b> —— Key 存本地浏览器，整套通用</span></div>
+    </div>
+
+    <div class="how">
+      <h2>三步开始用</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div class="t">去 <b>platform.deepseek.com</b> 注册充值（几元起），创建一个 <b>API Key</b></div></div>
+        <div class="step"><div class="n">2</div><div class="t">在工具箱首页「🔑 API 设置」<b>粘贴 Key 并保存</b>（只存你自己浏览器）</div></div>
+        <div class="step"><div class="n">3</div><div class="t">开始用，<b>整个工具箱都通用</b>，费用走你自己账户、几分钱一次</div></div>
+      </div>
+    </div>
+
+    <div class="cta"><a href="/ecom-toolbox/">进入工具箱 →</a></div>
+
+    <div class="foot">© 2026 海东 AI · 电商工具箱 · haidong.chat</div>
+  </div>
+</body>
+</html>
