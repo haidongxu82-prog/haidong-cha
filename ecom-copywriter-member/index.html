@@ -333,6 +333,45 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+  /* 使用说明按钮 + 弹层 */
+  .help-btn {
+    flex: none; margin-left: 10px;
+    border: 1px solid var(--line); background: var(--panel-hi); color: var(--text-2);
+    border-radius: 20px; padding: 5px 12px; font-size: 12.5px; font-family: inherit; cursor: pointer;
+    transition: border-color .15s var(--ease), color .15s var(--ease);
+  }
+  .help-btn:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .modal-mask {
+    position: fixed; inset: 0; z-index: 9995; background: rgba(0,0,0,.62);
+    display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg);
+    max-width: 680px; width: 100%; padding: 26px 28px; box-shadow: var(--shadow); position: relative; margin: auto;
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--line-soft); background: var(--bg-soft); color: var(--text-2);
+    font-size: 15px; cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { border-color: var(--accent-line); color: var(--accent-hi); }
+  .guide h2 { font-size: 19px; margin: 0 0 4px; }
+  .guide .lead { color: var(--muted); font-size: 13px; margin: 0 0 16px; line-height: 1.6; }
+  .guide h3 { font-size: 15px; margin: 22px 0 8px; color: var(--accent-hi); }
+  .guide p, .guide li { font-size: 13.5px; color: var(--text-2); line-height: 1.7; }
+  .guide ol, .guide ul { margin: 6px 0; padding-left: 20px; }
+  .guide b { color: var(--text); }
+  .guide .safe { background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: var(--r-md); padding: 12px 14px; margin: 14px 0; font-size: 13px; line-height: 1.65; }
+  .guide .cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+  .guide .gcard { background: var(--bg-soft); border: 1px solid var(--line-soft); border-radius: var(--r-md); padding: 13px 14px; }
+  .guide .gcard.rec { border-color: var(--accent-line); }
+  .guide .gcard h4 { margin: 0 0 6px; font-size: 13.5px; color: var(--text); }
+  .guide .tagrec { font-size: 11px; color: var(--ok); font-weight: 600; }
+  .guide a { color: var(--accent-hi); }
+  .guide .faq b { color: var(--accent-hi); display: block; margin-top: 12px; }
+  @media (max-width: 560px) { .guide .cards2 { grid-template-columns: 1fr; } }
+
   @media (max-width: 880px) {
     .grid { grid-template-columns: 1fr; }
     .composer { position: static; }
@@ -346,6 +385,7 @@
       <div class="logo">文</div>
       <span class="name">文案台</span>
       <span class="tag">会员版 · <b>自带 Key</b></span>
+      <button class="help-btn" id="guideBtn" type="button">📖 使用说明</button>
     </div>
 
     <div class="grid">
@@ -444,6 +484,67 @@
           </div>
         </div>
       </section>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="guideModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="使用说明">
+      <button class="modal-close" id="guideClose" type="button" aria-label="关闭">✕</button>
+      <div class="guide">
+        <h2>📝 使用说明</h2>
+        <p class="lead">填一下产品信息，一键批量生成标题、卖点、详情描述和标签，可直接用在小红书 / 抖音 / 淘宝 / 京东。工具免费，只需你自己的 AI 接口 Key（几块钱就能开始）。</p>
+
+        <div class="safe">🔒 <b>数据安全</b>：你填的产品信息、你的 API Key、生成的文案，都从<b>你自己的浏览器直接发给 AI 接口</b>，<b>不经过本站服务器</b>，Key 只保存在你自己电脑里。不放心可按 <b>F12 → Network</b> 自行验证：生成请求只发去了 AI 接口，没发给本站。</div>
+
+        <h3>第一步 · 准备一个 AI 接口 Key（二选一）</h3>
+        <div class="cards2">
+          <div class="gcard rec">
+            <h4>DeepSeek　<span class="tagrec">推荐 · 最简单</span></h4>
+            <p>国内接口，支付宝/微信充值，几块钱用很久。</p>
+            <ol>
+              <li>打开 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a> 注册登录</li>
+              <li>「充值」充一点余额（几元起）</li>
+              <li>「API Keys」创建密钥，复制 <b>sk-</b> 开头的串</li>
+            </ol>
+          </div>
+          <div class="gcard">
+            <h4>OpenRouter</h4>
+            <p>想用 GPT / Claude / Gemini 等多模型。⚠️ 充值多需境外支付方式。</p>
+            <ol>
+              <li>打开 <a href="https://openrouter.ai/" target="_blank" rel="noopener">openrouter.ai</a> 注册登录并充值</li>
+              <li><a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> 创建 Key（sk-or- 开头）</li>
+              <li>到 <a href="https://openrouter.ai/models" target="_blank" rel="noopener">models</a> 复制模型 ID（如 <b>deepseek/deepseek-chat</b>）</li>
+            </ol>
+          </div>
+        </div>
+
+        <h3>第二步 · 把 Key 填进工具</h3>
+        <p><b>用 DeepSeek：</b>在「🔑 API 设置」把 sk- Key 粘进去 → 点「保存」→ 显示「已配置 ✓」即可（默认就是 DeepSeek，直接用）。</p>
+        <p><b>用 OpenRouter：</b>点开「高级 · 换用别的 API 接口」→ 预设选 <b>OpenRouter</b> → 模型名填你复制的模型 ID → Key 粘到上面 → 点「保存」。</p>
+        <p style="color:var(--muted);font-size:12px">Key 保存后记在本浏览器，下次不用重填；换电脑或浏览器需重填。</p>
+
+        <h3>第三步 · 生成文案</h3>
+        <ol>
+          <li>填<b>产品名称</b>（必填）；卖点、人群填了更精准</li>
+          <li>选<b>文案风格</b>，设<b>生成数量</b>（加减号 / 拖动 / 直接输数字，1–15 套）</li>
+          <li>点「✦ 生成文案」，等 15–30 秒</li>
+          <li>每套可「复制这套」，也可「复制全部」；描述长可「展开全文」</li>
+        </ol>
+
+        <h3>常见问题</h3>
+        <div class="faq">
+          <b>会很贵吗？</b>
+          <p>很便宜，DeepSeek 一次生成通常几分钱，按用量扣。</p>
+          <b>提示「API Key 无效」？</b>
+          <p>检查 Key 有没有复制全、有没有多空格；用 OpenRouter 要确认 Key 和「接口预设」都选对。</p>
+          <b>提示「账户余额不足」？</b>
+          <p>去对应平台（DeepSeek / OpenRouter）充值即可。</p>
+          <b>提示「无法连接该接口」？</b>
+          <p>请用 DeepSeek 或 OpenRouter（已验证可用）；OpenAI 官方接口不支持浏览器直连，想用 GPT 请走 OpenRouter。</p>
+          <b>文案有点夸大 / 想更合规？</b>
+          <p>已内置广告法约束，但 AI 偶尔仍会冒夸张词，<b>发布前请自行核对一遍</b>，避免违禁用语。</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -856,6 +957,14 @@ $("apiPreset").addEventListener("change", function () {
   const p = PRESETS[this.value];
   if (p) { $("apiUrl").value = p.url; $("apiModel").value = p.model; }
 });
+/* --- 使用说明弹层 --- */
+function openGuide() { $("guideModal").classList.add("show"); $("guideModal").setAttribute("aria-hidden", "false"); }
+function closeGuide() { $("guideModal").classList.remove("show"); $("guideModal").setAttribute("aria-hidden", "true"); }
+$("guideBtn").addEventListener("click", openGuide);
+$("guideClose").addEventListener("click", closeGuide);
+$("guideModal").addEventListener("click", function (e) { if (e.target === this) closeGuide(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGuide(); });
+
 $("go").addEventListener("click", generate);
 ["product", "target"].forEach((id) =>
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); })
