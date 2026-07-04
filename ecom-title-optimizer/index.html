@@ -944,7 +944,47 @@ async function complianceFix(items, cfg) {
 }
 
 // 主生成：显式派角度 + 部分成功抢救 + 数量补齐 + 截断加token + 退避 + 合规闭环
-async function generateSets(input, cfg) {
+// 流式调用：SSE 累加 delta.content（忽略 reasoning_content），边流边回调
+async function streamCall(body, cfg, onDelta) {
+  const b = Object.assign({}, body, { stream: true, stream_options: { include_usage: true } });
+  let resp;
+  try {
+    resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(b) });
+  } catch (e) { return { neterr: true }; }
+  if (resp.status >= 400) return { status: resp.status, resp: resp };
+  const ct = resp.headers.get("content-type") || "";
+  if (!resp.body || ct.indexOf("event-stream") < 0) {
+    let data = null; try { data = await resp.json(); } catch (e) {}
+    const ch = data && data.choices && data.choices[0];
+    return { content: ch && ch.message ? ch.message.content : "", finish: ch ? ch.finish_reason : "", usage: data && data.usage };
+  }
+  const reader = resp.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "", content = "", finish = "", usage = null;
+  while (true) {
+    let rd;
+    try { rd = await reader.read(); } catch (e) { break; }
+    if (rd.done) break;
+    buf += dec.decode(rd.value, { stream: true });
+    let nl;
+    while ((nl = buf.indexOf("\n")) >= 0) {
+      const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+      if (line.indexOf("data:") !== 0) continue;
+      const d = line.slice(5).trim();
+      if (d === "[DONE]") continue;
+      try {
+        const j = JSON.parse(d);
+        const ch = j.choices && j.choices[0];
+        if (ch && ch.delta && ch.delta.content) { content += ch.delta.content; if (onDelta) onDelta(content); }
+        if (ch && ch.finish_reason) finish = ch.finish_reason;
+        if (j.usage) usage = j.usage;
+      } catch (e) {}
+    }
+  }
+  return { content: content, finish: finish, usage: usage };
+}
+
+async function generateSets(input, cfg, onProgress) {
   const target = input.count;
   _usage = { p: 0, c: 0, t: 0 };
   const temp = tempForStyle(input.style);
@@ -966,25 +1006,29 @@ async function generateSets(input, cfg) {
     const body = { model: cfg.model, messages: messages, temperature: temp, max_tokens: maxTokens };
     if (useJsonMode) body.response_format = { type: "json_object" };
 
-    let resp;
-    try {
-      resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(body) });
-    } catch (e) {
+    let _lastLen = 0;
+    const onDelta = onProgress ? function (partial) {
+      if (partial.length - _lastLen < 30) return;
+      _lastLen = partial.length;
+      const merged = collected.concat(normalizeItems(salvageParse(partial)));
+      if (merged.length) onProgress(merged);
+    } : null;
+
+    const sres = await streamCall(body, cfg, onDelta);
+    if (sres.neterr) {
       throw { title: "无法连接该接口", detail: "可能是接口地址填错，或该接口不允许浏览器直连(CORS)。请改用 DeepSeek / OpenRouter 等支持浏览器的接口。" };
     }
-    if (resp.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
-    if (resp.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
-    if (resp.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
-    if (!resp.ok) {
-      let d = ""; try { d = (await resp.text()).slice(0, 150); } catch (e) {}
-      lastErr = "HTTP " + resp.status + (d ? " · " + d : "");
+    if (sres.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
+    if (sres.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
+    if (sres.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
+    if (sres.status && sres.status >= 400) {
+      let d = ""; try { d = (await sres.resp.text()).slice(0, 150); } catch (e) {}
+      lastErr = "HTTP " + sres.status + (d ? " · " + d : "");
       await sleep(400 * round); continue;
     }
-    let data; try { data = await resp.json(); } catch (e) { lastErr = "返回内容异常"; await sleep(400 * round); continue; }
-    addUsage(data);
-    const choice = data && data.choices && data.choices[0];
-    const content = choice && choice.message ? choice.message.content : "";
-    const finish = choice ? choice.finish_reason : "";
+    if (sres.usage) addUsage({ usage: sres.usage });
+    const content = sres.content || "";
+    const finish = sres.finish || "";
     const items = normalizeItems(salvageParse(content));
     if (items.length) collected = collected.concat(items);
     else lastErr = "模型返回内容无法解析";
@@ -1240,11 +1284,14 @@ async function generate() {
   setRunning(true);
   renderLoading(count);
   saveLastInput();
+  RESULT = { product: input.product, style: input.style, features: input.features, target: input.target, list: [], usage: null };
 
   try {
     const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
-    const parsed = await generateSets(input, cfg);
-    renderResults({ product: input.product, style: input.style, features: input.features, target: input.target, copywriting: parsed.copywriting, usage: parsed.usage });
+    const parsed = await generateSets(input, cfg, function (items) { RESULT.list = items; renderCards(); });
+    RESULT.list = parsed.copywriting;
+    RESULT.usage = parsed.usage;
+    renderCards();
     saveHistory();
   } catch (err) {
     if (err && err.title) renderError(err.title, err.detail);
