@@ -36,7 +36,7 @@ def build_template() -> str:
     )
 
     html = re.sub(
-        r'\s*<link rel="stylesheet" href="\./styles\.css">\s*',
+        r'\s*<link rel="stylesheet" href="\./styles\.css[^"]*">\s*',
         lambda _match: f"\n  <style>\n{css}\n  </style>\n",
         html,
         count=1,
