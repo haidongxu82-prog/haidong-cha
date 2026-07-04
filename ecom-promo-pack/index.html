@@ -517,8 +517,8 @@
           <label>文案包套数</label>
           <div class="count-row">
             <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
-            <input type="range" id="count" min="1" max="15" value="10">
-            <input type="number" id="countVal" class="count-num" min="1" max="15" value="10" inputmode="numeric" aria-label="生成数量">
+            <input type="range" id="count" min="1" max="6" value="2">
+            <input type="number" id="countVal" class="count-num" min="1" max="6" value="2" inputmode="numeric" aria-label="生成数量">
             <button type="button" class="step" id="countPlus" aria-label="增加数量">+</button>
           </div>
         </div>
@@ -697,7 +697,7 @@ $("countVal").addEventListener("blur", function () { this.value = getCount(); })
 $("countVal").addEventListener("keydown", function (e) {
   if (e.key === "Enter") { this.blur(); generate(); }
 });
-setCount(10);
+setCount(2);
 
 function setRunning(on) {
   running = on;
@@ -832,6 +832,7 @@ function buildPrompt(input, need, angles) {
     "要求：\n" +
     "- 生成 " + need + " 套完整文案包，每套整体侧重不同，顺序一一对应：\n" + focusLines + "\n" +
     "- 契合节日氛围、突出优惠与紧迫；不违反广告法（禁极限词、不虚构优惠）。\n" +
+    "- 渠道约束：短信≤70字、以【店铺名】开头、结尾带\"退订回T\"；店铺公告分点列出活动时间与优惠；朋友圈口语化、带emoji和话题词；详情促销语精炼有紧迫感。\n" +
     "- 每套包含：slogan(活动主题slogan)、sms(短信文案)、moments(朋友圈文案)、announcement(店铺公告)、detail(详情页促销语)。\n\n" +
     '严格按此JSON输出，不要markdown：\n{"copywriting": [{"slogan": "", "sms": "", "moments": "", "announcement": "", "detail": ""}]}';
 }
@@ -919,7 +920,7 @@ async function complianceFix(items, cfg) {
 async function generateSets(input, cfg) {
   const target = input.count;
   const temp = tempForStyle(input.style);
-  let maxTokens = Math.min(8000, 700 + target * 420);
+  let maxTokens = Math.min(8000, 1000 + target * 900);
   let useJsonMode = true;
   let collected = [];
   let lastErr = "";

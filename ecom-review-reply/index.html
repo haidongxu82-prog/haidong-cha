@@ -517,8 +517,8 @@
           <label>回复条数</label>
           <div class="count-row">
             <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
-            <input type="range" id="count" min="1" max="15" value="10">
-            <input type="number" id="countVal" class="count-num" min="1" max="15" value="10" inputmode="numeric" aria-label="生成数量">
+            <input type="range" id="count" min="1" max="15" value="3">
+            <input type="number" id="countVal" class="count-num" min="1" max="15" value="3" inputmode="numeric" aria-label="生成数量">
             <button type="button" class="step" id="countPlus" aria-label="增加数量">+</button>
           </div>
         </div>
@@ -697,7 +697,7 @@ $("countVal").addEventListener("blur", function () { this.value = getCount(); })
 $("countVal").addEventListener("keydown", function (e) {
   if (e.key === "Enter") { this.blur(); generate(); }
 });
-setCount(10);
+setCount(3);
 
 function setRunning(on) {
   running = on;
@@ -825,6 +825,7 @@ function buildPrompt(input, need, angles) {
     "参考范例（学语气与分寸，不要照抄内容）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
     "要求：\n" +
     "- 写 " + need + " 版回复，每版用不同策略，顺序一一对应：\n" + focusLines + "\n" +
+    "- 先判断这条评价的核心问题（物流/质量/服务/误解/主观喜好）与情绪强度，针对具体问题回应，不要套模板空话。\n" +
     "- 真诚得体、可直接发布，60-120字为宜；不与顾客争吵、不做无法兑现的承诺。\n" +
     "- 每版包含：reply(回复正文)、strategy(一句话说明本版策略)。\n\n" +
     '严格按此JSON输出，不要markdown：\n{"copywriting": [{"reply": "", "strategy": ""}]}';
@@ -913,7 +914,7 @@ async function complianceFix(items, cfg) {
 async function generateSets(input, cfg) {
   const target = input.count;
   const temp = tempForStyle(input.style);
-  let maxTokens = Math.min(8000, 700 + target * 420);
+  let maxTokens = Math.min(8000, 600 + target * 340);
   let useJsonMode = true;
   let collected = [];
   let lastErr = "";

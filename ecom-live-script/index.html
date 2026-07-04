@@ -517,8 +517,8 @@
           <label>脚本条数</label>
           <div class="count-row">
             <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
-            <input type="range" id="count" min="1" max="15" value="10">
-            <input type="number" id="countVal" class="count-num" min="1" max="15" value="10" inputmode="numeric" aria-label="生成数量">
+            <input type="range" id="count" min="1" max="15" value="3">
+            <input type="number" id="countVal" class="count-num" min="1" max="15" value="3" inputmode="numeric" aria-label="生成数量">
             <button type="button" class="step" id="countPlus" aria-label="增加数量">+</button>
           </div>
         </div>
@@ -697,7 +697,7 @@ $("countVal").addEventListener("blur", function () { this.value = getCount(); })
 $("countVal").addEventListener("keydown", function (e) {
   if (e.key === "Enter") { this.blur(); generate(); }
 });
-setCount(10);
+setCount(3);
 
 function setRunning(on) {
   running = on;
@@ -830,6 +830,7 @@ function buildPrompt(input, need, angles) {
     "参考范例（学结构与节奏，不要照抄内容）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
     "要求：\n" +
     "- 生成 " + need + " 条脚本，每条用不同钩子，顺序一一对应：\n" + focusLines + "\n" +
+    "- 若给了时长，口播正文字数要匹配时长（约每秒3-4字，如60秒≈180-240字），控制好节奏；开场必须在前3秒抓住人。\n" +
     "- 口语化、能直接照拍/照播；不违反广告法。\n" +
     "- 每条包含：hook(黄金3秒开场)、body(口播正文/讲解)、cta(行动号召/促单)、tips(拍摄或控场提示)。\n\n" +
     '严格按此JSON输出，不要markdown：\n{"copywriting": [{"hook": "", "body": "", "cta": "", "tips": ""}]}';
@@ -919,7 +920,7 @@ async function complianceFix(items, cfg) {
 async function generateSets(input, cfg) {
   const target = input.count;
   const temp = tempForStyle(input.style);
-  let maxTokens = Math.min(8000, 700 + target * 420);
+  let maxTokens = Math.min(8000, 800 + target * 640);
   let useJsonMode = true;
   let collected = [];
   let lastErr = "";
