@@ -807,24 +807,44 @@ function styleSpecOf(s) { return STYLE_GUIDE[s] || STYLE_GUIDE["通用电商"]; 
 
 const SYSTEM_PROMPT = "你是一位资深电商文案策划师，擅长写高转化、可直接使用的电商文案。硬性要求：(1) 严格遵守中国广告法，禁用「最/第一/顶级/国家级/绝对/纯天然/包治/无副作用」等绝对化与违禁用语，不虚构或夸大功效、成分、资质；(2) 所有卖点必须基于用户提供的信息，不编造；(3) 必须严格按JSON格式返回，不要输出任何其他内容，不要包含markdown代码块标记。";
 
-function buildPrompt(p) {
-  return "请为以下产品生成 " + p.count + " 套电商文案：\n\n" +
-    "产品名称：" + p.product + "\n" +
-    "核心卖点：" + p.features + "\n" +
-    "目标人群：" + p.target + "\n" +
-    "文案风格：" + p.style + "\n" +
-    "风格要求：" + styleSpecOf(p.style) + "\n\n" +
+const ANGLES = ["痛点共鸣", "使用场景", "目标人群画像", "情感共鸣", "限时促销/紧迫感", "权威背书/品质保障", "对比升级/替换旧品", "效果与使用体验"];
+
+// 每种风格一条“黄金范例”，让模型照它的语气与结构写（few-shot）
+const STYLE_EXAMPLE = {
+  "小红书种草风": {"title":"这猫粮我能吹一整年","subtitle":"挑食猫空盘，毛量肉眼可见变多","selling_points":["鲜肉冻干","无谷低敏","适口性好"],"description":"宝子们真的会谢！我家挑嘴主子换了它天天光盘，冻干工艺锁住鲜肉香，无谷配方肠胃也不闹了，撸起来毛顺得像小绸缎，养猫女孩闭眼冲～","hashtags":["#猫粮推荐","#冻干猫粮","#养猫日常","#猫咪美毛","#挑食猫救星"]},
+  "抖音直播风": {"title":"家人们这价不抢真没了","subtitle":"鲜肉冻干猫粮直播间破价","selling_points":["鲜肉含量高","无谷低敏","限时特价"],"description":"话不多说直接上链接！这款鲜肉冻干猫粮，平时贵到肉疼，今天直播间给到家人们福利价！库存不多，主子口粮别省，看中的赶紧拍，拍完立刻付款锁单！","hashtags":["#直播福利","#猫粮","#冻干","#限时特价","#手慢无"]},
+  "淘宝详情页": {"title":"鲜肉冻干猫粮 无谷低敏","subtitle":"高鲜肉配方 适口不挑食","selling_points":["高鲜肉含量","无谷低敏","冻干锁鲜"],"description":"精选鲜肉冻干工艺，锁住原始肉香与营养；无谷低敏配方，呵护敏感肠胃；颗粒适口性好，挑食猫也爱吃。科学配比，助力毛发亮泽、体态健康，适合各阶段猫咪日常主粮。","hashtags":["#冻干猫粮","#无谷猫粮","#鲜肉配方","#猫咪主粮","#低敏"]},
+  "京东卖点": {"title":"鲜肉冻干 无谷低敏猫粮","subtitle":"高蛋白配方 品质保障","selling_points":["高蛋白鲜肉","无谷低敏","正品保障"],"description":"采用鲜肉冻干工艺，高蛋白易吸收；无谷低敏配方，减轻肠胃负担；严选原料，品质稳定可靠。京东自营正品，物流快、售后省心，为爱宠提供有营养的日常口粮。","hashtags":["#冻干猫粮","#无谷低敏","#高蛋白","#正品保障","#宠物主粮"]},
+  "通用电商": {"title":"鲜肉冻干猫粮 挑食也爱吃","subtitle":"无谷低敏 呵护肠胃更安心","selling_points":["鲜肉冻干","无谷低敏","适口性好"],"description":"鲜肉冻干工艺锁住营养与肉香，无谷低敏配方温和呵护肠胃，颗粒适口挑食猫也爱吃。助力毛发亮泽、体态匀称，是各阶段猫咪值得信赖的日常主粮之选。","hashtags":["#冻干猫粮","#无谷低敏","#鲜肉配方","#猫咪主粮","#宠物好物"]}
+};
+function exampleForStyle(s) { return STYLE_EXAMPLE[s] || STYLE_EXAMPLE["通用电商"]; }
+
+// 种草/直播要创意→高温；详情/京东要准确→低温
+function tempForStyle(s) {
+  if (s === "小红书种草风" || s === "抖音直播风") return 0.9;
+  if (s === "淘宝详情页" || s === "京东卖点") return 0.6;
+  return 0.75;
+}
+function anglesFor(offset, need) {
+  const out = [];
+  for (let i = 0; i < need; i++) out.push(ANGLES[(offset + i) % ANGLES.length]);
+  return out;
+}
+
+function buildPrompt(input, need, angles) {
+  const angleLines = angles.map(function (a, i) { return "  第" + (i + 1) + "套 → " + a; }).join("\n");
+  return "请为以下产品生成 " + need + " 套电商文案：\n\n" +
+    "产品名称：" + input.product + "\n" +
+    "核心卖点：" + input.features + "\n" +
+    "目标人群：" + input.target + "\n" +
+    "文案风格：" + input.style + "\n" +
+    "风格要求：" + styleSpecOf(input.style) + "\n\n" +
+    "本风格范例（学它的语气与结构，不要照抄内容）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
     "写作要求：\n" +
-    "- " + p.count + " 套之间从不同角度切入（痛点/使用场景/人群/情感/促销/权威背书/对比等），不要雷同。\n" +
-    "- 贴合「" + p.target + "」的语气与用词。\n" +
-    "- 每套包含：\n" +
-    "  1. title 主标题（15字以内，抓眼球）\n" +
-    "  2. subtitle 副标题（25字以内，补充卖点）\n" +
-    "  3. selling_points 3个核心卖点（每个10字以内）\n" +
-    "  4. description 详情摘要（80-120字，突出差异化）\n" +
-    "  5. hashtags 5个契合「" + p.style + "」的标签\n\n" +
-    '严格按以下JSON格式输出，不要包含任何markdown标记：\n' +
-    '{"copywriting": [{"title": "", "subtitle": "", "selling_points": ["", "", ""], "description": "", "hashtags": ["", "", "", "", ""]}]}';
+    "- 严格生成 " + need + " 套，每套对应一个指定切入角度，顺序一一对应：\n" + angleLines + "\n" +
+    "- 贴合「" + input.target + "」的语气与用词。\n" +
+    "- 每套包含：title(主标题≤15字)、subtitle(副标题≤25字)、selling_points(3个卖点，每个≤10字)、description(详情摘要80-120字)、hashtags(5个契合「" + input.style + "」的标签)。\n\n" +
+    '严格按此JSON输出，不要markdown：\n{"copywriting": [{"title": "", "subtitle": "", "selling_points": ["", "", ""], "description": "", "hashtags": ["", "", "", "", ""]}]}';
 }
 
 function normalizeItems(arr) {
@@ -856,55 +876,107 @@ function tryParse(text) {
   return null;
 }
 
-async function callModel(input, cfg) {
-  const maxTokens = Math.min(8000, 1200 + input.count * 450);
-  let lastErr = "";
+// 从（可能被截断的）文本里抢救出所有完整的文案对象
+function extractItems(text) {
+  const out = [];
+  let depth = 0, start = -1, inStr = false, esc = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') { inStr = true; continue; }
+    if (c === "{") { if (depth === 1) start = i; depth++; }
+    else if (c === "}") { depth--; if (depth === 1 && start >= 0) { out.push(text.slice(start, i + 1)); start = -1; } }
+  }
+  return out;
+}
+function salvageParse(text) {
+  const cleaned = String(text == null ? "" : text).replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+  const whole = tryParse(cleaned);
+  if (whole && Array.isArray(whole.copywriting) && whole.copywriting.length) return whole.copywriting;
+  // 整体解析失败（多为截断）→ 逐个抠出完整对象
+  const items = [];
+  const objs = extractItems(cleaned);
+  for (let i = 0; i < objs.length; i++) {
+    try { const p = JSON.parse(objs[i]); if (p && (p.title || p.subtitle)) items.push(p); } catch (e) {}
+  }
+  return items;
+}
+
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function hasBanned(item) {
+  return (countBan(item.title) + countBan(item.subtitle) + countBan(item.description) +
+    (item.selling_points || []).reduce(function (a, p) { return a + countBan(p); }, 0)) > 0;
+}
+
+// 合规闭环：检出违禁词 → 定向让模型只替换违禁词（失败则原样返回，前端仍会标红）
+async function complianceFix(items, cfg) {
+  if (!items.some(hasBanned)) return items;
+  const messages = [
+    { role: "system", content: "你是电商合规文案助手。只做一件事：把文案里违反中国广告法的极限词/违禁词（如 最/第一/顶级/国家级/纯天然/无副作用/根治/特效 等）替换成合规表达，保持原意、字数与JSON结构不变。只返回JSON，不要多余内容。" },
+    { role: "user", content: "请修正以下文案中的违禁词，返回同样结构的JSON：\n" + JSON.stringify({ copywriting: items }) }
+  ];
+  try {
+    const body = { model: cfg.model, messages: messages, temperature: 0.3, max_tokens: Math.min(8000, 700 + items.length * 420), response_format: { type: "json_object" } };
+    const resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(body) });
+    if (!resp.ok) return items;
+    const data = await resp.json();
+    const c = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : "";
+    const fixed = normalizeItems(salvageParse(c));
+    if (fixed.length === items.length) return fixed;
+  } catch (e) {}
+  return items;
+}
+
+// 主生成：显式派角度 + 部分成功抢救 + 数量补齐 + 截断加token + 退避 + 合规闭环
+async function generateSets(input, cfg) {
+  const target = input.count;
+  const temp = tempForStyle(input.style);
+  let maxTokens = Math.min(8000, 700 + target * 420);
   let useJsonMode = true;
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  let collected = [];
+  let lastErr = "";
+  let round = 0;
+  while (collected.length < target && round < 4) {
+    round++;
+    const need = target - collected.length;
     const messages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: buildPrompt(input) }
+      { role: "user", content: buildPrompt(input, need, anglesFor(collected.length, need)) }
     ];
-    if (attempt > 1) {
-      messages.push({ role: "user", content: "上次返回的不是合法JSON或格式不符，请务必只输出符合上面要求的合法JSON，不要任何多余文字。" });
+    if (collected.length > 0) {
+      messages.push({ role: "user", content: "继续补充生成 " + need + " 套，须与已有内容角度不同、避免重复。" });
     }
-    const body = { model: cfg.model, messages: messages, temperature: 0.8, max_tokens: maxTokens };
+    const body = { model: cfg.model, messages: messages, temperature: temp, max_tokens: maxTokens };
     if (useJsonMode) body.response_format = { type: "json_object" };
 
     let resp;
     try {
-      resp = await fetch(cfg.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key },
-        body: JSON.stringify(body)
-      });
+      resp = await fetch(cfg.url, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + cfg.key }, body: JSON.stringify(body) });
     } catch (e) {
-      // fetch 直接抛错通常是地址错误或接口不允许浏览器跨域(CORS)——重试无益，直接报清楚
       throw { title: "无法连接该接口", detail: "可能是接口地址填错，或该接口不允许浏览器直连(CORS)。请改用 DeepSeek / OpenRouter 等支持浏览器的接口。" };
     }
-
     if (resp.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
     if (resp.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
-    if (resp.status === 400 && useJsonMode) {
-      // 该模型可能不支持 JSON 模式，去掉后重试（不消耗尝试次数）
-      useJsonMode = false;
-      attempt--;
-      continue;
-    }
+    if (resp.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
     if (!resp.ok) {
-      let d = ""; try { d = (await resp.text()).slice(0, 200); } catch (e) {}
+      let d = ""; try { d = (await resp.text()).slice(0, 150); } catch (e) {}
       lastErr = "HTTP " + resp.status + (d ? " · " + d : "");
-      continue;
+      await sleep(400 * round); continue;
     }
-    let json;
-    try { json = await resp.json(); } catch (e) { lastErr = "返回内容异常"; continue; }
-    const content = json && json.choices && json.choices[0] && json.choices[0].message
-      ? json.choices[0].message.content : "";
-    const items = normalizeItems((tryParse(content) || {}).copywriting);
-    if (items.length) return { copywriting: items };
-    lastErr = "模型返回内容无法解析";
+    let data; try { data = await resp.json(); } catch (e) { lastErr = "返回内容异常"; await sleep(400 * round); continue; }
+    const choice = data && data.choices && data.choices[0];
+    const content = choice && choice.message ? choice.message.content : "";
+    const finish = choice ? choice.finish_reason : "";
+    const items = normalizeItems(salvageParse(content));
+    if (items.length) collected = collected.concat(items);
+    else lastErr = "模型返回内容无法解析";
+    if (finish === "length") maxTokens = Math.min(8000, Math.round(maxTokens * 1.6)); // 截断→下轮加大 token
+    if (!items.length) await sleep(500 * round);
   }
-  throw { title: "文案生成失败，请重试", detail: lastErr };
+  if (!collected.length) throw { title: "文案生成失败，请重试", detail: lastErr };
+  collected = collected.slice(0, target);
+  collected = await complianceFix(collected, cfg);
+  return { copywriting: collected };
 }
 
 /* --- 结果状态 --- */
@@ -1016,7 +1088,7 @@ async function regenOne(idx) {
   try {
     const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
     const input = { product: RESULT.product, features: RESULT.features, target: RESULT.target, count: 1, style: RESULT.style };
-    const r = await callModel(input, cfg);
+    const r = await generateSets(input, cfg);
     if (r.copywriting && r.copywriting[0]) {
       RESULT.list[idx] = r.copywriting[0];
       renderCards();
@@ -1143,7 +1215,7 @@ async function generate() {
 
   try {
     const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
-    const parsed = await callModel(input, cfg);
+    const parsed = await generateSets(input, cfg);
     renderResults({ product: input.product, style: input.style, features: input.features, target: input.target, copywriting: parsed.copywriting });
     saveHistory();
   } catch (err) {
