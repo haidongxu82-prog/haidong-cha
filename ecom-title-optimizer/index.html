@@ -267,6 +267,14 @@
     display: inline-flex; gap: 7px; align-items: center;
   }
   .results-bar .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  /* 批量表格 */
+  .btable-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); }
+  .btable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .btable th, .btable td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  .btable th { color: var(--muted); font-weight: 600; font-size: 12px; background: var(--panel); position: sticky; top: 0; }
+  .btable td { color: var(--text-2); }
+  .btable td:nth-child(2) { color: var(--text); min-width: 220px; }
+  .btable tr:hover td { background: var(--panel-hi); }
   .results-bar .copy-all {
     margin-left: auto;
     border: 1px solid var(--line); background: var(--panel-hi); color: var(--text-2);
@@ -498,8 +506,19 @@
         </div>
 
         <div class="field">
+          <label>模式</label>
+          <div class="segs" id="modeSegs">
+            <button type="button" class="seg on" data-mode="single">单个</button>
+            <button type="button" class="seg" data-mode="batch">批量（多产品）</button>
+          </div>
+        </div>
+        <div class="field" id="singleField">
           <label>产品名称 <span class="star">*</span></label>
           <input class="input" id="product" placeholder="如：进口冻干猫粮" autocomplete="off">
+        </div>
+        <div class="field" id="batchField" style="display:none">
+          <label>产品列表 <span class="opt">每行一个，最多 30 个</span></label>
+          <textarea id="batchProducts" placeholder="每行一个产品名，例如：&#10;进口冻干猫粮 1.5kg&#10;剑麻猫抓板&#10;不锈钢猫碗双碗" style="min-height:120px"></textarea>
         </div>
 
         <div class="field">
@@ -1192,6 +1211,7 @@ function fillSample() {
 /* --- submit --- */
 async function generate() {
   if (running) return;
+  if (batchMode) return batchGenerate();
   const apiKey = getKey();
   if (!apiKey) {
     toast("请先在上方「API 设置」里填入你的 DeepSeek Key");
@@ -1286,6 +1306,74 @@ $("histModal").addEventListener("click", function (e) { if (e.target === this) c
 document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeHist(); });
 $("sampleBtn").addEventListener("click", fillSample);
 restoreLastInput();
+
+/* --- 批量模式 --- */
+let batchMode = false;
+$("modeSegs").querySelectorAll(".seg").forEach(function (b) {
+  b.addEventListener("click", function () {
+    batchMode = b.dataset.mode === "batch";
+    $("modeSegs").querySelectorAll(".seg").forEach(function (x) { x.classList.remove("on"); });
+    b.classList.add("on");
+    $("singleField").style.display = batchMode ? "none" : "";
+    $("batchField").style.display = batchMode ? "" : "none";
+    $("goLabel").textContent = batchMode ? "✦ 批量生成" : "✦ 生成标题";
+  });
+});
+
+async function batchGenerate() {
+  const apiKey = getKey();
+  if (!apiKey) { toast("请先在「API 设置」里填入 Key"); $("apiKey").focus(); return; }
+  const lines = $("batchProducts").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+  if (!lines.length) { toast("请每行填一个产品"); $("batchProducts").focus(); return; }
+  if (lines.length > 30) { toast("单次最多 30 个，已取前 30 个"); lines.length = 30; }
+  saveLastInput();
+  const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
+  const perCount = getCount();
+  const oldAll = document.getElementById("copyAll"); if (oldAll) oldAll.remove();
+  running = true; setRunning(true);
+  const rows = []; let up = 0, uc = 0, ut = 0;
+  for (let i = 0; i < lines.length; i++) {
+    $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 批量生成中… ' + (i + 1) + '/' + lines.length + '（' + esc(lines[i]) + '）';
+    const input = { product: lines[i], features: $("features").value.trim() || "通用卖点", target: $("target").value.trim() || "电商通用", count: perCount, style: currentStyle };
+    try {
+      const r = await generateSets(input, cfg);
+      (r.copywriting || []).forEach(function (it) { rows.push({ product: lines[i], item: it }); });
+      if (r.usage) { up += r.usage.p; uc += r.usage.c; ut += r.usage.t; }
+    } catch (err) {
+      rows.push({ product: lines[i], item: null, err: (err && err.title) || "生成失败" });
+    }
+  }
+  running = false; setRunning(false);
+  renderBatch(rows, { p: up, c: uc, t: ut });
+}
+
+function renderBatch(rows, usage) {
+  const lim = currentStyle === "抖音" ? 20 : 30;
+  let m = [esc(currentStyle), "共 " + rows.length + " 条"].join('<span class="dot"></span>');
+  if (usage.t) m += '<span class="dot"></span><span title="按 DeepSeek 估算，实际以你的接口为准">本次约 ' + usage.t + ' token ≈ ¥' + ((usage.p * 0.14 + usage.c * 0.28) / 1e6 * 7.2).toFixed(4) + '</span>';
+  $("meta").innerHTML = m;
+  if (!rows.length) { $("out").innerHTML = '<div class="empty"><div class="t">没有结果</div></div>'; return; }
+  let html = '<div style="margin-bottom:12px"><button class="copy-all" id="csvBtn">⬇ 导出 CSV（Excel 可打开）</button></div>';
+  html += '<div class="btable-wrap"><table class="btable"><thead><tr><th>产品</th><th>标题</th><th>字数</th><th>关键词</th></tr></thead><tbody>';
+  rows.forEach(function (r) {
+    if (!r.item) { html += '<tr><td>' + esc(r.product) + '</td><td colspan="3" style="color:var(--danger)">' + esc(r.err || "失败") + '</td></tr>'; return; }
+    const over = r.item.chars > lim;
+    html += '<tr><td>' + esc(r.product) + '</td><td>' + markBan(esc(r.item.title)) + '</td><td' + (over ? ' style="color:var(--danger)"' : '') + '>' + r.item.chars + '</td><td>' + esc((r.item.keywords || []).join(" / ")) + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  $("out").innerHTML = html;
+  $("csvBtn").addEventListener("click", function () { exportCsv(rows); });
+}
+
+function exportCsv(rows) {
+  function q(s) { return '"' + String(s == null ? "" : s).replace(/"/g, '""') + '"'; }
+  let csv = "﻿产品,标题,字数,关键词\n";
+  rows.forEach(function (r) { if (!r.item) return; csv += [q(r.product), q(r.item.title), r.item.chars, q((r.item.keywords || []).join(" "))].join(",") + "\n"; });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "标题批量.csv"; a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  toast("已导出 CSV");
+}
 
 $("go").addEventListener("click", generate);
 ["product", "target"].forEach((id) =>
