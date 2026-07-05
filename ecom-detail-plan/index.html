@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>详情页分屏文案 · 会员版（自带 Key）· 详情台</title>
+<title>详情图策划方案 · 会员版（自带 Key）· 详情策划台</title>
 <style>
   :root {
     --bg: #0d0d0f;
@@ -439,14 +439,14 @@
   <div class="wrap">
     <div class="topbar">
       <div class="logo">文</div>
-      <span class="name">详情台</span>
-      <span class="tag">详情页脚本 · <b>自带 Key</b></span>
+      <span class="name">详情策划台</span>
+      <span class="tag">详情图策划 · <b>自带 Key</b></span>
       <select class="tool-switch" aria-label="切换工具" onchange="if(this.value)location.href=this.value">
         <option value="">🔀 切换工具</option>
         <option value="/ecom-toolbox/">← 工具箱首页</option>
         <option value="/ecom-copywriter-member/">📝 文案生成</option>
         <option value="/ecom-title-optimizer/">🏷️ 标题优化</option>
-        <option value="/ecom-detail-script/">📄 详情页脚本</option>
+        <option value="/ecom-detail-plan/">📄 详情图策划</option>
         <option value="/ecom-review-reply/">💬 差评回复</option>
         <option value="/ecom-cs-script/">🎧 客服话术</option>
         <option value="/ecom-live-script/">🎬 直播脚本</option>
@@ -463,8 +463,8 @@
     <div class="grid">
       <!-- 创作台 -->
       <section class="composer">
-        <h1>详情参数</h1>
-        <p class="hint">填好产品，一键生成详情页每一屏的文案脚本</p>
+        <h1>策划参数</h1>
+        <p class="hint">填好产品，一键生成整套详情图的专业策划方案（给美工直接开工）</p>
 
         <div class="apibox">
           <div class="apibox-head">
@@ -520,22 +520,22 @@
         </div>
 
         <div class="field">
-          <label>核心卖点 <span class="opt">选填</span></label>
-          <textarea id="features" placeholder="如：85% 鲜肉、无谷低敏、爆毛亮毛"></textarea>
+          <label>核心卖点 / 特征 <span class="opt">选填</span></label>
+          <textarea id="features" placeholder="如：85% 鲜肉、无谷低敏、爆毛亮毛、进口原料"></textarea>
         </div>
 
         <div class="field">
-          <label>目标人群 <span class="opt">选填</span></label>
-          <input class="input" id="target" placeholder="如：养猫的都市白领女性" autocomplete="off">
+          <label>目标人群 + 你的想法 <span class="opt">选填</span></label>
+          <input class="input" id="target" placeholder="如：养猫白领；想突出高端、成分安全" autocomplete="off">
         </div>
 
         <div class="field">
-          <label>详情风格</label>
+          <label>类目调性</label>
           <div class="segs" id="styleSegs"></div>
         </div>
 
         <div class="field">
-          <label>屏数</label>
+          <label>详情图张数</label>
           <div class="count-row">
             <button type="button" class="step" id="countMinus" aria-label="减少数量">−</button>
             <input type="range" id="count" min="1" max="15" value="10">
@@ -545,7 +545,7 @@
         </div>
 
         <button class="go" id="go">
-          <span id="goLabel">✦ 生成详情脚本</span>
+          <span id="goLabel">✦ 生成策划方案</span>
         </button>
         <button class="sample-link" id="sampleBtn" type="button">试试示例 ›</button>
       </section>
@@ -559,8 +559,8 @@
         <div id="out">
           <div class="empty">
             <div class="big">✦</div>
-            <div class="t">还没有详情脚本</div>
-            <div>填好参数，点击「生成详情脚本」开始</div>
+            <div class="t">还没有策划方案</div>
+            <div>填好产品，点击「生成策划方案」开始</div>
           </div>
         </div>
       </section>
@@ -572,7 +572,7 @@
       <button class="modal-close" id="guideClose" type="button" aria-label="关闭">✕</button>
       <div class="guide">
         <h2>📝 使用说明</h2>
-        <p class="lead">填一下产品，一键生成详情页每一屏的文案脚本（痛点/卖点/场景/信任/促销等），照着排版就能做详情页。工具免费，只需你自己的 AI 接口 Key。</p>
+        <p class="lead">填一下产品，一键生成整套详情图的专业策划方案——每一屏给到 定位/转化任务/图上文案/画面构图/视觉设计/转化心理/避坑 8 个维度，美工照着能直接开工。它是"策划总监"，不产图。工具免费，只需你自己的 AI 接口 Key。</p>
 
         <div class="safe">🔒 <b>数据安全</b>：你填的产品信息、你的 API Key、生成的文案，都从<b>你自己的浏览器直接发给 AI 接口</b>，<b>不经过本站服务器</b>，Key 只保存在你自己电脑里。不放心可按 <b>F12 → Network</b> 自行验证：生成请求只发去了 AI 接口，没发给本站。<br>（本站仅做基础访问流量统计，如页面访问量、来源，<b>不含你填写的内容和 Key</b>。）</div>
 
@@ -603,11 +603,11 @@
         <p><b>用 OpenRouter：</b>点开「高级 · 换用别的 API 接口」→ 预设选 <b>OpenRouter</b> → 模型名填你复制的模型 ID → Key 粘到上面 → 点「保存」。</p>
         <p style="color:var(--muted);font-size:12px">Key 保存后记在本浏览器，下次不用重填；换电脑或浏览器需重填。</p>
 
-        <h3>第三步 · 生成详情脚本</h3>
+        <h3>第三步 · 生成策划方案</h3>
         <ol>
-          <li>填<b>产品名称</b>（必填）；卖点、人群填了更贴合</li>
-          <li>选<b>详情风格</b>，设<b>屏数</b>（每屏是详情页的一段）</li>
-          <li>点「✦ 生成详情脚本」，每屏含 屏类型/大标题/说明文案，可逐屏复制</li>
+          <li>填<b>产品名称</b>（必填）；卖点特征、人群想法填了更专业</li>
+          <li>选<b>类目调性</b>（决定美术方向），设<b>详情图张数</b>（默认10屏高转化框架）</li>
+          <li>点「✦ 生成策划方案」，每屏含定位/文案/构图/设计/心理/避坑，逐屏复制给美工</li>
         </ol>
 
         <h3>常见问题</h3>
@@ -654,7 +654,7 @@ const PRESETS = {
 };
 function getEndpoint() { return (localStorage.getItem(URL_STORE) || "").trim() || DEF_URL; }
 function getModel() { return (localStorage.getItem(MODEL_STORE) || "").trim() || DEF_MODEL; }
-const STYLES = ["通用", "高端质感", "性价比", "情感故事", "专业理性"];
+const STYLES = ["通用", "美妆个护", "服饰穿搭", "食品生鲜", "3C数码家电", "家居日用", "母婴宠物"];
 
 const $ = (id) => document.getElementById(id);
 let currentStyle = STYLES[0];
@@ -723,7 +723,7 @@ setCount(10);
 function setRunning(on) {
   running = on;
   $("go").disabled = false;
-  $("goLabel").innerHTML = on ? '<span class="spin"></span> 停止生成' : "✦ 生成详情脚本";
+  $("goLabel").innerHTML = on ? '<span class="spin"></span> 停止生成' : "✦ 生成策划方案";
 }
 
 /* --- clipboard --- */
@@ -750,7 +750,15 @@ function copy(text, okMsg, btn) {
 }
 
 function itemToText(item, i) {
-  return (item.section ? "【" + item.section + "】" : "") + (item.headline || "") + (item.copy ? "\n" + item.copy : "");
+  const L = ["【屏" + (i + 1) + (item.screen && !/^\d+$/.test(item.screen) ? " · " + item.screen : "") + "】"];
+  if (item.goal) L.push("转化任务：" + item.goal);
+  if (item.headline) L.push("主标题：" + item.headline);
+  if (item.subcopy) L.push("辅助文案：" + item.subcopy);
+  if (item.visual) L.push("画面构图：" + item.visual);
+  if (item.design) L.push("视觉设计：" + item.design);
+  if (item.psychology) L.push("转化心理：" + item.psychology);
+  if (item.caution) L.push("避坑：" + item.caution);
+  return L.join("\n");
 }
 
 /* --- render states --- */
@@ -765,7 +773,7 @@ function renderLoading(n) {
     "</div>";
   const count = Math.min(Math.max(n, 1), 4);
   $("out").innerHTML = '<div class="cards">' + skTmpl.repeat(count) + "</div>";
-  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 海东 AI 正在生成详情脚本，约 15–30 秒';
+  $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 海东 AI 正在策划，约 20–40 秒';
 }
 
 function renderError(title, detail) {
@@ -812,36 +820,40 @@ function applyKeyUI() {
 
 /* --- 直连 DeepSeek：风格调教 + 容错解析 + 重试 --- */
 const STYLE_GUIDE = {
-  "通用": "通用高转化详情页，卖点清晰、逻辑顺，兼顾信息与吸引力。",
-  "高端质感": "克制高级、突出品质工艺与设计，措辞讲究、留白感。",
-  "性价比": "直白强调实惠与超值，利益点前置、打消犹豫。",
-  "情感故事": "用场景与情感打动人，先共鸣再带出产品。",
-  "专业理性": "参数、原理、对比、权威背书，打动理性买家。"
+  "通用": "通用高转化详情页美术调性，卖点清晰、层级分明、专业干净。",
+  "美妆个护": "精致高级、干净留白、质感光影，色系柔和，突出肤感/成分/效果对比。",
+  "服饰穿搭": "时尚有型、注重上身效果与面料细节，模特场景+平铺细节结合，版式利落。",
+  "食品生鲜": "诱人食欲、新鲜质感、暖色高饱和，突出原料/工艺/口感与食用场景。",
+  "3C数码家电": "科技理性、硬朗几何、深色高级或干净白，突出参数/功能/做工与对比。",
+  "家居日用": "温馨生活感、场景化、材质细节，突出实用/收纳/品质。",
+  "母婴宠物": "安心柔软、亲和暖色，突出安全/成分/呵护与真实使用场景。"
 };
 function styleSpecOf(s) { return STYLE_GUIDE[s] || STYLE_GUIDE["通用"]; }
-const SYSTEM_PROMPT = "你是资深电商详情页策划，擅长设计有转化力的详情页叙事结构。严格遵守中国广告法禁极限词、不虚构功效；严格按JSON返回，无多余内容与markdown。";
-const ANGLES = ["痛点引入", "核心卖点", "使用场景", "材质工艺参数", "效果对比", "信任背书", "促销转化", "品牌故事"];
-const EX = {"section":"核心卖点屏","headline":"85%鲜肉，一口全是肉","copy":"精选新鲜鸡肉冻干，锁住原始肉香与营养；无谷低敏配方，温和不刺激肠胃。每颗都看得见肉，挑食的猫主子也能光盘，日常主粮放心之选。"};
+const SYSTEM_PROMPT = "你是资深电商详情页视觉策划总监，集美术指导、文案、转化策略于一体，做过大量高转化详情页。你产出的是给美工/设计师能直接开工的专业策划方案，不是泛泛文案。硬性要求：(1) 每屏都服务转化链路的一个明确任务，先理清人群顾虑与卖点排序再逐屏落地；(2) 结合类目调性给出可执行美术指导(构图/配色/版式/层级)；(3) 文案精炼有冲击力、遵守中国广告法禁极限词；(4) 严格按JSON返回，无多余内容与markdown。";
+const ANGLES = ["首屏钩子(3秒留人)", "痛点共鸣", "核心卖点/解决方案", "卖点特写·证据", "使用场景/效果", "材质·工艺·参数", "细节·做工特写", "对比·差异化", "信任背书·口碑", "促单·售后保障"];
+const EX = {"screen":"首屏钩子","goal":"用最强利益点3秒抓住养猫人，让她愿意往下滑","headline":"85%鲜肉·挑食猫也光盘","subcopy":"进口冻干 / 无谷低敏 / 一口全是肉","visual":"产品袋居中偏右、局部特写露出肉块颗粒；左侧留白放文案；浅色高级背景点缀鲜肉与猫元素；可加一只满足干饭的猫抓拍增强代入","design":"暖色系(米白+肉粉)呼应鲜肉；主张特大字、'85%'描边强调；层级=主张>卖点标签>点缀；大留白显高级","psychology":"具象化(看得见肉块)+损失厌恶(挑食浪费的痛)","caution":"首屏别堆参数、别塞太多字，一个主张打透"};
 function exampleForStyle(s) { return EX; }
-function tempForStyle(s) { return 0.7; }
+function tempForStyle(s) { return 0.72; }
 function anglesFor(offset, need) { const out = []; for (let i = 0; i < need; i++) out.push(ANGLES[(offset + i) % ANGLES.length]); return out; }
 function buildPrompt(input, need, angles) {
   const lines = angles.map(function (a, i) { return "  第" + (i + 1) + "屏 → " + a; }).join("\n");
-  return "请为以下产品生成 " + need + " 屏详情页文案脚本，连起来构成完整的详情页叙事：\n\n" +
-    "产品名称：" + input.product + "\n核心卖点：" + input.features + "\n目标人群：" + input.target + "\n风格：" + input.style + "\n风格要求：" + styleSpecOf(input.style) + "\n\n" +
-    "参考范例（学结构，不要照抄）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
-    "要求：\n- 生成 " + need + " 屏，每屏对应一种屏类型，顺序一一对应：\n" + lines + "\n" +
-    "- 每屏包含：section(屏类型名)、headline(该屏大标题≤15字)、copy(该屏说明文案80-150字)。不违反广告法。\n\n" +
-    '严格按此JSON输出，不要markdown：\n{"copywriting": [{"section": "", "headline": "", "copy": ""}]}';
+  return "请以「详情页视觉策划总监」的专业度，为以下产品输出 " + need + " 屏详情图的完整策划方案（给美工直接开工）：\n\n" +
+    "产品名称：" + input.product + "\n核心卖点/特征：" + input.features + "\n目标人群+想法：" + input.target + "\n类目调性：" + input.style + "（" + styleSpecOf(input.style) + "）\n\n" +
+    "参考范例（学专业度与颗粒度，不要照抄内容）：\n" + JSON.stringify(exampleForStyle(input.style)) + "\n\n" +
+    "整体要求：先理清「核心购买理由 + 人群决策顾虑 + 卖点排序 + 视觉调性」，让 " + need + " 屏连成一条有节奏的转化叙事；每屏服务一个明确任务。\n" +
+    "逐屏对应以下框架，顺序一一对应：\n" + lines + "\n" +
+    "每屏必须给全这 8 项：screen(该屏定位名，如「首屏钩子」，不要填数字)、goal(转化任务一句话)、headline(图上主标题≤12字抓眼)、subcopy(图上辅助文案，可用 / 分隔)、visual(画面与构图：主体怎么摆/背景场景/有无人手道具/对比呈现/镜头角度)、design(视觉设计：配色方向/版式/重点强调/信息层级/留白)、psychology(用到的转化心理机制)、caution(这类屏避坑提醒)。\n" +
+    "文案不违反广告法(禁极限词)。\n\n" +
+    '严格按此JSON输出，不要markdown：\n{"copywriting": [{"screen": "", "goal": "", "headline": "", "subcopy": "", "visual": "", "design": "", "psychology": "", "caution": ""}]}';
 }
 function normalizeItems(arr) {
   if (!Array.isArray(arr)) return [];
   const out = [];
   for (let i = 0; i < arr.length; i++) {
     const it = arr[i]; if (!it || typeof it !== "object") continue;
-    const headline = String(it.headline || "").trim(); const section = String(it.section || "").trim();
-    if (!headline && !section) continue;
-    out.push({ section: section, headline: headline, copy: String(it.copy || "").trim() });
+    const headline = String(it.headline || "").trim(); const screen = String(it.screen || "").trim();
+    if (!headline && !screen) continue;
+    out.push({ screen: screen, goal: String(it.goal||"").trim(), headline: headline, subcopy: String(it.subcopy||"").trim(), visual: String(it.visual||"").trim(), design: String(it.design||"").trim(), psychology: String(it.psychology||"").trim(), caution: String(it.caution||"").trim() });
   }
   return out;
 }
@@ -958,7 +970,7 @@ async function generateSets(input, cfg, onProgress) {
   const target = input.count;
   _usage = { p: 0, c: 0, t: 0 };
   const temp = tempForStyle(input.style);
-  let maxTokens = Math.min(8000, 700 + target * 420);
+  let maxTokens = Math.min(8000, 1200 + target * 680);
   let useJsonMode = true;
   let collected = [];
   let lastErr = "";
@@ -1058,19 +1070,22 @@ function renderCards() {
   $("meta").innerHTML = parts.join('<span class="dot"></span>') + usageMeta();
 
   if (!list.length) {
-    $("out").innerHTML = '<div class="empty"><div class="t">没有返回详情脚本</div></div>';
+    $("out").innerHTML = '<div class="empty"><div class="t">没有返回策划方案</div></div>';
     return;
   }
 
   let banTotal = 0;
   const cards = list.map(function (item, i) {
-    banTotal += countBan(item.headline) + countBan(item.copy);
+    banTotal += countBan(item.headline) + countBan(item.subcopy);
+    function fld(label, txt) { return txt ? '<p class="sub" style="margin-top:10px">' + label + '</p><div class="desc">' + esc(txt).replace(/\n/g, "<br>") + '</div>' : ''; }
     return (
       '<article class="card" data-card="' + i + '">' +
-        '<div class="card-top2"><span class="idx">' + (item.section ? esc(item.section) : ("#" + (i + 1))) + '</span>' +
+        '<div class="card-top2"><span class="idx">屏#' + (i + 1) + (item.screen ? ' · ' + esc(item.screen) : '') + '</span>' +
           '<button class="regen" data-regen="' + i + '" title="换一屏">🔄 换一屏</button></div>' +
-        '<h3>' + markBan(esc(item.headline)) + '</h3>' +
-        (item.copy ? '<div class="desc">' + markBan(esc(item.copy)).replace(/\n/g, "<br>") + '</div>' : '') +
+        (item.goal ? '<p class="sub">🎯 ' + esc(item.goal) + '</p>' : '') +
+        (item.headline ? '<h3>' + markBan(esc(item.headline)) + '</h3>' : '') +
+        (item.subcopy ? '<div class="desc">' + markBan(esc(item.subcopy)).replace(/\n/g, "<br>") + '</div>' : '') +
+        fld('🖼 画面构图', item.visual) + fld('🎨 视觉设计', item.design) + fld('🧠 转化心理', item.psychology) + fld('⚠️ 避坑', item.caution) +
         '<div class="foot"><button class="mini" data-copy="' + i + '">📋 复制这屏</button></div>' +
       '</article>'
     );
@@ -1093,7 +1108,7 @@ function renderCards() {
   allBtn.textContent = "📋 复制全部 " + list.length + " 屏";
   allBtn.onclick = function () {
     const all = list.map(function (it, k) { return itemToText(it, k); }).join("\n\n————————\n\n");
-    copy(all, "已复制全部 " + list.length + " 屏", null);
+    copy(all, "已复制全部 " + list.length + " 屏方案", null);
   };
 
   $("out").querySelectorAll("[data-copy]").forEach(function (btn) {
@@ -1207,10 +1222,10 @@ function restoreLastInput() {
 }
 function fillSample() {
   $("product").value = "进口冻干猫粮";
-  $("features").value = "85%鲜肉、无谷低敏、爆毛亮毛";
-  $("target").value = "养猫的都市白领女性";
-  setStyleByValue("通用");
-  setCount(6);
+  $("features").value = "85%鲜肉、无谷低敏、爆毛亮毛、进口原料";
+  $("target").value = "养猫白领；想突出高端、成分安全";
+  setStyleByValue("母婴宠物");
+  setCount(10);
   toast("已填入示例，点生成试试");
 }
 
