@@ -1243,7 +1243,7 @@ async function generate() {
   const oldAll = document.getElementById("copyAll");
   if (oldAll) oldAll.remove();
 
-  setRunning(true);
+  setRunning(true); try{var _tk=(location.pathname.match(/ecom-[a-z0-9-]+/)||['ecom'])[0];if(window.umami)umami.track('gen-'+_tk);}catch(e){}
   renderLoading(count);
   saveLastInput();
   RESULT = { product: input.product, style: input.style, features: input.features, target: input.target, list: [], usage: null };

@@ -1303,7 +1303,7 @@ async function generate() {
   const oldAll = document.getElementById("copyAll");
   if (oldAll) oldAll.remove();
 
-  setRunning(true);
+  setRunning(true); try{var _tk=(location.pathname.match(/ecom-[a-z0-9-]+/)||['ecom'])[0];if(window.umami)umami.track('gen-'+_tk);}catch(e){}
   renderLoading(count);
   saveLastInput();
   RESULT = { product: input.product, style: input.style, features: input.features, target: input.target, list: [], usage: null };
@@ -1404,7 +1404,7 @@ async function batchGenerate() {
   const cfg = { url: getEndpoint(), model: getModel(), key: apiKey };
   const perCount = getCount();
   const oldAll = document.getElementById("copyAll"); if (oldAll) oldAll.remove();
-  running = true; setRunning(true);
+  running = true; setRunning(true); try{var _tk=(location.pathname.match(/ecom-[a-z0-9-]+/)||['ecom'])[0];if(window.umami)umami.track('gen-'+_tk);}catch(e){}
   const rows = []; let up = 0, uc = 0, ut = 0;
   for (let i = 0; i < lines.length; i++) {
     $("meta").innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.15);border-top-color:var(--accent)"></span> 批量生成中… ' + (i + 1) + '/' + lines.length + '（' + esc(lines[i]) + '）';
