@@ -11,3 +11,4 @@ __pycache__/
 *.bak_*
 /README.md
 /ai-chat-*.py
+ecom-toolbox/usage.json

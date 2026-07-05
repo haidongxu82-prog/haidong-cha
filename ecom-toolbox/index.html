@@ -222,6 +222,45 @@
       </a>
     </div>
 
+    <style>
+      .usage-panel{margin:30px 0 6px;border:1px solid var(--line);background:var(--panel);border-radius:var(--r-lg);padding:20px 22px}
+      .up-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+      .up-head h2{margin:0;font-size:18px;font-weight:800}
+      .up-sub{margin:5px 0 0;font-size:12.5px;color:var(--muted);max-width:52ch}
+      .up-range{display:flex;gap:6px}
+      .up-range button{border:1px solid var(--line);background:var(--panel-hi);color:var(--text-2);border-radius:20px;padding:5px 13px;font-size:12.5px;font-family:inherit;cursor:pointer}
+      .up-range button.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-hi)}
+      .up-body{margin-top:16px;overflow-x:auto}
+      .up-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:460px}
+      .up-table th{text-align:right;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+      .up-table th:first-child,.up-table td:first-child{text-align:left}
+      .up-table td{padding:11px 10px;border-bottom:1px solid var(--line-soft);text-align:right;vertical-align:top}
+      .up-table tr:last-child td{border-bottom:none}
+      .up-rank{color:var(--muted);font-family:var(--mono);font-size:12px;margin-right:9px}
+      .up-name{color:var(--text);font-weight:600}
+      .up-name.up-hot{color:var(--accent-hi)}
+      .up-bar{height:5px;border-radius:3px;background:var(--accent);opacity:.85;margin-top:6px;max-width:220px}
+      .up-num{font-family:var(--mono);color:var(--text)}
+      .up-num.dim{color:var(--muted)}
+      .up-loading,.up-empty{color:var(--muted);font-size:13px;padding:20px 0;text-align:center}
+      .up-foot{margin:14px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+    </style>
+    <section class="usage-panel" id="usagePanel" style="display:none">
+      <div class="up-head">
+        <div>
+          <h2>📊 使用数据</h2>
+          <p class="up-sub">各工具的访问量与生成次数，实时更新。用得多的工具，就是后续重点打磨的方向。</p>
+        </div>
+        <div class="up-range" id="upRange">
+          <button type="button" data-d="7">近 7 天</button>
+          <button type="button" data-d="30" class="on">近 30 天</button>
+          <button type="button" data-d="90">近 90 天</button>
+        </div>
+      </div>
+      <div class="up-body" id="upBody"><div class="up-loading">加载中…</div></div>
+      <p class="up-foot">「访问」= 打开工具页的人次；「使用」= 实际点击「生成」的次数。数据匿名，不含任何个人信息。</p>
+    </section>
+
     <div class="how">
       <h2>如何开始</h2>
       <p class="sub">三步就能用，一次配置整个工具箱都能用</p>
@@ -270,6 +309,80 @@
     $("kbEye").addEventListener("click", function () {
       var e = $("kbKey"); e.type = e.type === "password" ? "text" : "password";
     });
+  })();
+  </script>
+  <script>
+  (function () {
+    var SRC = "/ecom-toolbox/usage.json";                /* 服务器每 15 分钟从统计库聚合导出 */
+    var TOOLS = [
+      ["ecom-copywriter-member", "电商文案生成"],
+      ["ecom-title-optimizer", "标题 & 关键词优化"],
+      ["ecom-review-reply", "差评 / 中评回复"],
+      ["ecom-live-script", "直播 / 短视频脚本"],
+      ["ecom-promo-pack", "大促活动文案包"],
+      ["ecom-detail-plan", "详情图策划方案"],
+      ["ecom-cs-script", "客服话术 & FAQ"],
+      ["ecom-moments", "朋友圈 / 私域文案"],
+      ["ecom-adwords", "直通车广告词拓展"],
+      ["ecom-amazon-listing", "Amazon Listing（英文）"]
+    ];
+    var panel = document.getElementById("usagePanel");
+    var body = document.getElementById("upBody");
+    var range = document.getElementById("upRange");
+    var foot = panel.querySelector(".up-foot");
+    var DATA = null;
+    function render(days) {
+      var map = (DATA && DATA.ranges && DATA.ranges[days]) || {};
+      var rows = TOOLS.map(function (t) {
+        var d = map[t[0]] || {};
+        return { name: t[1], views: d.views || 0, uses: d.uses || 0 };
+      });
+      var tv = 0, tu = 0;
+      rows.forEach(function (r) { tv += r.views; tu += r.uses; });
+      if (tv === 0 && tu === 0) {
+        body.innerHTML = '<div class="up-empty">这个时间段还没有数据，工具被使用后这里会自动出现排行。</div>'; return;
+      }
+      var basis = tu > 0 ? "uses" : "views";             /* 还没使用数据时，先用访问量画条 */
+      var maxB = 1;
+      rows.forEach(function (r) { if (r[basis] > maxB) maxB = r[basis]; });
+      rows.sort(function (a, b) {
+        return tu > 0 ? (b.uses - a.uses || b.views - a.views) : (b.views - a.views);
+      });
+      var h = '<table class="up-table"><thead><tr><th>工具</th><th>访问</th><th>使用</th><th>使用率</th></tr></thead><tbody>';
+      rows.forEach(function (r, i) {
+        var rate = r.views ? Math.round(r.uses / r.views * 100) : 0;
+        var bw = Math.max(3, Math.round(r[basis] / maxB * 100));
+        h += '<tr><td><span class="up-rank">' + (i + 1) + '</span>'
+          + '<span class="up-name' + (i === 0 && r[basis] > 0 ? ' up-hot' : '') + '">' + r.name + '</span>'
+          + '<div class="up-bar" style="width:' + bw + '%"></div></td>'
+          + '<td><span class="up-num">' + r.views + '</span></td>'
+          + '<td><span class="up-num">' + r.uses + '</span></td>'
+          + '<td><span class="up-num dim">' + rate + '%</span></td></tr>';
+      });
+      h += '</tbody><tfoot><tr><td class="up-name">合计</td><td><span class="up-num">' + tv
+        + '</span></td><td><span class="up-num">' + tu + '</span></td><td></td></tr></tfoot></table>';
+      body.innerHTML = h;
+    }
+    function activeDays() {
+      var on = range.querySelector("button.on");
+      return on ? on.getAttribute("data-d") : "30";
+    }
+    range.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      [].forEach.call(range.querySelectorAll("button"), function (x) { x.classList.remove("on"); });
+      b.classList.add("on"); render(b.getAttribute("data-d"));
+    });
+    fetch(SRC + "?_=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) {
+        DATA = j;
+        panel.style.display = "";
+        render(activeDays());
+        if (j.updated && foot) {
+          foot.innerHTML += ' 数据每 15 分钟更新，最近更新：' + j.updated + '。';
+        }
+      })
+      .catch(function () { /* 拉取失败则保持隐藏，不打扰访客 */ });
   })();
   </script>
 </body>
