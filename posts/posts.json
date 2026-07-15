@@ -1,5 +1,13 @@
 [
   {
+    "title": "DeerFlow 2.0 本地部署指南：在自己的电脑上运行超级智能体",
+    "date": "2026-07-15",
+    "displayDate": "2026.07.15",
+    "file": "2026-07-15-deerflow-self-deploy.html",
+    "url": "posts/2026-07-15-deerflow-self-deploy.html",
+    "summary": "从下载安装到模型配置、后台运行与安全设置，带你在自己的电脑上跑通 DeerFlow，不使用别人的服务器和 API Key。"
+  },
+  {
     "title": "从问问题到派活干：我是怎么搭 AI 工作流让机器自己跑的",
     "date": "2026-06-28",
     "displayDate": "2026.06.28",
