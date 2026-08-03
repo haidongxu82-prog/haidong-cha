@@ -466,11 +466,12 @@
         <h1>私域参数</h1>
         <p class="hint">选类型，一键生成多条朋友圈 / 私域文案</p>
 
-        <div class="apibox">
+        <div class="apibox apibox-redirect">
           <div class="apibox-head">
-            <span class="apibox-title">🔑 API 设置</span>
+            <span class="apibox-title">🔑 接口设置已移到一级页 · <a href="/#copyApiPanel" style="color:var(--accent-hi);text-decoration:none">去一级页设置 →</a></span>
             <span class="apibox-state" id="keyState">未配置</span>
           </div>
+          <div class="api-legacy-controls" style="display:none">
           <div class="apibox-done">
             <span class="apibox-done-txt">✓ 已配置 · 整个工具箱通用</span>
             <div class="apibox-done-btns">
@@ -512,6 +513,7 @@
             </div>
           </details>
           <p class="apibox-note">Key 与接口配置只保存在你自己的浏览器里，生成时浏览器直连你选的接口，费用走你自己的账户，本站不经手、不上传。</p>
+          </div>
         </div>
 
         <div class="field">
@@ -1220,7 +1222,7 @@ async function generate() {
   if (running) return;
   const apiKey = getKey();
   if (!apiKey) {
-    toast("请先在上方「API 设置」里填入你的 DeepSeek Key");
+    toast("请先回一级页「文案接口」设置 API Key");
     $("apiKey").focus();
     return;
   }
