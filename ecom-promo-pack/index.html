@@ -1,9 +1,11 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+<script src="/ecom-toolbox/auth-guard.js"></script>
+<style>.apibox-redirect{display:none!important}</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>大促活动文案包 · 会员版（自带 Key）· 大促台</title>
+<title>大促活动文案包 · 海东 AI 电商工具箱</title>
 <style>
   :root {
     --bg: #0d0d0f;
@@ -498,7 +500,7 @@
             <summary>没有 Key？点这里看 3 步获取 ›</summary>
             <ol>
               <li>打开 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a> 注册并登录</li>
-              <li>在「充值 / 余额」里充值（几元起，按用量扣费）</li>
+              <li>按服务商规则准备调用额度（如有要求）</li>
               <li>进「API Keys」创建密钥，复制 <b>sk-</b> 开头的串，粘到上面点「保存」</li>
             </ol>
           </details>
@@ -588,10 +590,10 @@
         <div class="cards2">
           <div class="gcard rec">
             <h4>DeepSeek　<span class="tagrec">推荐 · 最简单</span></h4>
-            <p>国内接口，支付宝/微信充值，几块钱用很久。</p>
+            <p>国内接口，支持浏览器直连；具体费用以服务商规则为准。</p>
             <ol>
               <li>打开 <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">platform.deepseek.com</a> 注册登录</li>
-              <li>「充值」充一点余额（几元起）</li>
+              <li>按服务商规则准备调用额度（如有要求）</li>
               <li>「API Keys」创建密钥，复制 <b>sk-</b> 开头的串</li>
             </ol>
           </div>
@@ -599,7 +601,7 @@
             <h4>OpenRouter</h4>
             <p>想用 GPT / Claude / Gemini 等多模型。⚠️ 充值多需境外支付方式。</p>
             <ol>
-              <li>打开 <a href="https://openrouter.ai/" target="_blank" rel="noopener">openrouter.ai</a> 注册登录并充值</li>
+              <li>打开 <a href="https://openrouter.ai/" target="_blank" rel="noopener">openrouter.ai</a> 注册登录并按需准备调用额度</li>
               <li><a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> 创建 Key（sk-or- 开头）</li>
               <li>到 <a href="https://openrouter.ai/models" target="_blank" rel="noopener">models</a> 复制模型 ID（如 <b>deepseek/deepseek-chat</b>）</li>
             </ol>
@@ -607,7 +609,7 @@
         </div>
 
         <h3>第二步 · 把 Key 填进工具</h3>
-        <p><b>用 DeepSeek：</b>在「🔑 API 设置」把 sk- Key 粘进去 → 点「保存」→ 显示「已配置 ✓」即可（默认就是 DeepSeek，直接用）。</p>
+        <p><b>用 DeepSeek：</b>回到工具箱一级页的「文案接口」填写 Key → 点「保存」即可；保存后全部文案子模块通用。</p>
         <p><b>用 OpenRouter：</b>点开「高级 · 换用别的 API 接口」→ 预设选 <b>OpenRouter</b> → 模型名填你复制的模型 ID → Key 粘到上面 → 点「保存」。</p>
         <p style="color:var(--muted);font-size:12px">Key 保存后记在本浏览器，下次不用重填；换电脑或浏览器需重填。</p>
 
@@ -624,8 +626,8 @@
           <p>很便宜，DeepSeek 一次生成通常几分钱，按用量扣。</p>
           <b>提示「API Key 无效」？</b>
           <p>检查 Key 有没有复制全、有没有多空格；用 OpenRouter 要确认 Key 和「接口预设」都选对。</p>
-          <b>提示「账户余额不足」？</b>
-          <p>去对应平台（DeepSeek / OpenRouter）充值即可。</p>
+          <b>提示「接口额度不足」？</b>
+          <p>到对应服务商检查 API 额度或 Key 状态。</p>
           <b>提示「无法连接该接口」？</b>
           <p>请用 DeepSeek 或 OpenRouter（已验证可用）；OpenAI 官方接口不支持浏览器直连，想用 GPT 请走 OpenRouter。</p>
           <b>文案有点夸大 / 想更合规？</b>
@@ -1023,7 +1025,7 @@ async function generateSets(input, cfg, onProgress) {
     }
     if (sres.aborted) throw { aborted: true };
     if (sres.status === 401) throw { title: "API Key 无效", detail: "请检查 Key 是否正确、是否与所选接口匹配" };
-    if (sres.status === 402) throw { title: "账户余额不足", detail: "请到对应平台充值后再试" };
+    if (sres.status === 402) throw { title: "接口额度不足", detail: "请到对应服务商检查 API 额度或 Key 状态" };
     if (sres.status === 400 && useJsonMode) { useJsonMode = false; round--; continue; }
     if (sres.status && sres.status >= 400) {
       let d = ""; try { d = (await sres.resp.text()).slice(0, 150); } catch (e) {}
