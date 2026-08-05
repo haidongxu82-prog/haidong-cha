@@ -1,16 +1,29 @@
 :root {
-  color-scheme: light;
-  --bg: #f7f5ef;
-  --paper: #fbfaf6;
-  --paper-soft: #f0eee7;
-  --ink: #171817;
-  --text: #272925;
-  --muted: #74776f;
-  --faint: #a6a79f;
-  --line: #ded9cd;
-  --line-strong: #bdb6a8;
-  --accent: #8d641d;
-  --accent-soft: #efe3cb;
+  color-scheme: light dark;
+  --bg: #f4efe4;
+  --paper: #fbf8f1;
+  --paper-soft: #ede7d9;
+  --ink: #1b1815;
+  --text: #35302a;
+  --muted: #776f62;
+  --faint: #a39a89;
+  --line: #ddd4c2;
+  --line-strong: #b8ab93;
+  --accent: #a8322a;
+  --accent-soft: #f3e2df;
+  --accent-strong: #8d2a23;
+  --accent-border: rgba(168, 50, 42, 0.32);
+  --paper-veil: rgba(255, 255, 255, 0.5);
+  --page-glow: rgba(255, 253, 247, 0.8);
+  --topbar-bg: rgba(244, 239, 228, 0.9);
+  --card-shadow: 0 1px 0 rgba(27, 24, 21, 0.04);
+  --card-shadow-hover: 0 6px 20px rgba(27, 24, 21, 0.09);
+  --brand-shadow: 0 8px 26px rgba(40, 32, 20, 0.08);
+  --photo-filter: sepia(0.14) saturate(0.94);
+  --texture-ink: rgba(27, 24, 21, 0.045);
+  --texture-ink-soft: rgba(27, 24, 21, 0.03);
+  --serif: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun",
+    Georgia, serif;
   --max: 1160px;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -32,7 +45,7 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 239, 0) 260px),
+    linear-gradient(180deg, var(--page-glow), transparent 300px),
     var(--bg);
   overflow-x: hidden;
 }
@@ -44,10 +57,11 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(23, 24, 23, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 24, 23, 0.018) 1px, transparent 1px);
-  background-size: 36px 36px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 62%);
+    radial-gradient(var(--texture-ink) 1px, transparent 1px),
+    radial-gradient(var(--texture-ink-soft) 1px, transparent 1px);
+  background-size: 22px 22px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.32), transparent 76%);
 }
 
 a {
@@ -70,8 +84,8 @@ a {
   gap: 24px;
   height: 62px;
   padding: 0 max(22px, calc((100vw - var(--max)) / 2));
-  border-bottom: 1px solid rgba(222, 217, 205, 0.86);
-  background: rgba(247, 245, 239, 0.86);
+  border-bottom: 1px solid var(--line);
+  background: var(--topbar-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -94,7 +108,7 @@ a {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--paper);
-  box-shadow: 0 10px 34px rgba(40, 32, 20, 0.08);
+  box-shadow: var(--brand-shadow);
   overflow: hidden;
 }
 
@@ -194,7 +208,7 @@ a {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0 9px;
-  background: rgba(255, 255, 255, 0.38);
+  background: var(--paper-veil);
   color: var(--muted);
   font-size: 11px;
   font-weight: 620;
@@ -919,5 +933,146 @@ a {
 
   .footer {
     flex-direction: column;
+  }
+}
+
+/* ==========================================================================
+   东方书卷 · 主题层
+   衬线标题、朱砂印色、纸片卡片、方角。颜色一律走 :root 变量，
+   深色模式只需覆盖变量，见文件末尾 prefers-color-scheme 块。
+   ========================================================================== */
+
+.announcement h2,
+.photo-copy h2,
+.panel-title h2,
+.announcement-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.announcement-title {
+  font-size: clamp(26px, 3.8vw, 44px);
+  line-height: 1.24;
+}
+
+/* 副标题回到无衬线，和大标题拉开层次 */
+.announcement-title span {
+  font-family: Inter, ui-sans-serif, system-ui, "PingFang SC", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* 正文放宽行距，接近书籍排版 */
+.announcement-lead,
+.announcement-copy {
+  font-size: 15px;
+  line-height: 1.92;
+  letter-spacing: 0.01em;
+}
+
+.kicker,
+.panel-title p {
+  letter-spacing: 0.22em;
+}
+
+/* 照片卡：薄纸片，方角微圆 */
+.photo-card {
+  border-radius: 3px;
+  box-shadow: var(--card-shadow);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.photo-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.photo-card img {
+  filter: var(--photo-filter);
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.photo-card:hover img {
+  filter: none;
+}
+
+/* 工具目录保持列表行形态，仅序号改衬线 */
+.tool-card .index {
+  font-family: var(--serif);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 印章式按钮与标签：收成方角 */
+.announcement-link,
+.announcement-actions .announcement-price,
+.announcement-date,
+.announcement-tag,
+.announcement-actions span,
+.announcement-route span,
+.announcement-info div,
+.announcement-fees div {
+  border-radius: 2px;
+}
+
+.announcement-link {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+  font-weight: 760;
+  letter-spacing: 0.08em;
+}
+
+.announcement-link:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.announcement-actions .announcement-price {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  font-weight: 760;
+}
+
+.brand-mark {
+  border-radius: 3px;
+}
+
+/* ==========================================================================
+   深色模式 · 夜读
+   跟随系统设置，无需切换按钮。仅覆盖变量与少量滤镜。
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120f;
+    --paper: #1c1916;
+    --paper-soft: #221e1a;
+    --ink: #f0ebe1;
+    --text: #cbc3b6;
+    --muted: #918878;
+    --faint: #6b6357;
+    --line: #302a24;
+    --line-strong: #4a4238;
+    --accent: #e0655a;
+    --accent-soft: #2c1c19;
+    --accent-strong: #ef7d72;
+    --accent-border: rgba(224, 101, 90, 0.34);
+    --paper-veil: rgba(255, 255, 255, 0.04);
+    --page-glow: rgba(255, 240, 226, 0.05);
+    --topbar-bg: rgba(20, 18, 15, 0.9);
+    --texture-ink: rgba(240, 235, 225, 0.05);
+    --texture-ink-soft: rgba(240, 235, 225, 0.032);
+    --card-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 8px 26px rgba(0, 0, 0, 0.5);
+    --brand-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
+    --photo-filter: sepia(0.1) saturate(0.9) brightness(0.86);
+  }
+
+  /* 深色下按钮用朱砂填充，文字取纸色 */
+  .announcement-link {
+    color: #17130f;
+    font-weight: 800;
   }
 }
