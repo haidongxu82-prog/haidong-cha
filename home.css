@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #f4efe4;
   --paper: #fbf8f1;
   --paper-soft: #ede7d9;
@@ -1040,39 +1040,6 @@ a {
 }
 
 /* ==========================================================================
-   深色模式 · 夜读
-   跟随系统设置，无需切换按钮。仅覆盖变量与少量滤镜。
+   默认浅色主题（书卷风）。已关闭跟随系统的深色模式覆盖，
+   如需恢复夜读模式，请把下面这段重新加回即可。
    ========================================================================== */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #14120f;
-    --paper: #1c1916;
-    --paper-soft: #221e1a;
-    --ink: #f0ebe1;
-    --text: #cbc3b6;
-    --muted: #918878;
-    --faint: #6b6357;
-    --line: #302a24;
-    --line-strong: #4a4238;
-    --accent: #e0655a;
-    --accent-soft: #2c1c19;
-    --accent-strong: #ef7d72;
-    --accent-border: rgba(224, 101, 90, 0.34);
-    --paper-veil: rgba(255, 255, 255, 0.04);
-    --page-glow: rgba(255, 240, 226, 0.05);
-    --topbar-bg: rgba(20, 18, 15, 0.9);
-    --texture-ink: rgba(240, 235, 225, 0.05);
-    --texture-ink-soft: rgba(240, 235, 225, 0.032);
-    --card-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
-    --card-shadow-hover: 0 8px 26px rgba(0, 0, 0, 0.5);
-    --brand-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
-    --photo-filter: sepia(0.1) saturate(0.9) brightness(0.86);
-  }
-
-  /* 深色下按钮用朱砂填充，文字取纸色 */
-  .announcement-link {
-    color: #17130f;
-    font-weight: 800;
-  }
-}
