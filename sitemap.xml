@@ -12,6 +12,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://haidong.chat/course/ai-literacy-course.html</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://haidong.chat/course/wuhan-ai-product-development.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://haidong.chat/community/</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://haidong.chat/posts/2026-07-15-deerflow-self-deploy.html</loc>
     <lastmod>2026-07-15</lastmod>
     <priority>0.7</priority>
