@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://haidong.chat/sitemap.xml
+
+# ---- AI content signals (EEA Article 4 / Directive 2019/790) ----
+# If a content-signal = yes, you may collect content for the corresponding use.
+# If a content-signal = no, you may not collect content for that use.
+# If no signal is set for a use, neither permission nor restriction is granted
+# via content signals with respect to that use.
+#
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts). Does not include AI-generated search
+#           summaries.
+# ai-input: inputting content into one or more AI models (e.g., RAG, grounding, or
+#           real-time taking of content for generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+#
+# ai-input: yes
+# ai-search: yes
+# ai-train: no

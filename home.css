@@ -718,6 +718,88 @@ a {
   opacity: 0.58;
 }
 
+.writing-panel {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  gap: clamp(18px, 4vw, 54px);
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.writing-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.writing-copy h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 740;
+  line-height: 1.12;
+}
+
+.writing-copy p:not(.kicker) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.68;
+}
+
+.writing-list {
+  display: grid;
+  border-top: 1px solid var(--ink);
+}
+
+.writing-row {
+  display: grid;
+  grid-template-columns: 98px minmax(0, 1fr);
+  gap: 14px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+}
+
+.writing-row time {
+  color: var(--faint);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.writing-row span {
+  overflow: hidden;
+  color: currentColor;
+  font-size: 14px;
+  font-weight: 620;
+  line-height: 1.5;
+}
+
+.writing-row:hover {
+  color: var(--accent);
+}
+
+.writing-all {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 32px;
+  margin-top: 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  padding: 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.writing-all:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .photo-panel {
   display: grid;
   grid-template-columns: 154px minmax(0, 1fr);
@@ -864,6 +946,7 @@ a {
   .tool-panel,
   .share-panel,
   .photo-panel,
+  .writing-panel,
   .message-panel {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -927,6 +1010,11 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .writing-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
   .tool-card strong {
     white-space: normal;
   }
@@ -945,6 +1033,7 @@ a {
 .announcement h2,
 .photo-copy h2,
 .panel-title h2,
+.writing-copy h2,
 .announcement-title {
   font-family: var(--serif);
   font-weight: 700;

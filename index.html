@@ -4,20 +4,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>海东 AI</title>
-    <meta
-      name="description"
-      content="海东 AI 工具入口，收纳已跑通的 AI 工具、正在验证的原型和自动化工作流。"
-    />
+    <meta name="description" content="海东 AI 的个人博客与工具入口：AI 工具、自动化工作流的实践文章，以及线下课程活动记录。" />
     <meta property="og:title" content="海东 AI" />
     <meta
       property="og:description"
-      content="海东 AI 工具入口，收纳已跑通的 AI 工具和自动化工作流。"
+      content="AI 工具、自动化工作流的实践文章，与线下课程活动记录。"
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://haidong.chat/" />
-    <meta property="og:image" content="https://haidong.chat/assets/hero-hangzhou.png" />
+    <meta property="og:image" content="https://haidong.chat/assets/hero-og.jpg" />
+    <link rel="canonical" href="https://haidong.chat/" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "海东 AI",
+      "url": "https://haidong.chat/",
+      "description": "海东 AI 的个人博客与工具入口：AI 工具、自动化工作流的实践文章，以及线下课程活动记录。",
+      "inLanguage": "zh-CN"
+    }
+    </script>
     <link rel="icon" href="assets/logo-hd-minimal.svg" />
-    <link rel="stylesheet" href="home.css?v=20260811" />
+    <link rel="stylesheet" href="home.css?v=20260904" />
     <script defer src="https://analytics.haidong.chat/script.js" data-website-id="dd54fa0f-cf40-496c-bccb-a7f8b7fadb47"></script>
   </head>
   <body class="magazine-index">
@@ -33,11 +41,17 @@
       </a>
       <nav class="nav" aria-label="主导航">
         <a href="#tools-title">工具</a>
+        <a href="#writing">文章</a>
         <a href="#moments">剪影</a>
       </nav>
     </header>
 
     <main class="shell">
+      <header class="hero">
+        <h1>把 AI 变成真正干活的人</h1>
+        <p class="summary">我是海东。这里记录我跑通的 AI 工具、自动化工作流与线下课程实践——工具、文章、活动剪影，都在下面。</p>
+      </header>
+
       <section class="tool-panel" aria-labelledby="tools-title">
         <div class="panel-title">
           <p>FORUM INDEX</p>
@@ -90,6 +104,41 @@
         </div>
       </section>
 
+      <section class="writing-panel" id="writing" aria-labelledby="writing-title">
+        <div class="writing-copy">
+          <p class="kicker">WRITING</p>
+          <h2 id="writing-title">文章</h2>
+          <p>关于 AI、自动化与效率实践的记录，陆续更新。</p>
+        </div>
+        <div class="writing-list" data-writing-posts>
+          <a class="writing-row" href="posts/2026-07-15-deerflow-self-deploy.html">
+            <time datetime="2026-07-15">2026.07.15</time>
+            <span>DeerFlow 2.0 本地部署指南：在自己的电脑上运行超级智能体</span>
+          </a>
+          <a class="writing-row" href="posts/2026-06-28-ai-workflow.html">
+            <time datetime="2026-06-28">2026.06.28</time>
+            <span>从问问题到派活干：我是怎么搭 AI 工作流让机器自己跑的</span>
+          </a>
+          <a class="writing-row" href="posts/2026-06-21-coze-ai-manager.html">
+            <time datetime="2026-06-21">2026.06.21</time>
+            <span>我的 AI 大管家：一个能帮我管服务器、搭工作流、指挥其他 AI 干活的助手</span>
+          </a>
+          <a class="writing-row" href="posts/2026-06-21.html">
+            <time datetime="2026-06-21">2026.06.21</time>
+            <span>多一步心法：用 AI 总是差点意思？你和好效果之间只差一步</span>
+          </a>
+          <a class="writing-row" href="posts/2026-06-04.html">
+            <time datetime="2026-06-04">2026.06.04</time>
+            <span>外卖选餐这件事，暴露了我们的决策有多累</span>
+          </a>
+          <a class="writing-row" href="posts/2026-06-03.html">
+            <time datetime="2026-06-03">2026.06.03</time>
+            <span>不是所有事都值得自动化</span>
+          </a>
+        </div>
+        <a class="writing-all" href="posts/">查看全部文章 →</a>
+      </section>
+
       <section class="photo-panel" id="moments" aria-labelledby="moments-title">
         <div class="photo-copy">
           <p class="kicker">MOMENTS</p>
@@ -100,40 +149,40 @@
         </div>
         <!--
           照片替换方法：把占位 <figure class="photo-card is-empty"><span>剪影 0X</span></figure>
-          换成 <figure class="photo-card"><img src="assets/moments/01.jpg" alt="活动说明" loading="lazy" /></figure>
+          换成 <figure class="photo-card"><img src="assets/moments/01.webp" alt="活动说明" loading="lazy" /></figure>
           图片建议横向 4:3，放到 assets/moments/ 目录下；数量可自由增减。
         -->
         <div class="photo-grid" aria-label="活动照片">
           <figure class="photo-card">
-            <img src="assets/moments/changsha-01.jpg" alt="电商人的 AI 通识课 第 1 期 长沙站" loading="lazy" />
+            <img src="assets/moments/changsha-01.webp" alt="电商人的 AI 通识课 第 1 期 长沙站" loading="lazy" />
             <figcaption>2026.04.29 · 电商人的 AI 通识课 第 1 期（长沙站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/wenzhou-01.jpg" alt="电商人的 AI 通识课 第 2 期 温州站" loading="lazy" />
+            <img src="assets/moments/wenzhou-01.webp" alt="电商人的 AI 通识课 第 2 期 温州站" loading="lazy" />
             <figcaption>2026.05.19 · 电商人的 AI 通识课 第 2 期（温州站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/qingdao-01.jpg" alt="电商人的 AI 通识课 第 3 期 青岛站" loading="lazy" />
+            <img src="assets/moments/qingdao-01.webp" alt="电商人的 AI 通识课 第 3 期 青岛站" loading="lazy" />
             <figcaption>2026.06.10 · 电商人的 AI 通识课 第 3 期（青岛站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/wuhan-01.jpg" alt="AI 赋能电商产品开发 第 1 期 武汉站" loading="lazy" />
+            <img src="assets/moments/wuhan-01.webp" alt="AI 赋能电商产品开发 第 1 期 武汉站" loading="lazy" />
             <figcaption>2026.07.02 · AI 赋能电商产品开发 第 1 期（武汉站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/changsha-04.jpg" alt="电商人的 AI 通识课 第 4 期 长沙站" loading="lazy" />
+            <img src="assets/moments/changsha-04.webp" alt="电商人的 AI 通识课 第 4 期 长沙站" loading="lazy" />
             <figcaption>2026.07.16 · 电商人的 AI 通识课 第 4 期（长沙站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/visual-rebuild-01.jpg" alt="AI 视觉重构赋能产品开发 第 1 期 长沙站" loading="lazy" />
+            <img src="assets/moments/visual-rebuild-01.webp" alt="AI 视觉重构赋能产品开发 第 1 期 长沙站" loading="lazy" />
             <figcaption>2026.07.17 · AI 视觉重构赋能产品开发 第 1 期（长沙站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/yangzhou-01.jpg" alt="电商人的 AI 通识课 第 5 期 扬州站" loading="lazy" />
+            <img src="assets/moments/yangzhou-01.webp" alt="电商人的 AI 通识课 第 5 期 扬州站" loading="lazy" />
             <figcaption>2026.07.21 · 电商人的 AI 通识课 第 5 期（扬州站）</figcaption>
           </figure>
           <figure class="photo-card">
-            <img src="assets/moments/yangjiang-01.jpg" alt="电商人的 AI 通识课 第 6 期 阳江站" loading="lazy" />
+            <img src="assets/moments/yangjiang-01.webp" alt="电商人的 AI 通识课 第 6 期 阳江站" loading="lazy" />
             <figcaption>2026.07.29 · 电商人的 AI 通识课 第 6 期（阳江站）</figcaption>
           </figure>
         </div>
